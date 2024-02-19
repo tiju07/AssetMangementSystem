@@ -1,0 +1,134 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using AssetManagementSystem.Models;
+using AssetManagementSystem.Interfaces;
+using AutoMapper;
+using AssetManagementSystem.Dto;
+using AssetManagementSystem.Utils;
+using Microsoft.AspNetCore.Authorization;
+
+namespace AssetManagementSystem.Controllers
+{
+	[Route("api/Assets")]
+	[ApiController]
+	public class AssetCataloguesController : ControllerBase
+	{
+		private readonly IAssetCatalogueRepository _assetCatalogueRepository;
+		private readonly IAssetCategoryRepository _assetCategoryRepository;
+		private readonly IMapper _mapper;
+
+		public AssetCataloguesController(IAssetCatalogueRepository assetCatalogueRepository, IAssetCategoryRepository assetCategoryRepository, IMapper mapper)
+		{
+			_assetCatalogueRepository = assetCatalogueRepository;
+			_assetCategoryRepository = assetCategoryRepository;
+			_mapper = mapper;
+		}
+
+		[Authorize(Roles = "Admin, Employee")]
+		[HttpGet]
+		public IActionResult GetAllAssetDetails([FromQuery] string? searchQuery, [FromQuery] int? categoryFilter)
+		{
+			if(searchQuery != null) searchQuery = searchQuery.ToLower();
+			ICollection<AssetDto> assetCatalogue = new List<AssetDto>();
+			if (searchQuery == null && categoryFilter == null)
+			{
+				assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAllAssets());
+			}
+			else if (searchQuery != null && categoryFilter == null)
+			{
+				assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsForSearch(searchQuery));
+			}
+			else if (categoryFilter != null && searchQuery == null)
+			{
+				var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
+				if (category != null)
+				{
+					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
+				}
+			}
+			else
+			{
+				var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
+				if (category != null)
+				{
+					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
+					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(assetCatalogue
+						.Where(a => a.AssetModel.ToLower().Contains(searchQuery) || 
+						a.AssetDescription.ToLower().Contains(searchQuery) || 
+						a.AssetName.ToLower().Contains(searchQuery) || 
+						a.AssetSpecifications.ToLower().Contains(searchQuery)
+						).ToList());
+				}
+			}
+
+			return Ok(assetCatalogue);
+		}
+
+		[Authorize(Roles = "Admin, Employee")]
+		[HttpGet("{assetID}")]
+		public IActionResult GetAssetDetailsByID(int assetID)
+		{
+			if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+
+			var asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(assetID));
+			return Ok(asset);
+		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpPut("{assetID}")]
+		public IActionResult UpdateAssetDetails(int assetID, AssetDto asset)
+		{
+			if (assetID != asset.AssetID) return BadRequest();
+
+			if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+
+			if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
+
+			if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
+
+			var assetToUpdate = _mapper.Map<Asset>(asset);
+			var result = _assetCatalogueRepository.UpdateAsset(assetToUpdate);
+
+			if (result) return NoContent();
+
+			ModelState.AddModelError("Error", "An error occured updating the asset details!");
+			return StatusCode(500, ModelState);
+		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpPost]
+		public IActionResult CreateAsset(AssetDto asset)
+		{
+			if (!ModelState.IsValid) return BadRequest(ModelState);
+
+			if (!_assetCategoryRepository.AssetCategoryExists(asset.AssetCategoryID)) return BadRequest("Invalid category ID!");
+
+			if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
+
+			if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
+
+			var assetToCreate = _mapper.Map<Asset>(asset);
+			var result = _assetCatalogueRepository.CreateAsset(assetToCreate);
+
+			if (result) return Ok(assetToCreate);
+
+			ModelState.AddModelError("Error", "An error occured while creating the asset!");
+			return StatusCode(500, ModelState);
+		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpDelete("{assetID}")]
+		public IActionResult DeleteAsset(int assetID)
+		{
+			if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+
+			var assetToDelete = _assetCatalogueRepository.GetAssetById(assetID);
+
+			var result = _assetCatalogueRepository.DeleteAsset(assetToDelete);
+			if (result) return NoContent();
+
+			ModelState.AddModelError("Error", "An error occured while deleting the asset!");
+			return StatusCode(500, ModelState);
+		}
+	}
+}
