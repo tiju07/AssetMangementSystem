@@ -23,64 +23,87 @@ namespace AssetManagementSystem.Controllers
 		[HttpGet("{adminID}")]
         public IActionResult GetAdminByID(int adminID)
         {
-            int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
-
-			if (currentAdminID != adminID) return Unauthorized();
-         
-            if (!_adminRepository.AdminExists(adminID))
+            try
             {
-                return NotFound();
+                int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+
+                if (currentAdminID != adminID) return Unauthorized();
+
+                if (!_adminRepository.AdminExists(adminID))
+                {
+                    return NotFound();
+                }
+
+                var admin = _mapper.Map<AdminDto>(_adminRepository.GetAdminByID(adminID));
+
+                return Ok(admin);
+            } catch (Exception ex)
+            {
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
             }
-
-            var admin = _mapper.Map<AdminDto>(_adminRepository.GetAdminByID(adminID));
-
-			return Ok(admin);
         }
 
         [HttpPut("{adminID}")]
         public IActionResult UpdateAdmin(int adminID, AdminDto admin)
         {
-			int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+            try
+            {
+                int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-			if (currentAdminID != adminID || currentAdminID != admin.ID) return Unauthorized();
+                if (currentAdminID != adminID || currentAdminID != admin.ID) return Unauthorized();
 
-            var adminToUpdate = _mapper.Map<Admin>(admin);
-            
-            var originalData = _adminRepository.GetAdminByID(adminID);
+                var adminToUpdate = _mapper.Map<Admin>(admin);
 
-            adminToUpdate.PasswordHash = originalData.PasswordHash;
-            adminToUpdate.PasswordSalt = originalData.PasswordSalt;
+                var originalData = _adminRepository.GetAdminByID(adminID);
+
+                adminToUpdate.PasswordHash = originalData.PasswordHash;
+                adminToUpdate.PasswordSalt = originalData.PasswordSalt;
 
 
-			if (_adminRepository.AdminExists(_mapper.Map<AdminDto>(adminToUpdate))) ModelState.AddModelError("Errors", "A user with the given details already exists!");
+                if (_adminRepository.AdminExists(_mapper.Map<AdminDto>(adminToUpdate))) ModelState.AddModelError("Errors", "A user with the given details already exists!");
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+                if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var result = _adminRepository.UpdateAdmin(adminToUpdate);
+                var result = _adminRepository.UpdateAdmin(adminToUpdate);
 
-			if (result) return NoContent();
+                if (result) return NoContent();
 
-            ModelState.AddModelError("Errors", "An error occuerd while updating admin!");
-            return StatusCode(500, ModelState);
-        }
+                ModelState.AddModelError("Errors", "An error occuerd while updating admin!");
+                return StatusCode(500, ModelState);
+            }
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
+		}
 
         [HttpDelete("{adminID}")]
         public IActionResult DeleteAdmin(int adminID)
         {
-			int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
-
-			if (currentAdminID != adminID) return Unauthorized();
-
-			if (!_adminRepository.AdminExists(adminID)) return NotFound();
-
-            var result = _adminRepository.DeleteAdmin(adminID);
-            if (result)
+            try
             {
-                return NoContent();
-            }
+                int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-            ModelState.AddModelError("Error", "An error occuerd while deleting the admin!");
-            return StatusCode(500, ModelState);
-        }
+                if (currentAdminID != adminID) return Unauthorized();
+
+                if (!_adminRepository.AdminExists(adminID)) return NotFound();
+
+                var result = _adminRepository.DeleteAdmin(adminID);
+                if (result)
+                {
+                    return NoContent();
+                }
+
+                ModelState.AddModelError("Error", "An error occuerd while deleting the admin!");
+                return StatusCode(500, ModelState);
+            }
+            catch (Exception ex)
+            {
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+            }
+		}
     }
 }

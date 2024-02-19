@@ -28,107 +28,147 @@ namespace AssetManagementSystem.Controllers
 		[HttpGet]
 		public IActionResult GetAllAssetDetails([FromQuery] string? searchQuery, [FromQuery] int? categoryFilter)
 		{
-			if(searchQuery != null) searchQuery = searchQuery.ToLower();
-			ICollection<AssetDto> assetCatalogue = new List<AssetDto>();
-			if (searchQuery == null && categoryFilter == null)
+			try
 			{
-				assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAllAssets());
-			}
-			else if (searchQuery != null && categoryFilter == null)
-			{
-				assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsForSearch(searchQuery));
-			}
-			else if (categoryFilter != null && searchQuery == null)
-			{
-				var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
-				if (category != null)
+				if (searchQuery != null) searchQuery = searchQuery.ToLower();
+				ICollection<AssetDto> assetCatalogue = new List<AssetDto>();
+				if (searchQuery == null && categoryFilter == null)
 				{
-					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
+					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAllAssets());
 				}
-			}
-			else
-			{
-				var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
-				if (category != null)
+				else if (searchQuery != null && categoryFilter == null)
 				{
-					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
-					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(assetCatalogue
-						.Where(a => a.AssetModel.ToLower().Contains(searchQuery) || 
-						a.AssetDescription.ToLower().Contains(searchQuery) || 
-						a.AssetName.ToLower().Contains(searchQuery) || 
-						a.AssetSpecifications.ToLower().Contains(searchQuery)
-						).ToList());
+					assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsForSearch(searchQuery));
 				}
-			}
+				else if (categoryFilter != null && searchQuery == null)
+				{
+					var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
+					if (category != null)
+					{
+						assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
+					}
+				}
+				else
+				{
+					var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
+					if (category != null)
+					{
+						assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
+						assetCatalogue = _mapper.Map<ICollection<AssetDto>>(assetCatalogue
+							.Where(a => a.AssetModel.ToLower().Contains(searchQuery) ||
+							a.AssetDescription.ToLower().Contains(searchQuery) ||
+							a.AssetName.ToLower().Contains(searchQuery) ||
+							a.AssetSpecifications.ToLower().Contains(searchQuery)
+							).ToList());
+					}
+				}
 
-			return Ok(assetCatalogue);
+				return Ok(assetCatalogue);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
 		}
 
 		[Authorize(Roles = "Admin, Employee")]
 		[HttpGet("{assetID}")]
 		public IActionResult GetAssetDetailsByID(int assetID)
 		{
-			if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+			try
+			{
+				if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
 
-			var asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(assetID));
-			return Ok(asset);
+				var asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(assetID));
+				return Ok(asset);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
 		}
 
 		[Authorize(Roles = "Admin")]
 		[HttpPut("{assetID}")]
 		public IActionResult UpdateAssetDetails(int assetID, AssetDto asset)
 		{
-			if (assetID != asset.AssetID) return BadRequest();
+			try
+			{
+				if (assetID != asset.AssetID) return BadRequest();
 
-			if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+				if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
 
-			if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
+				if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
 
-			if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
+				if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
 
-			var assetToUpdate = _mapper.Map<Asset>(asset);
-			var result = _assetCatalogueRepository.UpdateAsset(assetToUpdate);
+				var assetToUpdate = _mapper.Map<Asset>(asset);
+				var result = _assetCatalogueRepository.UpdateAsset(assetToUpdate);
 
-			if (result) return NoContent();
+				if (result) return NoContent();
 
-			ModelState.AddModelError("Error", "An error occured updating the asset details!");
-			return StatusCode(500, ModelState);
+				ModelState.AddModelError("Error", "An error occured updating the asset details!");
+				return StatusCode(500, ModelState);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
 		}
 
 		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult CreateAsset(AssetDto asset)
 		{
-			if (!ModelState.IsValid) return BadRequest(ModelState);
+			try
+			{
+				if (!ModelState.IsValid) return BadRequest(ModelState);
 
-			if (!_assetCategoryRepository.AssetCategoryExists(asset.AssetCategoryID)) return BadRequest("Invalid category ID!");
+				if (!_assetCategoryRepository.AssetCategoryExists(asset.AssetCategoryID)) return BadRequest("Invalid category ID!");
 
-			if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
+				if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
 
-			if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
+				if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
 
-			var assetToCreate = _mapper.Map<Asset>(asset);
-			var result = _assetCatalogueRepository.CreateAsset(assetToCreate);
+				var assetToCreate = _mapper.Map<Asset>(asset);
+				var result = _assetCatalogueRepository.CreateAsset(assetToCreate);
 
-			if (result) return Ok(assetToCreate);
+				if (result) return Ok(assetToCreate);
 
-			ModelState.AddModelError("Error", "An error occured while creating the asset!");
-			return StatusCode(500, ModelState);
+				ModelState.AddModelError("Error", "An error occured while creating the asset!");
+				return StatusCode(500, ModelState);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
 		}
 
 		[Authorize(Roles = "Admin")]
 		[HttpDelete("{assetID}")]
 		public IActionResult DeleteAsset(int assetID)
 		{
-			if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+			try
+			{
+				if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
 
-			var assetToDelete = _assetCatalogueRepository.GetAssetById(assetID);
+				var assetToDelete = _assetCatalogueRepository.GetAssetById(assetID);
 
-			var result = _assetCatalogueRepository.DeleteAsset(assetToDelete);
-			if (result) return NoContent();
+				var result = _assetCatalogueRepository.DeleteAsset(assetToDelete);
+				if (result) return NoContent();
 
-			ModelState.AddModelError("Error", "An error occured while deleting the asset!");
-			return StatusCode(500, ModelState);
+				ModelState.AddModelError("Error", "An error occured while deleting the asset!");
+				return StatusCode(500, ModelState);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
 		}
 	}
 }

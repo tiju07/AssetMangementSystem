@@ -16,147 +16,194 @@ using System.Security.Claims;
 
 namespace AssetManagementSystem.Controllers
 {
-    [Route("api/AllocationDetails")]
-    [ApiController]
-    public class AssetAllocationDetailsController : ControllerBase
-    {
+	[Route("api/AllocationDetails")]
+	[ApiController]
+	public class AssetAllocationDetailsController : ControllerBase
+	{
 
-        private readonly IAssetAllocationRepository _assetAllocationRepository;
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly IAssetCatalogueRepository _assetCatalogueRepository;
-        private readonly IMapper _mapper;
+		private readonly IAssetAllocationRepository _assetAllocationRepository;
+		private readonly IEmployeeRepository _employeeRepository;
+		private readonly IAssetCatalogueRepository _assetCatalogueRepository;
+		private readonly IMapper _mapper;
 
-        public AssetAllocationDetailsController(IAssetAllocationRepository assetAllocationRepository, IEmployeeRepository employeeRepository, IAssetCatalogueRepository assetCatalogueRepository, IMapper mapper)
-        {
-            _assetAllocationRepository = assetAllocationRepository;
-            _employeeRepository = employeeRepository;
-            _assetCatalogueRepository = assetCatalogueRepository;
-            _mapper = mapper;
-        }
+		public AssetAllocationDetailsController(IAssetAllocationRepository assetAllocationRepository, IEmployeeRepository employeeRepository, IAssetCatalogueRepository assetCatalogueRepository, IMapper mapper)
+		{
+			_assetAllocationRepository = assetAllocationRepository;
+			_employeeRepository = employeeRepository;
+			_assetCatalogueRepository = assetCatalogueRepository;
+			_mapper = mapper;
+		}
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public IActionResult GetAllAssetAllocationDetails()
-        {
-            var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(_assetAllocationRepository.GetAllAssetAllocations());
+		[Authorize(Roles = "Admin")]
+		[HttpGet]
+		public IActionResult GetAllAssetAllocationDetails()
+		{
+			try
+			{
+				var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(_assetAllocationRepository.GetAllAssetAllocations());
 
-            return Ok(assetAllocationDetails);
-        }
+				return Ok(assetAllocationDetails);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
+		}
 
 		[Authorize(Roles = "Admin, Employee")]
 		[HttpGet("{assetAllocationID}")]
-        public IActionResult GetAssetAllocationDetailByID(int assetAllocationID)
-        {
-            string currentUserRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+		public IActionResult GetAssetAllocationDetailByID(int assetAllocationID)
+		{
+			try
+			{
+				string currentUserRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
 
-			int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+				int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-			if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationID))
-            {
-                if(currentUserRole == "Admin") return NotFound();
-                return Unauthorized();
-            }
+				if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationID))
+				{
+					if (currentUserRole == "Admin") return NotFound();
+					return Unauthorized();
+				}
 
-            var assetAllocationDetail = _mapper.Map<AssetAllocationDetailDto>(_assetAllocationRepository.GetAssetAllocationByID(assetAllocationID));
+				var assetAllocationDetail = _mapper.Map<AssetAllocationDetailDto>(_assetAllocationRepository.GetAssetAllocationByID(assetAllocationID));
 
-			if (currentUserRole != "Admin" && currentUserID != assetAllocationDetail.EmployeeID) return Unauthorized();
+				if (currentUserRole != "Admin" && currentUserID != assetAllocationDetail.EmployeeID) return Unauthorized();
 
-            return Ok(assetAllocationDetail);
-        }
+				return Ok(assetAllocationDetail);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
+		}
 
 		[Authorize(Roles = "Admin, Employee")]
 		[HttpGet("Employee/{employeeID}")]
-        public IActionResult GetAssetAllocationDetailsByEmployee(int employeeID)
-        {
-			string currentUserRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+		public IActionResult GetAssetAllocationDetailsByEmployee(int employeeID)
+		{
+			try
+			{
+				string currentUserRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
 
-			int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+				int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-			if (!_employeeRepository.EmployeeExists(employeeID))
-            {
-				if (currentUserRole == "Admin") return NotFound();
-				return Unauthorized();
+				if (!_employeeRepository.EmployeeExists(employeeID))
+				{
+					if (currentUserRole == "Admin") return NotFound();
+					return Unauthorized();
+				}
+
+				if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
+
+				var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(_assetAllocationRepository.GetAssetAllocationsByEmployee(employeeID));
+				return Ok(assetAllocationDetails);
 			}
-
-			if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
-
-            var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(_assetAllocationRepository.GetAssetAllocationsByEmployee(employeeID));
-            return Ok(assetAllocationDetails);
-        }
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
+		}
 
 		[Authorize(Roles = "Admin")]
 		[HttpPost]
-        public IActionResult CreateAssetAllocationDetail(AssetAllocationDetailDto assetAllocationDetail)
-        {
-            
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+		public IActionResult CreateAssetAllocationDetail(AssetAllocationDetailDto assetAllocationDetail)
+		{
+			try
+			{
+				if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            if (!_employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
+				if (!_employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
 
-            if (!_assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
+				if (!_assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
 
-			if (assetAllocationDetail.AssetCount < 1) return BadRequest("Invalid asset count!");
+				if (assetAllocationDetail.AssetCount < 1) return BadRequest("Invalid asset count!");
 
-			if (assetAllocationDetail.AssetAllocatedTill <= assetAllocationDetail.AssetAllocatedFrom) return BadRequest("Invalid allocation period!");
+				if (assetAllocationDetail.AssetAllocatedTill <= assetAllocationDetail.AssetAllocatedFrom) return BadRequest("Invalid allocation period!");
 
-			if (!AssetAllocationUtils.AllocationStatusIsValid(assetAllocationDetail.AllocationStatus))
-            {
-                ModelState.AddModelError("Error", "Invalid allocation status!");
-                return BadRequest(ModelState);
-            }
-            var assetAllocation = _mapper.Map<AssetAllocationDetail>(assetAllocationDetail);
+				if (!AssetAllocationUtils.AllocationStatusIsValid(assetAllocationDetail.AllocationStatus))
+				{
+					ModelState.AddModelError("Error", "Invalid allocation status!");
+					return BadRequest(ModelState);
+				}
+				var assetAllocation = _mapper.Map<AssetAllocationDetail>(assetAllocationDetail);
 
-            var result = _assetAllocationRepository.AllocateAsset(assetAllocation);
+				var result = _assetAllocationRepository.AllocateAsset(assetAllocation);
 
-            if (result) return Ok(assetAllocation);
+				if (result) return Ok(assetAllocation);
 
-            ModelState.AddModelError("Error", "An error occuerd while adding the allocation details!");
-            return StatusCode(500, ModelState);
-        }
+				ModelState.AddModelError("Error", "An error occuerd while adding the allocation details!");
+				return StatusCode(500, ModelState);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
+		}
 
 		[Authorize(Roles = "Admin")]
 		[HttpPut("{assetAllocationID}")]
-        public IActionResult UpdateAssetAllocationDetail(int assetAllocationID, AssetAllocationDetailDto assetAllocationDetail)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+		public IActionResult UpdateAssetAllocationDetail(int assetAllocationID, AssetAllocationDetailDto assetAllocationDetail)
+		{
+			try
+			{
+				if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationDetail.AssetAllocationID)) return NotFound("Asset allocation details not found!");
+				if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationDetail.AssetAllocationID)) return NotFound("Asset allocation details not found!");
 
-            if (!_employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
+				if (!_employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
 
-            if (!_assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
-            
-            if(assetAllocationDetail.AssetCount < 1) return BadRequest("Invalid asset count!");
+				if (!_assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
 
-            if (assetAllocationDetail.AssetAllocatedTill <= assetAllocationDetail.AssetAllocatedFrom) return BadRequest("Invalid allocation period!");
+				if (assetAllocationDetail.AssetCount < 1) return BadRequest("Invalid asset count!");
 
-            if (!AssetAllocationUtils.AllocationStatusIsValid(assetAllocationDetail.AllocationStatus))
-            {
-                ModelState.AddModelError("Error", "Invalid allocation status!");
-                return BadRequest(ModelState);
-            }
-            
-            var allocationDetail = _mapper.Map<AssetAllocationDetail>(assetAllocationDetail);
+				if (assetAllocationDetail.AssetAllocatedTill <= assetAllocationDetail.AssetAllocatedFrom) return BadRequest("Invalid allocation period!");
 
-            var result = _assetAllocationRepository.UpdateAllocationDetails(allocationDetail);
-            if (result) return Ok(allocationDetail);
+				if (!AssetAllocationUtils.AllocationStatusIsValid(assetAllocationDetail.AllocationStatus))
+				{
+					ModelState.AddModelError("Error", "Invalid allocation status!");
+					return BadRequest(ModelState);
+				}
 
-            ModelState.AddModelError("Error", "An error occuerd while updating asset allocation details!");
-            return StatusCode(500, ModelState);
-        }
+				var allocationDetail = _mapper.Map<AssetAllocationDetail>(assetAllocationDetail);
+
+				var result = _assetAllocationRepository.UpdateAllocationDetails(allocationDetail);
+				if (result) return Ok(allocationDetail);
+
+				ModelState.AddModelError("Error", "An error occuerd while updating asset allocation details!");
+				return StatusCode(500, ModelState);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
+		}
 
 		[Authorize(Roles = "Admin")]
 		[HttpDelete("{assetAllocationID}")]
-        public IActionResult DeleteAssetAllocationDetail(int assetAllocationID)
-        {
-            if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationID)) return NotFound("Asset allocation details not found!");
+		public IActionResult DeleteAssetAllocationDetail(int assetAllocationID)
+		{
+			try
+			{
+				if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationID)) return NotFound("Asset allocation details not found!");
 
-            var result = _assetAllocationRepository.DeallocateAsset(assetAllocationID);
-            
-            if (result) return Ok();
+				var result = _assetAllocationRepository.DeallocateAsset(assetAllocationID);
 
-            ModelState.AddModelError("Error", "An error occuerd while deleting allocation details!");
-            return StatusCode(500, ModelState);
-        }
-    }
+				if (result) return Ok();
+
+				ModelState.AddModelError("Error", "An error occuerd while deleting allocation details!");
+				return StatusCode(500, ModelState);
+			}
+			catch (Exception ex)
+			{
+				//Add a log here with details as from ex.Message
+				return StatusCode(500, "An error occured at the server!");
+			}
+		}
+	}
 }
