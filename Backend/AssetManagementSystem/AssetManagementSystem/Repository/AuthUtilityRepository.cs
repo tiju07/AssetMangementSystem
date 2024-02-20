@@ -47,9 +47,5 @@ namespace AssetManagementSystem.Repository
 
 			return new { token = encryptorToken, name = name };
 		}
-		public bool AddJwtToCookie(string token)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

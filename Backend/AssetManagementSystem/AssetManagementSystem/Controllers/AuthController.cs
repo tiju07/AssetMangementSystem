@@ -2,6 +2,8 @@
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -196,6 +198,23 @@ namespace AssetManagementSystem.Controllers
 			{
 				//Add a log here with details as from ex.Message
 				return StatusCode(500, "An error occured at the server!");
+			}
+		}
+
+		[Authorize(Roles = "Admin, Employee")]
+		[HttpPost("Logout")]
+		public IActionResult Logout()
+		{
+			try
+			{
+				Response.Cookies.Delete("token");
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				//Log the error(ex.Message)
+				ModelState.AddModelError("Error", "Error signing out!");
+				return StatusCode(500, ModelState);
 			}
 		}
 	}
