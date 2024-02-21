@@ -13,11 +13,13 @@ namespace AssetManagementSystem.Controllers
 	{
 		private readonly IAssetCategoryRepository _assetCategoryRepository;
 		private readonly IMapper _mapper;
+		private readonly ILogger<AssetCategoriesController> _logger;
 
-		public AssetCategoriesController(IAssetCategoryRepository assetCategoryRepository, IMapper mapper)
+		public AssetCategoriesController(IAssetCategoryRepository assetCategoryRepository, IMapper mapper, ILogger<AssetCategoriesController> logger)
 		{
 			_assetCategoryRepository = assetCategoryRepository;
 			_mapper = mapper;
+			_logger = logger;
 		}
 
 		[Authorize(Roles = "Admin, Employee")]
@@ -32,7 +34,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -51,7 +53,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -77,7 +79,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -101,7 +103,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -125,7 +127,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}

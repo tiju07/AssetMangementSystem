@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using AssetManagementSystem.Dto;
 using AssetManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace AssetManagementSystemTestProject
 {
@@ -20,7 +21,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<IMapper> _mapperMock;
 		private Fixture _fixture;
 		private AuthController _controller;
-
+		private Mock<ILogger<AuthController>> _loggerMock;
 		[SetUp]
 		public void SetUp()
 		{
@@ -36,7 +37,9 @@ namespace AssetManagementSystemTestProject
 			_authUtilityRepositoryMock = new Mock<IAuthUtilityRepository>();
 			_mapperMock = new Mock<IMapper>();
 			_fixture = new Fixture();
-			_controller = new AuthController(_applicationSettings.Object, _adminRepositoryMock.Object, _employeeRepositoryMock.Object, _authUtilityRepositoryMock.Object, _mapperMock.Object);
+			_loggerMock = new Mock<ILogger<AuthController>>();
+
+			_controller = new AuthController(_applicationSettings.Object, _adminRepositoryMock.Object, _employeeRepositoryMock.Object, _authUtilityRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
 
 			_fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
 	.ForEach(b => _fixture.Behaviors.Remove(b));

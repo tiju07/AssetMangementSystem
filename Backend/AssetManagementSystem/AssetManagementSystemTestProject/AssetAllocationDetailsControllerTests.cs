@@ -5,8 +5,10 @@ using AssetManagementSystem.Models;
 using AssetManagementSystem.Utils;
 using AutoFixture;
 using AutoMapper;
+using Castle.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -26,7 +28,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<IMapper> _mapperMock;
 		private Fixture _fixture;
 		private Mock<AssetAllocationUtils> _utilsMock;
-
+		private Mock<ILogger<AssetAllocationDetailsController>> _loggerMock;
 		[SetUp]
 		public void SetUp()
 		{
@@ -35,8 +37,8 @@ namespace AssetManagementSystemTestProject
 			_mapperMock = new Mock<IMapper>();
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
 			_assetCatalogueRepositoryMock = new Mock<IAssetCatalogueRepository>();
-
-			_controller = new AssetAllocationDetailsController(_assetAllocationRepositoryMock.Object, _employeeRepositoryMock.Object, _assetCatalogueRepositoryMock.Object, _mapperMock.Object);
+			_loggerMock = new Mock<ILogger<AssetAllocationDetailsController>>();
+			_controller = new AssetAllocationDetailsController(_assetAllocationRepositoryMock.Object, _employeeRepositoryMock.Object, _assetCatalogueRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
 		}
 
 		[Test]

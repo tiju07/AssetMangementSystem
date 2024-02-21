@@ -13,6 +13,7 @@ namespace AssetManagementSystem.Repository
     {
         private readonly AssetManagementSystemContext _context;
 		private readonly IMapper _mapper;
+        
 
 		public EmployeeRepository(AssetManagementSystemContext context, IMapper mapper)
         {

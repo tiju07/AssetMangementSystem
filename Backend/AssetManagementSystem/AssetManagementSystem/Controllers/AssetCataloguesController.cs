@@ -16,12 +16,14 @@ namespace AssetManagementSystem.Controllers
 		private readonly IAssetCatalogueRepository _assetCatalogueRepository;
 		private readonly IAssetCategoryRepository _assetCategoryRepository;
 		private readonly IMapper _mapper;
+		private readonly ILogger<AssetCataloguesController> _logger;
 
-		public AssetCataloguesController(IAssetCatalogueRepository assetCatalogueRepository, IAssetCategoryRepository assetCategoryRepository, IMapper mapper)
+		public AssetCataloguesController(IAssetCatalogueRepository assetCatalogueRepository, IAssetCategoryRepository assetCategoryRepository, IMapper mapper, ILogger<AssetCataloguesController> logger)
 		{
 			_assetCatalogueRepository = assetCatalogueRepository;
 			_assetCategoryRepository = assetCategoryRepository;
 			_mapper = mapper;
+			_logger = logger;
 		}
 
 		[Authorize(Roles = "Admin, Employee")]
@@ -67,7 +69,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -85,7 +87,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -114,7 +116,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -143,7 +145,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -166,7 +168,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}

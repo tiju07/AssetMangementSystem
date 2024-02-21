@@ -7,6 +7,7 @@ using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<IMapper> _mapperMock;
 		private Fixture _fixture;
 		private AssetAuditReportRequestsController _controller;
+		private Mock<ILogger<AssetAuditReportRequestsController>> _loggerMock;
 
 		[SetUp]
 		public void SetUp()
@@ -37,7 +39,9 @@ namespace AssetManagementSystemTestProject
 			_assetAllocationRepositoryMock = new Mock<IAssetAllocationRepository>();
 			_mapperMock = new Mock<IMapper>();
 			_fixture = new Fixture();
-			_controller = new AssetAuditReportRequestsController(_assetAuditReportRequestRepositoryMock.Object, _employeeRepositoryMock.Object, _assetCatalogueRepositoryMock.Object, _assetAllocationRepositoryMock.Object, _mapperMock.Object);
+			_loggerMock = new Mock<ILogger<AssetAuditReportRequestsController>>();
+
+			_controller = new AssetAuditReportRequestsController(_assetAuditReportRequestRepositoryMock.Object, _employeeRepositoryMock.Object, _assetCatalogueRepositoryMock.Object, _assetAllocationRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
 
 			_fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
 	.ForEach(b => _fixture.Behaviors.Remove(b));

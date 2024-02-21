@@ -23,14 +23,16 @@ namespace AssetManagementSystem.Controllers
 		private readonly IEmployeeRepository _employeeRepository;
 		private readonly IAuthUtilityRepository _authUtilityRepository;
 		private readonly IMapper _mapper;
+		private readonly ILogger<AuthController> _logger;
 
-		public AuthController(IOptions<AppSettings> applicationSettings, IAdminRepository adminRepository, IEmployeeRepository employeeRepository, IAuthUtilityRepository authUtilityRepository, IMapper mapper)
+		public AuthController(IOptions<AppSettings> applicationSettings, IAdminRepository adminRepository, IEmployeeRepository employeeRepository, IAuthUtilityRepository authUtilityRepository, IMapper mapper, ILogger<AuthController> logger)
 		{
 			_applicationSettings = applicationSettings.Value;
 			_adminRepository = adminRepository;
 			_employeeRepository = employeeRepository;
 			_authUtilityRepository = authUtilityRepository;
 			_mapper = mapper;
+			_logger = logger;
 		}
 
 		[HttpPost("Admin/Register")]
@@ -77,7 +79,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -119,7 +121,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -157,7 +159,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -196,7 +198,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -212,7 +214,7 @@ namespace AssetManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				//Log the error(ex.Message)
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				ModelState.AddModelError("Error", "Error signing out!");
 				return StatusCode(500, ModelState);
 			}

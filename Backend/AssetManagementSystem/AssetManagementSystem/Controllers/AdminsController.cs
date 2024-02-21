@@ -13,11 +13,12 @@ namespace AssetManagementSystem.Controllers
     {
 		private readonly IAdminRepository _adminRepository;
         private readonly IMapper _mapper;
-
-        public AdminsController(IAdminRepository adminRepository, IMapper mapper)
+        private readonly ILogger<AdminsController> _logger;
+        public AdminsController(IAdminRepository adminRepository, IMapper mapper, ILogger<AdminsController> logger)
         {
 			_adminRepository = adminRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
 		[HttpGet("{adminID}")]
@@ -35,11 +36,11 @@ namespace AssetManagementSystem.Controllers
                 }
 
                 var admin = _mapper.Map<AdminDto>(_adminRepository.GetAdminByID(adminID));
-
+                throw new Exception("");
                 return Ok(admin);
             } catch (Exception ex)
             {
-				//Add a log here with details as from ex.Message
+                _logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
             }
         }
@@ -74,7 +75,7 @@ namespace AssetManagementSystem.Controllers
             }
 			catch (Exception ex)
 			{
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
 			}
 		}
@@ -101,7 +102,7 @@ namespace AssetManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-				//Add a log here with details as from ex.Message
+				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
             }
 		}

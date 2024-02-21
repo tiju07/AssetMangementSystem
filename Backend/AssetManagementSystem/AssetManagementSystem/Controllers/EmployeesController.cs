@@ -15,11 +15,13 @@ namespace AssetManagementSystem.Controllers
 	{
 		private readonly IEmployeeRepository _employeeRepository;
 		private readonly IMapper _mapper;
+		private readonly ILogger<EmployeesController> _logger;
 
-		public EmployeesController(IEmployeeRepository employeeRepository, IMapper mapper)
+		public EmployeesController(IEmployeeRepository employeeRepository, IMapper mapper, ILogger<EmployeesController> logger)
 		{
 			_employeeRepository = employeeRepository;
 			_mapper = mapper;
+			_logger = logger;
 		}
 
 		[Authorize(Roles = "Admin")]

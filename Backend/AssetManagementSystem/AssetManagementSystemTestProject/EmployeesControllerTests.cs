@@ -8,6 +8,7 @@ using AutoFixture;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<IMapper> _mapperMock;
 		private Fixture _fixture;
 		private EmployeesController _controller;
+		private Mock<ILogger<EmployeesController>> _loggerMock;
 
 		[SetUp]
 		public void SetUp()
@@ -31,7 +33,9 @@ namespace AssetManagementSystemTestProject
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
 			_mapperMock = new Mock<IMapper>();
 			_fixture = new Fixture();
-			_controller = new EmployeesController(_employeeRepositoryMock.Object, _mapperMock.Object);
+			_loggerMock = new Mock<ILogger<EmployeesController>>();
+
+			_controller = new EmployeesController(_employeeRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
 
 			_fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
 	.ForEach(b => _fixture.Behaviors.Remove(b));

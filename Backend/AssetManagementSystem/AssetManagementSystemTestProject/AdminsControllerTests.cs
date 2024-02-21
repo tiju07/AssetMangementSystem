@@ -4,9 +4,11 @@ using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
 using AutoFixture;
 using AutoMapper;
+using Castle.Core.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Controller;
 using Moq;
 using System.Security.Claims;
@@ -22,6 +24,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<IMapper> _mapper;
 		private Fixture _fixture;
 		private AdminsController _controller;
+		private Mock<ILogger<AdminsController>> _logger;
 
 		[SetUp]
 		public void Setup()
@@ -29,7 +32,8 @@ namespace AssetManagementSystemTestProject
 			_fixture = new Fixture();
 			_adminRepository = new Mock<IAdminRepository>();
 			_mapper = new Mock<IMapper>();
-			_controller = new AdminsController(_adminRepository.Object, _mapper.Object);
+			_logger = new Mock<ILogger<AdminsController>>();
+			_controller = new AdminsController(_adminRepository.Object, _mapper.Object, _logger.Object);
 		}
 
 		[Test]
