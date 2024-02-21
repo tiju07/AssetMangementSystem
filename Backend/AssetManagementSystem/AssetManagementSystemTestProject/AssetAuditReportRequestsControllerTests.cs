@@ -1,4 +1,4 @@
-﻿using AssetManagementSystem.Controllers;
+﻿using AssetManagementSystem.Controllers.v1;
 using AssetManagementSystem.Dto;
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace AssetManagementSystemTestProject
 {
-	class AssetAuditReportRequestsControllerTests
+    class AssetAuditReportRequestsControllerTests
 	{
 
 		private Mock<IAssetAuditReportRequestRepository> _assetAuditReportRequestRepositoryMock;

@@ -1,4 +1,4 @@
-using AssetManagementSystem.Controllers;
+using AssetManagementSystem.Controllers.v1;
 using AssetManagementSystem.Dto;
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
@@ -16,7 +16,7 @@ using System.Security.Principal;
 
 namespace AssetManagementSystemTestProject
 {
-	[TestFixture]
+    [TestFixture]
 	public class AdminsControllerTests
 	{
 

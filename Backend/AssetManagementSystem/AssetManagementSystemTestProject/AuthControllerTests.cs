@@ -3,16 +3,16 @@ using AssetManagementSystem;
 using AutoMapper;
 using Moq;
 using AutoFixture;
-using AssetManagementSystem.Controllers;
 using Microsoft.Extensions.Options;
 using AssetManagementSystem.Dto;
 using AssetManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using AssetManagementSystem.Controllers.v1;
 
 namespace AssetManagementSystemTestProject
 {
-	internal class AuthControllerTests
+    internal class AuthControllerTests
 	{
 		private Mock<IOptions<AppSettings>> _applicationSettings;
 		private Mock<IAdminRepository> _adminRepositoryMock;

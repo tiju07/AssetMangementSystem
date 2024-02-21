@@ -1,4 +1,4 @@
-﻿using AssetManagementSystem.Controllers;
+﻿using AssetManagementSystem.Controllers.v1;
 using AssetManagementSystem.Dto;
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace AssetManagementSystemTestProject
 {
-	internal class AssetCataloguesControllerTests
+    internal class AssetCataloguesControllerTests
 	{
 		private Mock<IAssetCatalogueRepository> _assetCatalogueRepositoryMock;
 		private Mock<IAssetCategoryRepository> _assetCategoryRepositoryMock;
