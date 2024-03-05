@@ -1,0 +1,144 @@
+<main id="main">
+    <section id="about" class="assets cta">
+        <div class="container mb-3" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Add New Allocation</h2>
+            </div>
+            <div class="d-flex flex-column flex-wrap align-items-center form">
+                <div class="">
+                    <p-selectButton
+                        [options]="roles"
+                        [(ngModel)]="selectedRole"
+                        optionLabel="label"
+                        optionValue="value"
+                    ></p-selectButton>
+                </div>
+                <form
+                    [formGroup]="form"
+                    data-bs-theme="dark"
+                    class="d-flex flex-column align-items-center"
+                    (ngSubmit)="registerUser()"
+                >
+                    <div class="form-floating mb-3">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            formControlName="name"
+                            placeholder=""
+                            [ngClass]="{
+                                'is-invalid':
+                                    form.get('name')?.touched &&
+                                    !form.get('name')?.valid,
+                                'is-valid': !form.get('name')?.errors
+                            }"
+                        />
+                        <label for="floatingInput"
+                            >Full Name <span>*</span></label
+                        >
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                form.get('name')?.errors &&
+                                form.get('name')?.touched
+                            "
+                            >Please enter a valid input with atleast 3
+                            characters!</span
+                        >
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="floatingInput"
+                            formControlName="email"
+                            placeholder=""
+                            [ngClass]="{
+                                'is-invalid':
+                                    form.get('email')?.touched &&
+                                    !form.get('email')?.valid,
+                                'is-valid': !form.get('email')?.errors
+                            }"
+                        />
+                        <label for="floatingInput"
+                            >Email ID <span>*</span></label
+                        >
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                form.get('email')?.errors &&
+                                form.get('email')?.touched
+                            "
+                            >Please enter a valid email!</span
+                        >
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            formControlName="username"
+                            placeholder=""
+                            [ngClass]="{
+                                'is-invalid':
+                                    form.get('username')?.touched &&
+                                    !form.get('username')?.valid,
+                                'is-valid': !form.get('username')?.errors
+                            }"
+                        />
+                        <label for="floatingInput"
+                            >Username <span>*</span></label
+                        >
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                form.get('username')?.errors &&
+                                form.get('username')?.touched
+                            "
+                            >Please enter a valid username with atleast 5
+                            characters!</span
+                        >
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <div class="form-floating input-group mb-3">
+                            <input
+                                type="password"
+                                formControlName="password"
+                                class="form-control"
+                                id="password"
+                                placeholder=""
+                                data-bs-toggle="popover"
+                                data-bs-trigger="manual"
+                                data-bs-placement="bottom"
+                                data-bs-container="body"
+                                data-bs-custom-class="custom-popover"
+                                #passwordPopover
+                            />
+                            <label for="password"
+                                >Password <span>*</span></label
+                            >
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                id="togglePassword"
+                            >
+                                <i class="bi bi-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button
+                        pButton
+                        class="btn btn-outline-warning p-3 create-btn w-100"
+                        type="submit"
+                    >
+                        Create
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <p-toast styleClass="custom-error-toast" *ngIf="!form.valid"> </p-toast>
+    <p-toast styleClass="custom-success-toast" *ngIf="form.valid"> </p-toast>
+</main>

@@ -1,0 +1,50 @@
+<main id="main">
+  <section id="about" class="about cta">
+    <div
+      class="container d-flex flex-column align-items-center justify-items-center"
+      data-aos="fade-up"
+    >
+      <div
+        class="btn-group toggle-user"
+        role="group"
+        aria-label="Basic radio toggle button group"
+      >
+        <input
+          type="radio"
+          class="btn-check"
+          name="btnradio"
+          id="btnradio1"
+          autocomplete="off"
+          checked
+        />
+        <label class="btn btn-outline-warning" for="btnradio1">Admin</label>
+
+        <input
+          type="radio"
+          class="btn-check"
+          name="btnradio"
+          id="btnradio2"
+          autocomplete="off"
+        />
+        <label class="btn btn-outline-warning" for="btnradio2">Employee</label>
+      </div>
+      <form class="d-flex flex-column align-items-center">
+        <div>
+          <label for="Username" class="form-label text-light">Username</label>
+          <input type="text" id="username" class="form-control" />
+
+          <label for="inputPassword5" class="form-label text-light"
+            >Password</label
+          >
+          <input
+            type="password"
+            id="inputPassword5"
+            class="form-control"
+            aria-describedby="passwordHelpBlock"
+          />
+        </div>
+        <div class="btn btn-warning mt-3 w-2" type="submit">Login</div>
+      </form>
+    </div>
+  </section>
+</main>

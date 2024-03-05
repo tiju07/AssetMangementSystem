@@ -1,0 +1,68 @@
+<main id="main">
+    <section id="about" class="assets cta">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Allocation Details</h2>
+            </div>
+            <div
+                class="container d-flex align-items-end justify-content-between"
+            >
+                <p-table
+                    [columns]="cols"
+                    [value]="allocationDetails"
+                    responsiveLayout="scroll"
+                    selectionMode="single"
+                    [(selection)]="selectedAllocation"
+                    dataKey="categoryID"
+                    (onRowSelect)="onRowSelect()"
+                    class="p-datatable"
+                    [tableStyle]="{ 'min-width': '70vw' }"
+                >
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns">
+                                {{ col.header }}
+                            </th>
+                            <th>Update</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template
+                        pTemplate="body"
+                        let-rowData
+                        let-columns="columns"
+                    >
+                        <tr [pSelectableRow]="rowData">
+                            <td
+                                *ngFor="let col of columns"
+                                [ngClass]="
+                                    col.field === 'assetAllocationID'
+                                        ? 'id-col'
+                                        : ''
+                                "
+                            >
+                                {{
+                                    col.field == "assetAllocatedFrom" ||
+                                    col.field == "assetAllocatedTill"
+                                        ? (rowData[col.field] | date)
+                                        : rowData[col.field]
+                                }}
+                            </td>
+                            <td>
+                                <a
+                                    routerLink="update/{{
+                                        rowData.assetAllocationID
+                                    }}"
+                                    class="p-button p-button-info"
+                                    ><i
+                                        class="pi pi-pencil"
+                                        style="color: white"
+                                    ></i
+                                ></a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </section>
+</main>
