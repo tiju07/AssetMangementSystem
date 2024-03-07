@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AssetService } from '../../services/asset-catalogue/asset.service';
 import { MessageService } from 'primeng/api';
@@ -14,7 +14,7 @@ import { EmployeesService } from '../../services/employees/employees.service';
     styleUrl: './create-audit-request.component.css'
 })
 export class CreateAuditRequestComponent implements OnInit {
-    constructor(private auditRequestService: AuditRequestsService, private router: Router, private fb: FormBuilder, private assetService: AssetService, private messageService: MessageService, private employeeService: EmployeesService) { }
+    constructor(private auditRequestService: AuditRequestsService, private router: Router, private fb: FormBuilder, private assetService: AssetService, private messageService: MessageService, private employeeService: EmployeesService, private activatedRoute: ActivatedRoute) { }
 
     assets!: IAsset[]
     employees!: IEmployee[];
@@ -28,11 +28,11 @@ export class CreateAuditRequestComponent implements OnInit {
     })
 
     ngOnInit(): void {
-        this.assetService.getAllAssets().subscribe(assets => {
-            this.assets = assets as IAsset[]
+        this.activatedRoute.data.subscribe(data => {
+            this.assets = data['assets'] as IAsset[]
         })
-        this.employeeService.getEmployees().subscribe(employees => {
-            this.employees = employees as IEmployee[]
+        this.activatedRoute.data.subscribe(data => {
+            this.employees = data['employees'] as IEmployee[]
         })
     }
 

@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ICategory } from '../../interfaces/icategory';
 import { IAsset } from '../../interfaces/iasset';
+import { formatDate } from '@angular/common';
 
 @Component({
     selector: 'app-update-asset',
@@ -15,7 +16,7 @@ import { IAsset } from '../../interfaces/iasset';
 })
 export class UpdateAssetComponent {
 
-    constructor(private assetService: AssetService, private categoryService: CategoriesService, private fb: FormBuilder, private messageService: MessageService, private router: Router, private route: ActivatedRoute) { }
+    constructor(private assetService: AssetService, private categoryService: CategoriesService, private fb: FormBuilder, private messageService: MessageService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
     categories!: ICategory[]
     asset!: IAsset;
@@ -28,8 +29,8 @@ export class UpdateAssetComponent {
         assetImage: new FormControl('', [Validators.required]),
         assetDescription: new FormControl(''),
         assetStatus: new FormControl('', [Validators.required]),
-        manufacturingDate: new FormControl(null),
-        expiryDate: new FormControl(null),
+        manufacturingDate: new FormControl(formatDate(new Date(), "yyyy-MM-dd", "en")),
+        expiryDate: new FormControl(formatDate(new Date(), "yyyy-MM-dd", "en")),
         assetValue: new FormControl(null, [Validators.required, Validators.min(1)]),
     })
 
@@ -39,12 +40,15 @@ export class UpdateAssetComponent {
 
 
     ngOnInit(): void {
-        this.assetService.getAssetByID(parseInt(this.route.snapshot.params['id'])).subscribe(data => {
-            this.asset = data as IAsset;
+        this.activatedRoute.data.subscribe(data => {
+            this.asset = data['asset'] as IAsset;
             this.form.patchValue(this.asset as any);
+            this.form.patchValue({
+                manufacturingDate: formatDate(this.asset.manufacturingDate as Date, "yyyy-MM-dd", "en"),
+                expiryDate: formatDate(this.asset.expiryDate as Date, "yyyy-MM-dd", "en")
+            });
         });
-        this.categoryService.getAllCategories().subscribe(data => this.categories = data as ICategory[]);
-        console.log(this.asset);
+        this.activatedRoute.data.subscribe(data => this.categories = data['categories'] as ICategory[]);
     }
 
     updateAsset() {
@@ -52,16 +56,23 @@ export class UpdateAssetComponent {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 })
             return;
         }
-        this.assetService.updateAsset(parseInt(this.route?.snapshot.params['id']), {assetID:this.asset.assetID, ...this.form.getRawValue()}).subscribe(data => {
-            if (data.status == 200) {
-                this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset Update Successful! Redirecting...', life: 2000 })
-                console.log("Success: " + this.form.getRawValue());
-                const d = data as unknown as IAsset;
-                this.router.navigate(['/assets' + d.assetID]);
-            } else {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Asset!' })
-            }
-        })
+        // const formValue = this.form.getRawValue();
+        // const updateParam = {
+        //     assetID: this.asset.assetID,
+        //     ...formValue,
+        //     manufacturingDate: formValue.manufacturingDate ? new Date(formValue.manufacturingDate) : null,
+        //     expiryDate: formValue.expiryDate ? new Date(formValue.expiryDate) : null
+        // };
+        // this.assetService.updateAsset(parseInt(this.activatedRoute?.snapshot.params['id']), updateParam).subscribe(data => {
+        //     if (data.status == 200) {
+        //         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset Update Successful! Redirecting...', life: 2000 })
+        //         console.log("Success: " + this.form.getRawValue());
+        //         const d = data as unknown as IAsset;
+        //         this.router.navigate(['/assets' + d.assetID]);
+        //     } else {
+        //         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Asset!' })
+        //     }
+        // })
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset Update Successful! Redirecting...', life: 2000 })
     }
 }

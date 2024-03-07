@@ -2,7 +2,7 @@
     <section id="about" class="assets cta">
         <div class="container mb-3" data-aos="fade-up">
             <div class="section-title">
-                <h2>Add New Allocation</h2>
+                <h2>Register</h2>
             </div>
             <div class="d-flex flex-column flex-wrap align-items-center form">
                 <div class="">
@@ -101,7 +101,7 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <div class="form-floating input-group mb-3">
+                        <div class="form-floating input-group">
                             <input
                                 type="password"
                                 formControlName="password"
@@ -109,25 +109,157 @@
                                 id="password"
                                 placeholder=""
                                 data-bs-toggle="popover"
-                                data-bs-trigger="manual"
-                                data-bs-placement="bottom"
-                                data-bs-container="body"
+                                data-bs-placement="left"
+                                data-bs-html="true"
+                                data-bs-title="<h6 class='text-light'>Tips For A Strong Password</h6>"
                                 data-bs-custom-class="custom-popover"
-                                #passwordPopover
+                                data-bs-content="<ul class='list-unstyled'>
+                                    <li>Must be at least 8 characters long.</li>
+                                    <li>Must contain at least one uppercase letter.</li>
+                                    <li>Must contain at least one lowercase letter.</li>
+                                    <li>Must contain at least one number.</li>
+                                    <li>Must contain at least one special character.</li>
+                                </ul>"
+                                [ngClass]="{
+                                    'is-invalid':
+                                        form.get('password')?.touched &&
+                                        !form.get('password')?.valid,
+                                    'is-valid': !form.get('password')?.errors
+                                }"
                             />
                             <label for="password"
                                 >Password <span>*</span></label
                             >
                             <button
-                                class="btn btn-outline-secondary"
+                                class="btn btn-outline-warning"
                                 type="button"
                                 id="togglePassword"
                             >
                                 <i class="bi bi-eye" aria-hidden="true"></i>
                             </button>
                         </div>
+                        <app-password-strength
+                            *ngIf="form.get('password')?.dirty"
+                            [passwordToCheck]="form.value.password"
+                            (passwordStrength)="
+                                onPasswordStrengthChanged($event)
+                            "
+                        ></app-password-strength>
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                form.get('password')?.errors &&
+                                form.get('password')?.touched
+                            "
+                            >Please enter a valid password with atleast 8
+                            characters!</span
+                        >
+                    </div>
+                    <div class="form-floating mb-3">
+                        <div class="input-group form-floating">
+                            <input
+                                type="password"
+                                formControlName="confirmPassword"
+                                class="form-control"
+                                id="confirmPassword"
+                                placeholder=""
+                                [ngClass]="{
+                                    'is-invalid':
+                                        form.get('confirmPassword')?.dirty &&
+                                        form.get('confirmPassword')?.errors &&
+                                        !form.hasError('passwordsDoNotMatch'),
+                                    'is-valid':
+                                        !form.get('confirmPassword')?.errors &&
+                                        !form.hasError('passwordsDoNotMatch')
+                                }"
+                            />
+                            <label for="confirmPassword"
+                                >Confirm Password <span>*</span></label
+                            >
+                            <button
+                                class="btn btn-outline-warning"
+                                type="button"
+                                id="toggleConfirmPassword"
+                            >
+                                <i class="bi bi-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                form.get('confirmPassword')?.dirty &&
+                                form.hasError('passwordsDoNotMatch')
+                            "
+                            >Passwords do not match!</span
+                        >
                     </div>
 
+                    <div class="form-floating mb-3">
+                        <select
+                            class="form-select"
+                            formControlName="gender"
+                            [ngClass]="{
+                                'is-invalid':
+                                    !form.get('gender')?.valid &&
+                                    form.get('gender')?.touched,
+                                'is-valid': form.get('gender')?.valid
+                            }"
+                        >
+                            <option selected value="" disabled>
+                                Select a Gender
+                            </option>
+                            <option *ngFor="let g of gender" [value]="g">
+                                {{ g }}
+                            </option>
+                        </select>
+                        <label for="floatingSelect"
+                            >Gender <span>*</span></label
+                        >
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                !form.get('gender')?.valid &&
+                                form.get('gender')?.touched
+                            "
+                            >Please select a status!</span
+                        >
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            formControlName="contactNumber"
+                            placeholder=""
+                            [ngClass]="{
+                                'is-invalid':
+                                    form.get('contactNumber')?.touched &&
+                                    !form.get('contactNumber')?.valid,
+                                'is-valid': !form.get('contactNumber')?.errors
+                            }"
+                        />
+                        <label for="floatingInput"
+                            >Contact Number <span>*</span></label
+                        >
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                form.get('contactNumber')?.errors &&
+                                form.get('contactNumber')?.touched
+                            "
+                            >Please enter a valid contact number!</span
+                        >
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="floatingInput"
+                            formControlName="contactNumber"
+                            placeholder=""
+                        />
+                        <label for="floatingInput">Address</label>
+                    </div>
                     <button
                         pButton
                         class="btn btn-outline-warning p-3 create-btn w-100"
@@ -139,6 +271,14 @@
             </div>
         </div>
     </section>
-    <p-toast styleClass="custom-error-toast" *ngIf="!form.valid"> </p-toast>
-    <p-toast styleClass="custom-success-toast" *ngIf="form.valid"> </p-toast>
+    <p-toast
+        styleClass="custom-error-toast"
+        *ngIf="!form.valid || (!form.valid && selectedRole == undefined)"
+    >
+    </p-toast>
+    <p-toast
+        styleClass="custom-success-toast"
+        *ngIf="form.valid && selectedRole != undefined"
+    >
+    </p-toast>
 </main>

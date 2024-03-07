@@ -1,20 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IAuditRequest } from '../../interfaces/iauditrequest';
+import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuditRequestsService {
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private jwtService: JwtDecryptorService) { }
 
     getAllAuditRequests() {
-        return this.http.get<IAuditRequest[]>('http://localhost:7234/api/v1/AuditReportRequests', { withCredentials: true });
+        const role = this.jwtService.getRole();
+        if (role == 'Admin') {
+            return this.http.get<IAuditRequest[]>('http://localhost:7234/api/v1/AuditReportRequests', { withCredentials: true });
+        } else {
+            return this.http.get<IAuditRequest[]>('http://localhost:7234/api/v1/AuditReportRequests/Employee/' + this.jwtService.getUserData().id, { withCredentials: true })
+        }
     }
 
     getAuditRequestByID(id: number) {
-        return this.http.get<IAuditRequest>('http://localhost:7234/api/v1/AuditReportRequests/' + id, { withCredentials: true });
+        return this.http.get<IAuditRequest>('http://localhost:7234/api/v1/AuditReportRequests/' + id, { withCredentials: true, observe: 'response' });
     }
 
     createAuditRequest(auditRequest: IAuditRequest) {

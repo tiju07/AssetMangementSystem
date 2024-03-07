@@ -1,4 +1,5 @@
-input::after, label::after{
+input::after,
+label::after {
     background-color: white !important;
     color: black !important;
 }

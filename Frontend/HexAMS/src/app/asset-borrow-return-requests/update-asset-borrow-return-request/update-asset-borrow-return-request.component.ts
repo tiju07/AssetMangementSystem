@@ -38,16 +38,26 @@ export class UpdateAssetBorrowReturnRequestComponent {
     }, { validators: this.dateRangeValidator });
 
     ngOnInit(): void {
-        this.assetService.getAllAssets().subscribe(data => this.assets = data as IAsset[]);
-        this.borrowReturnRequestService.getBorrowReturnRequestByID(this.activatedRoute.snapshot.params['id'])
-            .subscribe(data => {
-                this.request = data.body as IBorrowReturnRequest;
-                this.form.patchValue(this.request as any);
-                this.form.patchValue({
-                    assetAllocationFrom: formatDate(this.request.assetAllocationFrom as Date, "yyyy-MM-dd", "en"),
-                    assetAllocationTill: formatDate(this.request.assetAllocationTill as Date, "yyyy-MM-dd", "en")
-                })
-            })
+        this.activatedRoute.data.subscribe(data => this.assets = data['assets'] as IAsset[]);
+        this.activatedRoute.data.subscribe({
+            next: (data) => {
+                if (data['allocation'].error && data['allocation'].error.status == 401) {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Unauthorized Access' });
+                    this.router.navigate(['/allocation-details']);
+                } else if (data['allocation'].status == 200) {
+                    this.request = data['request'] as IBorrowReturnRequest;
+                    this.form.patchValue(this.request as any);
+                    this.form.patchValue({
+                        assetAllocationFrom: formatDate(this.request.assetAllocationFrom as Date, "yyyy-MM-dd", "en"),
+                        assetAllocationTill: formatDate(this.request.assetAllocationTill as Date, "yyyy-MM-dd", "en")
+                    });
+                }
+                else {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: data['allocation'].error.statusText });
+                }
+            },
+            error: (error) => { console.log("Error: " + error) }
+        });
     }
 
     validateDateRange() {

@@ -12,7 +12,6 @@ export class AssetService {
     constructor(private http: HttpClient) { }
 
     getAllAssets(searchQuery: string = '', categoryFilter: string = '') {
-        console.log(`Search Query: ${searchQuery == undefined ? '' : searchQuery}, Category Filter: ${categoryFilter == undefined ? '' : categoryFilter}`);
         return this.http.get<IAsset[]>('http://localhost:7234/api/v1/Assets?searchQuery=' + searchQuery + '&categoryFilter=' + categoryFilter, { withCredentials: true })
     }
 
@@ -32,5 +31,3 @@ export class AssetService {
         return this.http.delete<HttpResponse<IAsset | any>>('http://localhost:7234/api/v1/Assets/' + id, { withCredentials: true, observe: 'response' })
     }
 }
-
-export const getAssetByIDResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => inject(AssetService).getAssetByID(route.params['id']);

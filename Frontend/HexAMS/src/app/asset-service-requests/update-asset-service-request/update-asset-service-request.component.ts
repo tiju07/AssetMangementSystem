@@ -30,9 +30,9 @@ export class UpdateAssetServiceRequestComponent {
     })
 
     ngOnInit(): void {
-        this.assetService.getAllAssets().subscribe(data => this.assets = data as IAsset[]);
-        this.serviceRequestService.getServiceRequestByID(this.activatedRoute.snapshot.params['id']).subscribe((data) => {
-            this.form.patchValue(data as any);
+        this.activatedRoute.data.subscribe(data => this.assets = data['assets'] as IAsset[]);
+        this.activatedRoute.data.subscribe((data) => {
+            this.form.patchValue(data['request'] as any);
         })
     }
 

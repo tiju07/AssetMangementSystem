@@ -5,6 +5,9 @@ import { IAsset } from '../interfaces/iasset';
 import { Observable, map, startWith } from 'rxjs';
 import { CategoriesService } from '../services/categories/categories.service';
 import { ICategory } from '../interfaces/icategory';
+import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
+import { CookieService } from 'ngx-cookie-service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -14,30 +17,32 @@ import { ICategory } from '../interfaces/icategory';
 })
 export class AssetsComponent {
 
-    constructor(private assetService: AssetService, private categoryService: CategoriesService) { }
+    constructor(private assetService: AssetService, private activatedRoute: ActivatedRoute, private router: Router, private jwtDecoder: JwtDecryptorService) { }
 
     searchControl = new FormControl('');
     filterControl = new FormGroup({
         categoryID: new FormControl('')
     })
 
-    assets!: any[];
+    assets!: IAsset[];
     assetData: any[] = [];
     filteredAssets!: IAsset[];
     filteredAssetData!: Observable<string[]>;
 
     categories!: ICategory[];
+    payload!: any;
+
+    isAdmin = false;
 
     ngOnInit(): void {
-        this.assetService.getAllAssets().subscribe(data => this.assets = data);
-        this.assetService.getAllAssets().subscribe(data => data.forEach((d: IAsset) => this.assetData.push(d.assetName)));
-        this.categoryService.getAllCategories().subscribe(data => this.categories = data as ICategory[]);
+        this.activatedRoute.data.subscribe(data => this.assets = data['assets']);
+        this.assets.forEach((d: IAsset) => this.assetData.push(d.assetName));
+        this.activatedRoute.data.subscribe(data => this.categories = data['categories']);
         this.filteredAssetData = this.searchControl.valueChanges.pipe(
             startWith(''),
             map(value => this._filter(value || '')),
         )
-
-
+        if (this.jwtDecoder.getRole() == 'Admin') this.isAdmin = true;
     }
 
     private _filter(value: string): string[] {
@@ -52,8 +57,16 @@ export class AssetsComponent {
         if (isNaN(filter as any) == true) {
             filter = "";
         }
-        console.log(`Search Query: ${searchQuery}, Filter: ${filter}`);
-        console.log(this.categories);
-        this.assetService.getAllAssets(searchQuery, filter).subscribe(data => this.assets = data);
+        this.assetService.getAllAssets(searchQuery, filter).subscribe(data => this.assets = data as IAsset[]);
     }
+
+    clearFilter() {
+        this.filterControl.setValue({ categoryID: '' });
+        this.search();
+    }
+
+    getCategoryName(id: number | null) {
+        return this.categories.filter(c => c.categoryID == id)[0].categoryName;
+    }
+
 }

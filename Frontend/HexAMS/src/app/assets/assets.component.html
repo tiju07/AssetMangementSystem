@@ -1,104 +1,147 @@
 <main id="main">
-  <section id="about" class="assets cta">
-    <div class="container" data-aos="fade-up">
-      <div class="section-title">
-        <h2>Assets</h2>
-      </div>
-      <div class="container d-flex align-items-end justify-content-between">
-        <form>
-          <div class="input-group mb-3">
-            <input
-              type="text"
-              placeholder="Search..."
-              matInput
-              [formControl]="searchControl"
-              [matAutocomplete]="auto"
-              class="form-control search-input"
-              (keyup.enter)="search()"
-            />
-            <mat-autocomplete
-              #auto="matAutocomplete"
-              (optionSelected)="search()"
-            >
-              @for (option of filteredAssetData | async; track option) {
-              <mat-option [value]="option">{{ option }}</mat-option>
-              }
-            </mat-autocomplete>
-            <div class="input-group-append">
-              <button class="search-btn" type="button" (click)="search()">
-                <i class="bi bi-search mt-1 ml-2"></i>
-              </button>
+    <section id="about" class="assets cta">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Assets</h2>
             </div>
-          </div>
-        </form>
-        <div>
-          <form [formGroup]="filterControl">
-            <label for="category" class="form-label text-light"
-              >Filter By Category</label
+            <div
+                class="container d-flex align-items-end justify-content-between"
             >
-            <select
-              class="form-select bg-transparent text-dark search-input"
-              formControlName="categoryID"
-              (change)="search()"
-            >
-              <option [selected]="true" class="text-center">
-                <--------Select a Category-------->
-              </option>
-              <option
-                *ngFor="let category of categories"
-                [ngValue]="category.categoryID"
-              >
-                {{ category.categoryName }}
-              </option>
-            </select>
-          </form>
-        </div>
-      </div>
-      <div class="asset-list">
-        <div class="row">
-          <div
-            class="col-lg-3 col-md-6 d-flex align-items-stretch"
-            *ngFor="let asset of assets"
-          >
-            <div class="asset" data-aos="fade-up" data-aos-delay="100">
-              <div class="asset-img">
-                <img [src]="asset.assetImage" class="img-fluid" alt="" />
-                <div class="social">
-                  <a routerLink="view/{{ asset.assetID }}"
-                    ><i class="bi bi-arrow-up-right-square"></i
-                  ></a>
-                  <a href=""><i class="bi bi-plus"></i></a>
-                  <a routerLink="update/{{ asset.assetID }}"
-                    ><i class="bi bi-pencil-square"></i
-                  ></a>
+                <form>
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            matInput
+                            [formControl]="searchControl"
+                            [matAutocomplete]="auto"
+                            class="form-control search-input"
+                            (keyup)="search()"
+                        />
+                        <mat-autocomplete
+                            #auto="matAutocomplete"
+                            (optionSelected)="search()"
+                        >
+                            @for (option of filteredAssetData | async; track
+                            option) {
+                            <mat-option [value]="option">{{
+                                option
+                            }}</mat-option>
+                            }
+                        </mat-autocomplete>
+                        <button
+                            class="search-btn"
+                            type="button"
+                            (click)="search()"
+                        >
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+                <div>
+                    <form [formGroup]="filterControl" class="d-flex flex-row">
+                        <div class="input-group bg-transparent">
+                            <label
+                                for="category"
+                                class="form-label text-light input-group-text m-0"
+                                ><i class="pi pi-filter"></i
+                            ></label>
+
+                            <select
+                                id="category"
+                                class="form-select bg-dark search-input"
+                                formControlName="categoryID"
+                                (change)="search()"
+                            >
+                                <option
+                                    [selected]="true"
+                                    class="text-center"
+                                    value=""
+                                    disabled
+                                >
+                                    <--------Select a Category-------->
+                                </option>
+                                <option
+                                    *ngFor="let category of categories"
+                                    [ngValue]="category.categoryID"
+                                >
+                                    {{ category.categoryName }}
+                                </option>
+                            </select>
+                        </div>
+                        <button
+                            class="btn btn-outline-warning d-flex align-items-center mx-2"
+                            (click)="clearFilter()"
+                        >
+                            <i class="pi pi-filter-slash"></i>
+                        </button>
+                    </form>
                 </div>
-              </div>
-              <div class="asset-info">
-                <h4>{{ asset.assetName }}</h4>
-                <span>{{ asset.assetDescription }}</span>
-                <span
-                  ><svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-tags-fill"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      d="M2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586zm3.5 4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"
-                    />
-                    <path
-                      d="M1.293 7.793A1 1 0 0 1 1 7.086V2a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l.043-.043z"
-                    />
-                  </svg>
-                  {{ asset.assetCategoryID }}</span
-                >
-              </div>
             </div>
-          </div>
+            <div class="asset-list">
+                <div class="row">
+                    <div
+                        class="col-lg-3 col-md-6 d-flex align-items-center ml-5"
+                        *ngFor="let asset of assets"
+                    >
+                        <div
+                            class="asset"
+                            data-aos="fade-up"
+                            data-aos-delay="100"
+                        >
+                            <div class="asset-img">
+                                <img
+                                    [src]="asset.assetImage"
+                                    class="img-fluid"
+                                    alt=""
+                                />
+                                <div class="social">
+                                    <a routerLink="view/{{ asset.assetID }}"
+                                        ><i
+                                            class="bi bi-arrow-up-right-square"
+                                        ></i
+                                    ></a>
+                                    <a
+                                        routerLink="../asset-borrow-return-requests/add/{{
+                                            asset.assetID
+                                        }}"
+                                        ><i class="bi bi-plus"></i
+                                    ></a>
+                                    <a
+                                        *ngIf="isAdmin"
+                                        routerLink="update/{{ asset.assetID }}"
+                                        ><i class="bi bi-pencil-square"></i
+                                    ></a>
+                                </div>
+                            </div>
+                            <div class="asset-info">
+                                <h4>{{ asset.assetName }}</h4>
+                                <span>{{ asset.assetDescription }}</span>
+                                <span
+                                    ><svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        fill="currentColor"
+                                        class="bi bi-tags-fill"
+                                        viewBox="0 0 16 16"
+                                    >
+                                        <path
+                                            d="M2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586zm3.5 4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"
+                                        />
+                                        <path
+                                            d="M1.293 7.793A1 1 0 0 1 1 7.086V2a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l.043-.043z"
+                                        />
+                                    </svg>
+                                    {{
+                                        getCategoryName(asset.assetCategoryID)
+                                    }}</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 </main>

@@ -1,3 +1,7 @@
+.emp-table {
+    width: fit-content;
+}
+
 .p-datatable::ng-deep th {
     background-color: #ffc451 !important;
     color: black !important;

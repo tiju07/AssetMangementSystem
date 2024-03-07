@@ -17,6 +17,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
+import { PasswordStrengthComponent } from './password-strength/password-strength.component';
+import { CookieService } from 'ngx-cookie-service';
+import { Location } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -56,6 +59,7 @@ import { CreateAuditRequestComponent } from './asset-audit-requests/create-audit
 import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit-request/update-audit-request.component';
 
 
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -92,7 +96,8 @@ import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit
         ViewAssetServiceRequestComponent,
         ViewAssetAuditRequestComponent,
         CreateAuditRequestComponent,
-        UpdateAuditRequestComponent
+        UpdateAuditRequestComponent,
+        PasswordStrengthComponent
     ],
     imports: [
         BrowserModule,
@@ -115,7 +120,7 @@ import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit
         PasswordModule,
         DividerModule,
     ],
-    providers: [MessageService, ConfirmationService],
+    providers: [MessageService, ConfirmationService, CookieService, Location],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

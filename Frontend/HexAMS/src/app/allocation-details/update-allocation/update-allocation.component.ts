@@ -37,21 +37,25 @@ export class UpdateAllocationComponent {
     }, { validators: dateRangeValidator })
 
     ngOnInit(): void {
-        this.employeeService.getEmployees().subscribe(data => {
-            this.employees = data as IEmployee[];
+        this.activatedRoute.data.subscribe(data => {
+            this.employees = data['employees'];
         })
-        this.assetService.getAllAssets().subscribe(data => {
-            this.assets = data as IAsset[];
+        this.activatedRoute.data.subscribe(data => {
+            this.assets = data['assets'];
         })
-        this.allocationService.getAllocationDetailByID(this.activatedRoute.snapshot.params['id']).subscribe(data => {
-            const d = data.body as IAllocation;
-            this.allocationDetail = d;
-            this.form.patchValue(this.allocationDetail as any);
-            this.form.patchValue({
-                assetAllocatedFrom: formatDate(this.allocationDetail.assetAllocatedFrom as Date, "yyyy-MM-dd", "en"),
-                assetAllocatedTill: formatDate(this.allocationDetail.assetAllocatedTill as Date, "yyyy-MM-dd", "en")
-            })
-        })
+        this.activatedRoute.data.subscribe({
+            next: (data) => {
+                const d = data['allocation'] as IAllocation;
+                this.allocationDetail = d;
+                this.form.patchValue(this.allocationDetail as any);
+                this.form.patchValue({
+                    assetAllocatedFrom: formatDate(this.allocationDetail.assetAllocatedFrom as Date, "yyyy-MM-dd", "en"),
+                    assetAllocatedTill: formatDate(this.allocationDetail.assetAllocatedTill as Date, "yyyy-MM-dd", "en")
+                })
+
+            },
+            error: (error) => { console.log("Error: " + error) }
+        });
     }
 
     validateDateRange() {
@@ -65,7 +69,14 @@ export class UpdateAllocationComponent {
         }
         else {
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Allocation Update Successful! Redirecting...', life: 2000 });
-            // this.allocationService.updateAllocation(this.allocationDetail.assetAllocationID, { assetAllocationID: this.allocationDetail.assetAllocationID, ...this.form.getRawValue() }).subscribe({
+            // const formValue = this.form.getRawValue();
+            // const updateParam = {
+            //     assetAllocationID: this.allocationDetail.assetAllocationID,
+            //     ...formValue,
+            //     assetAllocatedFrom: formValue.assetAllocatedFrom ? new Date(formValue.assetAllocatedFrom) : null,
+            //     assetAllocatedTill: formValue.assetAllocatedTill ? new Date(formValue.assetAllocatedTill) : null
+            // };
+            // this.allocationService.updateAllocation(this.allocationDetail.assetAllocationID, updateParam).subscribe({
             //     next: data => {
             //         if (data.status == 200) {
             //             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Allocation Update Successful! Redirecting...', life: 2000 });

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IAllocation } from '../interfaces/iallocationdetails';
 import { AllocationDetailsService } from '../services/allocation-details/allocation-details.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface Column {
     field: string;
@@ -15,15 +15,16 @@ interface Column {
 })
 export class AllocationDetailsComponent implements OnInit {
 
-    constructor(private allocationService: AllocationDetailsService, private router: Router) { }
+    constructor(private allocationService: AllocationDetailsService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
     allocationDetails!: IAllocation[];
     cols!: Column[];
     selectedAllocation!: IAllocation;
 
     ngOnInit(): void {
-        this.allocationService.getAllAllocationDetails().subscribe(data => {
-            this.allocationDetails = data.body as IAllocation[];
+
+        this.activatedRoute.data.subscribe(data => {
+            this.allocationDetails = data['allocations'] as any;
         })
         this.cols = [
             { field: 'assetAllocationID', header: 'Allocation ID' },
@@ -35,7 +36,6 @@ export class AllocationDetailsComponent implements OnInit {
             { field: 'assetAllocatedTill', header: 'Allocated Till' },
             { field: 'allocationStatus', header: 'Allocation Status' }
         ]
-        console.log(this.allocationDetails);
     }
 
     onRowSelect() {

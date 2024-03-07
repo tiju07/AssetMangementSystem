@@ -1,16 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IBorrowReturnRequest } from '../../interfaces/iborrowreturnrequest';
+import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class BorrowReturnRequestsService {
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private jwtService: JwtDecryptorService) { }
 
     getAllBorrowReturnRequests() {
-        return this.http.get<IBorrowReturnRequest[]>('http://localhost:7234/api/v1/AssetBorrowReturnRequests', { withCredentials: true, observe: 'response' });
+        const role = this.jwtService.getRole();
+        if (role == 'Admin') {
+            return this.http.get<IBorrowReturnRequest[]>('http://localhost:7234/api/v1/AssetBorrowReturnRequests', { withCredentials: true });
+        }
+        else {
+            return this.http.get<IBorrowReturnRequest[]>('http://localhost:7234/api/v1/AssetBorrowReturnRequests/Employee/' + this.jwtService.getUserData().id, { withCredentials: true })
+        }
     }
 
     getBorrowReturnRequestByID(id: number) {

@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { AssetService } from '../../services/asset-catalogue/asset.service';
 import { BorrowReturnRequestsService } from '../../services/borrow-return-requests/borrow-return-requests.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
 
 @Component({
     selector: 'app-create-asset-borrow-return-request',
@@ -12,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     styleUrl: './create-asset-borrow-return-request.component.css',
 })
 export class CreateAssetBorrowReturnRequestComponent implements OnInit {
-    constructor(private fb: FormBuilder, private messageService: MessageService, private router: Router, private assetService: AssetService, private borrowReturnRequestService: BorrowReturnRequestsService) { }
+    constructor(private fb: FormBuilder, private messageService: MessageService, private router: Router, private assetService: AssetService, private borrowReturnRequestService: BorrowReturnRequestsService, private activatedRoute: ActivatedRoute, private jwtService: JwtDecryptorService) { }
 
     assets!: IAsset[];
     requestTypes = ['Borrow', 'Return'];
@@ -24,7 +25,7 @@ export class CreateAssetBorrowReturnRequestComponent implements OnInit {
     }
 
     form = this.fb.group({
-        employeeID: new FormControl(1, [Validators.required]),
+        employeeID: new FormControl(this.jwtService.getUserData().id, [Validators.required]),
         adminID: new FormControl(1, [Validators.required]),
         assetID: new FormControl(null, [Validators.required]),
         assetRequestType: new FormControl('', [Validators.required]),
@@ -35,7 +36,13 @@ export class CreateAssetBorrowReturnRequestComponent implements OnInit {
     }, { validators: this.dateRangeValidator });
 
     ngOnInit(): void {
-        this.assetService.getAllAssets().subscribe(data => this.assets = data as IAsset[]);
+        this.activatedRoute.data.subscribe(data => this.assets = data['assets'] as IAsset[]);
+        if (!isNaN(this.activatedRoute.snapshot.params['assetID'])) {
+            this.form.patchValue({
+                assetID: this.activatedRoute.snapshot.params['assetID'],
+                assetRequestType: 'Borrow'
+            })
+        }
     }
 
 
@@ -49,21 +56,21 @@ export class CreateAssetBorrowReturnRequestComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 });
         }
         else {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });
-            // this.borrowReturnRequestService.createBorrowReturnRequest({ requestID: 0, ...this.form.getRawValue() }).subscribe({
-            //     next: data => {
-            //         if (data.status == 201) {
-            //             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });
-            //             setTimeout(() => this.router.navigate(['/asset-borrow-return-requests']), 2000);
-            //         } else {
-            //             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
-            //         }
-            //     },
-            //     error: err => {
-            //         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
-            //         console.log(err);
-            //     }
-            // })
+            // this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });
+            this.borrowReturnRequestService.createBorrowReturnRequest({ requestID: 0, ...this.form.getRawValue() }).subscribe({
+                next: data => {
+                    if (data.status == 200) {
+                        this.messageService.add({key: 'success', severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });
+                        setTimeout(() => this.router.navigate(['/asset-borrow-return-requests']), 2000);
+                    } else {
+                        this.messageService.add({key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
+                    }
+                },
+                error: err => {
+                    this.messageService.add({key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
+                    console.log(err);
+                }
+            })
         }
     }
 }

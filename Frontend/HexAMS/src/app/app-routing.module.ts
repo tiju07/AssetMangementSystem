@@ -16,7 +16,6 @@ import { ViewAssetComponent } from './assets/view-asset/view-asset.component';
 import { CreateAssetComponent } from './assets/create-asset/create-asset.component';
 import { UpdateAssetComponent } from './assets/update-asset/update-asset.component';
 import { DeleteAssetComponent } from './assets/delete-asset/delete-asset.component';
-import { getAssetByIDResolver } from './services/asset-catalogue/asset.service';
 import { AssetCategoriesComponent } from './asset-categories/asset-categories.component';
 import { ViewCategoryComponent } from './asset-categories/view-category/view-category.component';
 import { GetCategoryByIDResolver } from './services/categories/categories.service';
@@ -34,40 +33,51 @@ import { ViewAssetServiceRequestComponent } from './asset-service-requests/view-
 import { ViewAssetAuditRequestComponent } from './asset-audit-requests/view-asset-audit-request/view-asset-audit-request.component';
 import { CreateAuditRequestComponent } from './asset-audit-requests/create-audit-request/create-audit-request.component';
 import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit-request/update-audit-request.component';
+import { employeeGuard } from './guards/employee.guard';
+import { adminGuard } from './guards/admin.guard';
+import { generalGuard } from './guards/general.guard';
+import { GetAllEmployeesResolver, GetEmployeeByIDResolver, GetUserByIDResolver } from './guards/resolvers/employee-data.resolver';
+import { GetAllAssetsResolver, getAssetByIDResolver } from './guards/resolvers/asset-data.resolver';
+import { GetAllCategoriesResolver } from './guards/resolvers/category-data.resolver';
+import { GetAllAllocationDetails, GetAllocationDetailsByID } from './guards/resolvers/allocation-data.resolver';
+import { GetAllBorrowReturnRequests, GetBorrowReturnRequestByID } from './guards/resolvers/borrow-return-requests-data.resolver';
+import { GetAllAuditRequestsResolver, GetAuditRequestByIDResolver } from './guards/resolvers/audit-requests-data.resolver';
+import { GetAllServiceRequestsResolver, GetServiceRequestByIDResolver } from './guards/resolvers/service-requests.resolver';
 
 const routes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'profile', component: ProfileComponent },
-    { path: 'employees', component: EmployeesComponent },
-    { path: 'employees/view/:id', component: ViewEmployeeComponent },
-    { path: 'employees/delete/:id', component: DeleteEmployeeComponent },
-    { path: 'assets', component: AssetsComponent },
-    { path: 'assets/view/:id', component: ViewAssetComponent, resolve: { data: getAssetByIDResolver }, },
-    { path: 'assets/add', component: CreateAssetComponent },
-    { path: 'assets/update/:id', component: UpdateAssetComponent },
-    { path: 'assets/delete/:id', component: DeleteAssetComponent, resolve: { data: getAssetByIDResolver }, },
-    { path: 'asset-categories', component: AssetCategoriesComponent },
-    { path: 'asset-categories/view/:id', component: ViewCategoryComponent, resolve: { data: GetCategoryByIDResolver }, },
-    { path: 'asset-categories/add', component: CreateCategoryComponent },
-    { path: 'asset-categories/update/:id', component: UpdateCategoryComponent },
-    { path: 'allocation-details', component: AllocationDetailsComponent },
-    { path: 'allocation-details/view/:id', component: ViewAllocationComponent },
-    { path: 'allocation-details/add', component: CreateAllocationComponent },
-    { path: 'allocation-details/update/:id', component: UpdateAllocationComponent },
-    { path: 'asset-borrow-return-requests', component: AssetBorrowReturnRequestsComponent },
-    { path: 'asset-borrow-return-requests/view/:id', component: ViewAssetBorrowReturnRequestComponent },
-    { path: 'asset-borrow-return-requests/add', component: CreateAssetBorrowReturnRequestComponent },
-    { path: 'asset-borrow-return-requests/update/:id', component: UpdateAssetBorrowReturnRequestComponent },
-    { path: 'asset-audit-requests', component: AssetAuditRequestsComponent },
-    { path: 'asset-audit-requests/view/:id', component: ViewAssetAuditRequestComponent },
-    { path: 'asset-audit-requests/add', component: CreateAuditRequestComponent },
-    { path: 'asset-audit-requests/update/:id', component: UpdateAuditRequestComponent },
-    { path: 'asset-service-requests', component: AssetServiceRequestsComponent },
-    { path: 'asset-service-requests/view/:id', component: ViewAssetServiceRequestComponent },
-    { path: 'asset-service-requests/add', component: CreateAssetServiceRequestComponent },
-    { path: 'asset-service-requests/update/:id', component: UpdateAssetServiceRequestComponent },
+    { path: 'profile', component: ProfileComponent, canActivate: [generalGuard], resolve: { user: GetUserByIDResolver } },
+    { path: 'employees', component: EmployeesComponent, canActivate: [adminGuard], resolve: { employees: GetAllEmployeesResolver} },
+    { path: 'employees/view/:id', component: ViewEmployeeComponent, canActivate: [adminGuard], resolve: { employee: GetEmployeeByIDResolver} },
+    { path: 'employees/delete/:id', component: DeleteEmployeeComponent, canActivate: [adminGuard] },
+    { path: 'assets', component: AssetsComponent, canActivate: [generalGuard], resolve: { assets: GetAllAssetsResolver, categories: GetAllCategoriesResolver } },
+    { path: 'assets/view/:id', component: ViewAssetComponent, canActivate: [generalGuard], resolve: { data: getAssetByIDResolver }, },
+    { path: 'assets/add', component: CreateAssetComponent, canActivate: [adminGuard], resolve: { categories: GetAllCategoriesResolver } },
+    { path: 'assets/update/:id', component: UpdateAssetComponent, canActivate: [adminGuard], resolve: { categories: GetAllCategoriesResolver, asset: getAssetByIDResolver } },
+    { path: 'assets/delete/:id', component: DeleteAssetComponent, resolve: { data: getAssetByIDResolver }, canActivate: [adminGuard] },
+    { path: 'asset-categories', component: AssetCategoriesComponent, canActivate: [generalGuard], resolve: { categories: GetAllCategoriesResolver } },
+    { path: 'asset-categories/view/:id', component: ViewCategoryComponent, canActivate: [generalGuard], resolve: { category: GetCategoryByIDResolver } },
+    { path: 'asset-categories/add', component: CreateCategoryComponent, canActivate: [adminGuard] },
+    { path: 'asset-categories/update/:id', component: UpdateCategoryComponent, canActivate: [adminGuard], resolve: { category: GetCategoryByIDResolver } },
+    { path: 'allocation-details', component: AllocationDetailsComponent, canActivate: [generalGuard], resolve: { allocations: GetAllAllocationDetails } },
+    { path: 'allocation-details/view/:id', component: ViewAllocationComponent, canActivate: [generalGuard], resolve: { allocation: GetAllocationDetailsByID } },
+    { path: 'allocation-details/add', component: CreateAllocationComponent, canActivate: [adminGuard], resolve: { employees: GetAllEmployeesResolver, assets: GetAllAssetsResolver } },
+    { path: 'allocation-details/update/:id', component: UpdateAllocationComponent, canActivate: [adminGuard], resolve: { employees: GetAllEmployeesResolver, assets: GetAllAssetsResolver, allocation: GetAllocationDetailsByID } },
+    { path: 'asset-borrow-return-requests', component: AssetBorrowReturnRequestsComponent, canActivate: [generalGuard], resolve: { requests: GetAllBorrowReturnRequests } },
+    { path: 'asset-borrow-return-requests/view/:id', component: ViewAssetBorrowReturnRequestComponent, canActivate: [generalGuard], resolve: { request: GetBorrowReturnRequestByID } },
+    { path: 'asset-borrow-return-requests/add', component: CreateAssetBorrowReturnRequestComponent, canActivate: [employeeGuard], resolve: { assets: GetAllAssetsResolver } },
+    { path: 'asset-borrow-return-requests/add/:assetID', component: CreateAssetBorrowReturnRequestComponent, canActivate: [employeeGuard], resolve: { assets: GetAllAssetsResolver } },
+    { path: 'asset-borrow-return-requests/update/:id', component: UpdateAssetBorrowReturnRequestComponent, canActivate: [adminGuard], resolve: { request: GetBorrowReturnRequestByID, assets: GetAllAssetsResolver } },
+    { path: 'asset-audit-requests', component: AssetAuditRequestsComponent, canActivate: [generalGuard], resolve: { requests: GetAllAuditRequestsResolver } },
+    { path: 'asset-audit-requests/view/:id', component: ViewAssetAuditRequestComponent, canActivate: [generalGuard], resolve: { request: GetAuditRequestByIDResolver } },
+    { path: 'asset-audit-requests/add', component: CreateAuditRequestComponent, canActivate: [adminGuard], resolve: { assets: GetAllAssetsResolver, employees: GetAllEmployeesResolver } },
+    { path: 'asset-audit-requests/update/:id', component: UpdateAuditRequestComponent, canActivate: [generalGuard], resolve: { assets: GetAllAssetsResolver, employees: GetAllEmployeesResolver, request: GetAuditRequestByIDResolver } },
+    { path: 'asset-service-requests', component: AssetServiceRequestsComponent, canActivate: [generalGuard], resolve: { requests: GetAllServiceRequestsResolver } },
+    { path: 'asset-service-requests/view/:id', component: ViewAssetServiceRequestComponent, canActivate: [generalGuard], resolve: { request: GetServiceRequestByIDResolver } },
+    { path: 'asset-service-requests/add', component: CreateAssetServiceRequestComponent, canActivate: [employeeGuard], resolve: { assets: GetAllAssetsResolver } },
+    { path: 'asset-service-requests/update/:id', component: UpdateAssetServiceRequestComponent, canActivate: [adminGuard], resolve: { request: GetServiceRequestByIDResolver, assets: GetAllAssetsResolver } },
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: '**', redirectTo: 'home' }
 ];

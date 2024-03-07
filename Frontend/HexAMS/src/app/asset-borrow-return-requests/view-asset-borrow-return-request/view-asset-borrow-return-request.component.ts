@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BorrowReturnRequestsService } from '../../services/borrow-return-requests/borrow-return-requests.service';
 import { IBorrowReturnRequest } from '../../interfaces/iborrowreturnrequest';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-view-asset-borrow-return-request',
@@ -10,14 +11,24 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ViewAssetBorrowReturnRequestComponent implements OnInit {
 
-    constructor(private borrowReturnRequestService: BorrowReturnRequestsService, private activatedRoute: ActivatedRoute) { }
+    constructor(private activatedRoute: ActivatedRoute, private messageService: MessageService, private router: Router) { }
 
     request!: IBorrowReturnRequest;
 
     ngOnInit(): void {
-        this.borrowReturnRequestService.getBorrowReturnRequestByID(this.activatedRoute.snapshot.params['id'])
-            .subscribe(data => {
-                this.request = data.body as IBorrowReturnRequest;
-            })
+        this.activatedRoute.data.subscribe({
+            next: (data) => {
+                if (data['request'].error && data['request'].error.status == 401) {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Unauthorized Access' });
+                    this.router.navigate(['/asset-borrow-return-requests']);
+                } else if (data['request'].status == 200) {
+                    this.request = data['request'].body as IBorrowReturnRequest;
+                }
+                else {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: data['request'].error.statusText });
+                }
+            },
+            error: (error) => { console.log("Error: " + error) }
+        });
     }
 }

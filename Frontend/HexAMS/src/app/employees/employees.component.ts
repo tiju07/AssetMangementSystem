@@ -52,7 +52,7 @@ export class EmployeesComponent implements OnInit {
                 // });
             },
             reject: () => {
-                this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Employee Deletion Cancelled!', life: 3000 });
+                this.messageService.add({ severity: 'error', key: 'error', summary: 'Cancelled!', detail: 'Employee Deletion Cancelled!', life: 3000 });
             }
         });
     }

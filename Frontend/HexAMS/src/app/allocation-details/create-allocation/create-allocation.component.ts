@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { AllocationDetailsService } from '../../services/allocation-details/allocation-details.service';
 import { MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { IEmployee } from '../../interfaces/iemployee';
 import { IAsset } from '../../interfaces/iasset';
@@ -16,7 +16,7 @@ import { AssetService } from '../../services/asset-catalogue/asset.service';
 })
 export class CreateAllocationComponent implements OnInit {
 
-    constructor(private fb: FormBuilder, private allocationService: AllocationDetailsService, private messageService: MessageService, private router: Router, private employeeService: EmployeesService, private assetService: AssetService) { }
+    constructor(private fb: FormBuilder, private allocationService: AllocationDetailsService, private messageService: MessageService, private router: Router, private employeeService: EmployeesService, private assetService: AssetService, private activatedRoute: ActivatedRoute) { }
 
     statuses = ['Allocated', 'Deallocated'];
     employees!: IEmployee[];
@@ -33,11 +33,11 @@ export class CreateAllocationComponent implements OnInit {
     }, { validators: dateRangeValidator })
 
     ngOnInit(): void {
-        this.employeeService.getEmployees().subscribe(data => {
-            this.employees = data as IEmployee[];
+        this.activatedRoute.data.subscribe(data => {
+            this.employees = data['employees'] as IEmployee[];
         })
-        this.assetService.getAllAssets().subscribe(data => {
-            this.assets = data as IAsset[];
+        this.activatedRoute.data.subscribe(data => {
+            this.assets = data['assets'] as IAsset[];
         })
     }
 

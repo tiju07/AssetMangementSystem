@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { IEmployee } from '../../interfaces/iemployee';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
@@ -11,15 +11,23 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class ViewEmployeeComponent implements OnInit {
 
-    constructor(private employeeService: EmployeesService, private route: ActivatedRoute, private messageService: MessageService, private confirmationService: ConfirmationService) {
+    constructor(private employeeService: EmployeesService, private activatedRoute: ActivatedRoute, private messageService: MessageService, private confirmationService: ConfirmationService, private router: Router) {
     }
     employee!: IEmployee;
     ngOnInit(): void {
-        this.employeeService.getEmployeeByID(parseInt(this.route.snapshot.paramMap.get('id')!))
-            .subscribe(
-                data => this.employee = data as IEmployee
-            );
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Employee Viewed Successfully' });
+        this.activatedRoute.data.subscribe({
+            next: data => {
+                if (data['employee'].status == 200) {
+                    this.employee = data['employee'].body as IEmployee;
+                }
+                else {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: data['error'] });
+                }
+            },
+            error: error => {
+                this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: error });
+            }
+        })
     }
 
     deleteEmployee(id: number) {
@@ -32,17 +40,17 @@ export class ViewEmployeeComponent implements OnInit {
             rejectButtonStyleClass: "p-button-text",
             accept: () => {
                 this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
-                // this.employeesService.deleteEmployee(id).subscribe(data => {
-                //     if (data.status == 200) {
-                //         this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
-                //         setTimeout(() => this.router.navigate(['/employees']), 2000);
-                //     } else {
-                //         this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Error Deleting Employee!', life: 3000 });
-                //     }
-                // });
+                this.employeeService.deleteEmployee(id).subscribe(data => {
+                    if (data.status == 200) {
+                        this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
+                        setTimeout(() => this.router.navigate(['/employees']), 2000);
+                    } else {
+                        this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Error Deleting Employee!', life: 3000 });
+                    }
+                });
             },
             reject: () => {
-                this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Employee Deletion Cancelled!', life: 3000 });
+                this.messageService.add({ severity: 'error', key: 'error', summary: 'Cancelled!', detail: 'Employee Deletion Cancelled!', life: 3000 });
             }
         });
     }

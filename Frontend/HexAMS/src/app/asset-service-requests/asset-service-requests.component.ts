@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { IServiceRequest } from '../interfaces/iservicerequest';
 import { Column } from '../interfaces/column';
 import { ServiceRequestsService } from '../services/service-requests/service-requests.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-asset-service-requests',
@@ -12,10 +12,8 @@ import { Router } from '@angular/router';
 })
 export class AssetServiceRequestsComponent implements OnInit {
 
-    constructor(private serviceRequestService: ServiceRequestsService, private router: Router) { }
+    constructor(private serviceRequestService: ServiceRequestsService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
-    // issueTypes = ['Malfunction', 'Repair'];
-    // statuses = ['Open', 'Closed', 'Servicing', 'Rejected'];
     cols!: Column[];
     requests!: IServiceRequest[];
     selectedRequest!: IServiceRequest;
@@ -29,8 +27,8 @@ export class AssetServiceRequestsComponent implements OnInit {
             { field: 'requestDetails', header: 'Request Details' },
             { field: 'requestStatus', header: 'Request Status' }
         ]
-        this.serviceRequestService.getAllServiceRequests().subscribe((data) => {
-            this.requests = data as IServiceRequest[];
+        this.activatedRoute.data.subscribe((data) => {
+            this.requests = data['requests'] as IServiceRequest[];
         })
     }
 

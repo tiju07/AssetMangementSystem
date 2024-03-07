@@ -30,14 +30,25 @@ export class UpdateAuditRequestComponent {
     })
 
     ngOnInit(): void {
-        this.assetService.getAllAssets().subscribe(assets => {
-            this.assets = assets as IAsset[]
+        this.activatedRoute.data.subscribe(data => {
+            this.assets = data['assets'] as IAsset[]
         })
-        this.employeeService.getEmployees().subscribe(employees => {
-            this.employees = employees as IEmployee[]
+        this.activatedRoute.data.subscribe(data => {
+            this.employees = data['employees'] as IEmployee[]
         })
-        this.auditRequestService.getAuditRequestByID(this.activatedRoute.snapshot.params['id']).subscribe((data) => {
-            this.form.patchValue(data as any)
+        this.activatedRoute.data.subscribe({
+            next: (data) => {
+                if (data['request'].error && data['request'].error.status == 401) {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Unauthorized Access' });
+                    this.router.navigate(['/request-details']);
+                } else if (data['request'].status == 200) {
+                    this.form.patchValue(data['request'] as any)
+                }
+                else {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: data['request'].error.statusText });
+                }
+            },
+            error: (error) => { console.log("Error: " + error) }
         })
     }
 

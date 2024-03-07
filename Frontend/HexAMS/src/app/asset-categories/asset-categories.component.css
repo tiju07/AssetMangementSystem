@@ -1,3 +1,16 @@
+.p-toastitem {
+    border: 6px solid green !important;
+}
+
+.p-datatable::ng-deep th {
+    background-color: #ffc451 !important;
+    color: black !important;
+}
+
+.id-col {
+    background-color: rgb(212, 212, 212);
+}
+
 :host ::ng-deep .custom-error-toast .p-toast-message {
     color: red;
     background: white;
@@ -22,8 +35,4 @@
 :host ::ng-deep .custom-success-toast .p-toast-message-icon {
     color: rgb(0, 168, 0);
 
-}
-
-.p-toastitem {
-    border: 6px solid green !important;
 }

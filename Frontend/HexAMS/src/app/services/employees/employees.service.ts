@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { IUser } from '../../interfaces/iuser';
 import { Observable, of } from 'rxjs';
 import { ɵparseCookieValue } from '@angular/common';
+import { IEmployee } from '../../interfaces/iemployee';
 
 @Injectable({
     providedIn: 'root'
@@ -16,10 +17,10 @@ export class EmployeesService {
     }
 
     getEmployeeByID(id: number) {
-        return this.http.get("http://localhost:7234/api/v1/Employees/" + id, { withCredentials: true })
+        return this.http.get("http://localhost:7234/api/v1/Employees/" + id, { withCredentials: true, observe: 'response' })
     }
 
     deleteEmployee(id: number) {
-        return this.http.get<HttpResponse<any>>('https://jsonplaceholder.typicode.com/posts/1', { withCredentials: true, observe: 'response' });
+        return this.http.delete<any>("http://localhost:7234/api/v1/Employees/" + id, { withCredentials: true, observe: 'response' });
     }
 }

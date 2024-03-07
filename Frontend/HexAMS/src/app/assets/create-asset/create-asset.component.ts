@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ICategory } from '../../interfaces/icategory';
 import { CategoriesService } from '../../services/categories/categories.service';
 import { MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IAsset } from '../../interfaces/iasset';
 
 @Component({
@@ -15,7 +15,7 @@ import { IAsset } from '../../interfaces/iasset';
 })
 export class CreateAssetComponent {
 
-    constructor(private assetService: AssetService, private categoryService: CategoriesService, private fb: FormBuilder, private messageService: MessageService, private router: Router) { }
+    constructor(private assetService: AssetService, private categoryService: CategoriesService, private fb: FormBuilder, private messageService: MessageService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
     categories!: ICategory[]
 
@@ -39,8 +39,7 @@ export class CreateAssetComponent {
 
 
     ngOnInit(): void {
-        this.categoryService.getAllCategories().subscribe(data => this.categories = data as ICategory[]);
-        console.log(this.categories);
+        this.activatedRoute.data.subscribe(data => this.categories = data['categories']);
     }
 
     createAsset() {

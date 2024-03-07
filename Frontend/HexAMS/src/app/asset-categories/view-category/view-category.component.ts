@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ICategory } from '../../interfaces/icategory';
 import { CategoriesService } from '../../services/categories/categories.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
 
 @Component({
     selector: 'app-view-category',
@@ -12,12 +13,14 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class ViewCategoryComponent implements OnInit {
 
-    constructor(private activatedRoute: ActivatedRoute, private categoryService: CategoriesService, private confirmationService: ConfirmationService, private messageService: MessageService, private router: Router) { }
+    constructor(private activatedRoute: ActivatedRoute, private categoryService: CategoriesService, private confirmationService: ConfirmationService, private messageService: MessageService, private router: Router, private jwtService: JwtDecryptorService) { }
 
     category!: ICategory;
+    isAdmin = false;
 
     ngOnInit(): void {
-        this.activatedRoute.data.subscribe(data => this.category = data['data'] as ICategory);
+        this.activatedRoute.data.subscribe(data => this.category = data['category']);
+        if(this.jwtService.getRole() == 'Admin') this.isAdmin = true;
     }
 
     deleteCategory() {
@@ -43,5 +46,4 @@ export class ViewCategoryComponent implements OnInit {
             }
         });
     }
-
 }

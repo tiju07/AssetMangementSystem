@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuditRequestsService } from '../services/audit-requests/audit-requests.service';
 import { IAuditRequest } from '../interfaces/iauditrequest';
 import { Column } from '../interfaces/column';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-asset-audit-requests',
@@ -10,16 +10,16 @@ import { Router } from '@angular/router';
     styleUrl: './asset-audit-requests.component.css'
 })
 export class AssetAuditRequestsComponent implements OnInit {
-    constructor(private auditRequestService: AuditRequestsService, private router: Router) { }
+    constructor(private auditRequestService: AuditRequestsService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
     requests!: IAuditRequest[];
     cols!: Column[];
     selectedRequest!: IAuditRequest;
 
     ngOnInit(): void {
-        this.auditRequestService.getAllAuditRequests().subscribe((data) => {
-            this.requests = data as IAuditRequest[];
-        })
+        this.activatedRoute.data.subscribe((data) => {
+            this.requests = data['requests'] as IAuditRequest[];
+        });
         this.cols = [
             { field: 'requestID', header: 'Request ID' },
             { field: 'employeeID', header: 'Employee ID' },

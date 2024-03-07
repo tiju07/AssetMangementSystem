@@ -23,8 +23,8 @@ export class UpdateCategoryComponent implements OnInit {
     })
 
     ngOnInit(): void {
-        this.categoryService.getCategoryByID(this.activatedRoute.snapshot.params['id']).subscribe((data) => {
-            this.category = data as ICategory;
+        this.activatedRoute.data.subscribe((data) => {
+            this.category = data['category'] as ICategory;
             this.form.patchValue(this.category);
         });
     }

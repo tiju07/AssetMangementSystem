@@ -21,7 +21,10 @@
                         </tr>
                     </table>
                 </div>
-                <div class="col-lg-6 col-md-6 d-flex flex-column">
+                <div
+                    *ngIf="isAdmin"
+                    class="col-lg-6 col-md-6 d-flex flex-column"
+                >
                     <button
                         class="btn btn-outline-warning p-3 my-2"
                         routerLink="../../update/{{ category.categoryID }}"

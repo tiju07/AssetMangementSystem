@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IBorrowReturnRequest } from '../interfaces/iborrowreturnrequest';
 import { BorrowReturnRequestsService } from '../services/borrow-return-requests/borrow-return-requests.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Column } from '../interfaces/column';
 
 
@@ -13,15 +13,15 @@ import { Column } from '../interfaces/column';
     styleUrl: './asset-borrow-return-requests.component.css'
 })
 export class AssetBorrowReturnRequestsComponent implements OnInit {
-    constructor(private borrowReturnRequestService: BorrowReturnRequestsService, private router: Router) { }
+    constructor(private borrowReturnRequestService: BorrowReturnRequestsService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
     requests!: IBorrowReturnRequest[];
     cols!: Column[];
     selectedRequest!: IBorrowReturnRequest;
 
     ngOnInit(): void {
-        this.borrowReturnRequestService.getAllBorrowReturnRequests().subscribe((data) => {
-            this.requests = data.body as IBorrowReturnRequest[];
+        this.activatedRoute.data.subscribe((data) => {
+            this.requests = data['requests'] as IBorrowReturnRequest[];
         })
         this.cols = [
             { field: 'requestID', header: 'Request ID' },
