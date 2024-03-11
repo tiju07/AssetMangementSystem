@@ -7,12 +7,17 @@ using AssetManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Cors;
+using AssetManagementSystem.Repository;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace AssetManagementSystem.Controllers.v1
 {
 	[ApiVersion("1.0")]
 	[Route("api/v{version:apiversion}/Employees")]
     [ApiController]
+    [EnableCors]
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeRepository _employeeRepository;
@@ -143,6 +148,40 @@ namespace AssetManagementSystem.Controllers.v1
 				_logger.LogCritical($"Exception error: {ex.Message}");
 				return StatusCode(500, "An error occured at the server!");
             }
+        }
+
+        [MapToApiVersion("1.0")]
+        [HttpPost]
+        [Route("ValidateUsernameOrEmail")]
+        public IActionResult ValidateUsernameOrEmail([FromBody] string username)
+        {
+            if (_employeeRepository.EmployeeExists(username)) return Ok();
+            return NotFound();
+        }
+
+        [MapToApiVersion("1.0")]
+        [HttpPost]
+        [Route("UpdatePassword")]
+        public IActionResult UpdatePassword(LoginDto credentials)
+        {
+            //Will get by both checking username & email
+            var employeeToUpdate = _employeeRepository.GetEmployeeByUserName(credentials.UserName);
+            if (employeeToUpdate != null)
+            {
+                using (HMACSHA512? hmac = new HMACSHA512())
+                {
+                    employeeToUpdate.PasswordSalt = hmac.Key;
+                    employeeToUpdate.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(credentials.Password));
+                }
+
+                var result = _employeeRepository.UpdateEmployee(employeeToUpdate);
+
+                if (result) return Ok();
+
+                else return StatusCode(500, "An error occured at the server!");
+            }
+
+            return NotFound("Could not find any employee with matching username or email!");
         }
     }
 }

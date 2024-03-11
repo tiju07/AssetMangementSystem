@@ -106,12 +106,12 @@ namespace AssetManagementSystem.Repository
 
 		public Employee GetEmployeeByUserName(string username)
 		{
-			return _context.Employees.AsNoTracking().FirstOrDefault(a => a.Username == username);
+			return _context.Employees.AsNoTracking().FirstOrDefault(a => a.Username == username || a.Email == username);
 		}
 
 		public bool EmployeeExists(string email)
 		{
-			return _context.Employees.Any(e => e.Email == email);
+			return _context.Employees.Any(e => e.Email == email || e.Username == email);
 		}
 	}
 }

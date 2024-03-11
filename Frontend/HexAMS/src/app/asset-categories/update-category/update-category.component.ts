@@ -31,24 +31,21 @@ export class UpdateCategoryComponent implements OnInit {
 
     updateCategory() {
         if (!this.form.valid) {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Fill in all required fields!' });
+            this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Fill in all required fields!' });
         }
-        // this.categoryService.updateCategory(this.activatedRoute.snapshot.params['categoryID'], { categoryID: this.category.categoryID, ...this.form.getRawValue() }).subscribe({
-        //     next: data => {
-        //         if(data.status == 200){
-        //             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category Update Successful! Redirecting...', life: 2000 });
-        //             setTimeout(() => this.router.navigate(['/asset-categories']), 2000);
-        //         }else{
-        //             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Category!', life: 3000 });
-        //         }
-        //     },
-        //     error: err => {
-        //         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Category!', life: 3000 });
-        //         console.log("Error: " + err);
-        //     }
-        // });
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category Update Successful! Redirecting...', life: 2000 });
+        this.categoryService.updateCategory(this.activatedRoute.snapshot.params['id'], { categoryID: this.category.categoryID, ...this.form.getRawValue() }).subscribe({
+            next: data => {
+                if (data.status == 204) {
+                    this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Category Update Successful! Redirecting...', life: 2000 });
+                    setTimeout(() => this.router.navigate(['/asset-categories', 'view', this.category.categoryID]), 1500);
+                } else {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Updating Category!', life: 2000 });
+                }
+            },
+            error: err => {
+                this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Updating Category!', life: 2000 });
+                console.log("Error: " + err);
+            }
+        });
     }
-
-
 }

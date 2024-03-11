@@ -7,13 +7,15 @@ using AssetManagementSystem.Dto;
 using AssetManagementSystem.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Cors;
 
 namespace AssetManagementSystem.Controllers.v1
 {
 	[ApiVersion("1.0")]
 	[Route("api/v{version:apiversion}/Assets")]
     [ApiController]
-    public class AssetCataloguesController : ControllerBase
+	[EnableCors]
+	public class AssetCataloguesController : ControllerBase
     {
         private readonly IAssetCatalogueRepository _assetCatalogueRepository;
         private readonly IAssetCategoryRepository _assetCategoryRepository;

@@ -27,7 +27,7 @@ export class AuditRequestsService {
         return this.http.post<any>('http://localhost:7234/api/v1/AuditReportRequests', auditRequest, { withCredentials: true, observe: 'response' });
     }
 
-    updateAuditRequest(id: number | null, auditRequest: IAuditRequest) {
+    updateAuditRequest(id: number, auditRequest: IAuditRequest) {
         return this.http.put<any>('http://localhost:7234/api/v1/AuditReportRequests/' + id, auditRequest, { withCredentials: true, observe: 'response' });
     }
 }

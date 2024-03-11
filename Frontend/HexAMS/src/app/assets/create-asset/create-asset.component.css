@@ -9,6 +9,11 @@
     background-color: transparent;
 }
 
+.form label span {
+    color: rgb(255, 45, 45);
+    font-size: larger;
+}
+
 .form input,
 .form select,
 .form textarea {

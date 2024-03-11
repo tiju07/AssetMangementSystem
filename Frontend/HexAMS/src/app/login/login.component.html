@@ -50,7 +50,7 @@
                     <div class="form-floating mb-3">
                         <div class="form-floating input-group">
                             <input
-                                type="password"
+                                [type]="passwordVisible ? 'text' : 'password'"
                                 formControlName="password"
                                 class="form-control"
                                 autocomplete="current-password"
@@ -70,8 +70,16 @@
                                 class="btn btn-outline-warning"
                                 type="button"
                                 id="togglePassword"
+                                (click)="togglePasswordVisibility()"
                             >
-                                <i class="bi bi-eye" aria-hidden="true"></i>
+                                <i
+                                    [ngClass]="
+                                        passwordVisible
+                                            ? 'bi bi-eye-slash'
+                                            : 'bi bi-eye'
+                                    "
+                                    aria-hidden="true"
+                                ></i>
                             </button>
                         </div>
                         <span
@@ -90,6 +98,15 @@
                     >
                         Login
                     </button>
+                    <h6 class="text-tertiary mt-4">
+                        <a routerLink="/forgot-password">Forgot Password?</a>
+                    </h6>
+                    <div class="d-flex flex-row border-custom">
+                        <span class="text-light mt-2">
+                            Don't have an account?
+                            <a routerLink="/register">Register</a>
+                        </span>
+                    </div>
                 </form>
             </div>
         </div>

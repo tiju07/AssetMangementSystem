@@ -5,7 +5,7 @@
                 <h2>Asset Borrow & Return Requests</h2>
             </div>
             <div
-                class="container d-flex align-items-end justify-content-between"
+                class="container d-flex align-items-end justify-content-between mb-5"
             >
                 <p-table
                     [columns]="cols"
@@ -16,7 +16,14 @@
                     dataKey="categoryID"
                     (onRowSelect)="onRowSelect()"
                     class="p-datatable"
-                    [tableStyle]="{ 'min-width': '70vw' }"
+                    [tableStyle]="{ 'min-width': '80vw' }"
+                    [paginator]="true"
+                    [rows]="5"
+                    [rowsPerPageOptions]="[5, 10, 15]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [scrollable]="true"
+                    scrollHeight="500px"
                 >
                     <ng-template pTemplate="header" let-columns>
                         <tr>

@@ -14,13 +14,15 @@ using AssetManagementSystem.Utils;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Cors;
 
 namespace AssetManagementSystem.Controllers.v1
 {
 	[ApiVersion("1.0")]
 	[Route("api/v{version:apiversion}/AllocationDetails")]
     [ApiController]
-    public class AssetAllocationDetailsController : ControllerBase
+	[EnableCors]
+	public class AssetAllocationDetailsController : ControllerBase
     {
 
         private readonly IAssetAllocationRepository _assetAllocationRepository;
@@ -39,12 +41,17 @@ namespace AssetManagementSystem.Controllers.v1
         }
 
 		[MapToApiVersion("1.0")]
-		[Authorize(Roles = "Admin")]
+		//[Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetAllAssetAllocationDetails()
         {
             try
             {
+                string currentUserRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+                _logger.LogCritical($"User Role {currentUserRole}");
+
+                int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+                _logger.LogCritical($"User ID {currentUserID}");
                 var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(_assetAllocationRepository.GetAllAssetAllocations());
 
                 return Ok(assetAllocationDetails);
@@ -64,8 +71,10 @@ namespace AssetManagementSystem.Controllers.v1
             try
             {
                 string currentUserRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+                _logger.LogCritical($"User Role {currentUserRole}");
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+                _logger.LogCritical($"User ID {currentUserID}");
 
                 if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationID))
                 {

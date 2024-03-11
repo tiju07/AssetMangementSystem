@@ -55,12 +55,21 @@ namespace AssetManagementSystem.Repository
 
 		public Admin GetAdminByUsername(string username)
 		{
-            return _context.Admins.FirstOrDefault(a => a.Username == username);
+            return _context.Admins.FirstOrDefault(a => a.Username == username || a.Email == username);
 		}
 
 		public bool AdminExists(string email)
 		{
-			return _context.Admins.Any(a => a.Email == email);
+			return _context.Admins.Any(a => a.Email == email || a.Username == email);
 		}
-	}
+
+        public Admin UpdatePassword(LoginDto credentials)
+        {
+            var adminToUpdate = _context.Admins
+                .Where(a =>  a.Username == credentials.UserName || a.Email == credentials.UserName).FirstOrDefault();
+
+            return adminToUpdate;
+
+        }
+    }
 }

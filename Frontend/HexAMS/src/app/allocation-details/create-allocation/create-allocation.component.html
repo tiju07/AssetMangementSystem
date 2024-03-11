@@ -22,7 +22,7 @@
                                 'is-valid': form.get('employeeID')?.valid
                             }"
                         >
-                            <option selected value="">
+                            <option selected value="null">
                                 Select an Employee
                             </option>
                             <option
@@ -57,7 +57,9 @@
                                 'is-valid': form.get('assetID')?.valid
                             }"
                         >
-                            <option selected value="">Select an Asset</option>
+                            <option selected value="null">
+                                Select an Asset
+                            </option>
                             <option
                                 *ngFor="let asset of assets"
                                 [value]="asset.assetID"
@@ -221,6 +223,6 @@
             </div>
         </div>
     </section>
-    <p-toast styleClass="custom-error-toast" *ngIf="!form.valid"> </p-toast>
-    <p-toast styleClass="custom-success-toast" *ngIf="form.valid"> </p-toast>
+    <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
+    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
 </main>

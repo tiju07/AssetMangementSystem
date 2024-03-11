@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminsService } from '../services/admins/admins.service';
 import { IUserProfile } from '../interfaces/iuserprofile';
+import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
 
 @Component({
     selector: 'app-profile',
@@ -9,16 +10,16 @@ import { IUserProfile } from '../interfaces/iuserprofile';
     styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-    constructor(private router: Router, private adminService: AdminsService, private activatedRoute: ActivatedRoute) { }
+    constructor(private router: Router, private adminService: AdminsService, private activatedRoute: ActivatedRoute, private jwtService: JwtDecryptorService) { }
 
 
     user!: IUserProfile;
+    isAdmin = false;
     ngOnInit() {
-        this.activatedRoute.data.subscribe(data => this.user = data['user'] as IUserProfile);
+        this.activatedRoute.data.subscribe(data => this.user = data['user'].body as IUserProfile);
         console.log(this.user);
-    }
-
-    update() {
-
+        if (this.jwtService.getRole() == 'Admin') {
+            this.isAdmin = true;
+        }
     }
 }

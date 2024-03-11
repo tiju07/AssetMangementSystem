@@ -66,20 +66,20 @@ export class AssetCategoriesComponent implements OnInit {
                 icon: 'pi pi-exclamation-triangle',
                 acceptIcon: "none",
                 rejectIcon: "none",
-                rejectButtonStyleClass: "p-button-text",
+                rejectButtonStyleClass: "p-button-danger",
                 accept: () => {
                     this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Category Deleted Successfully! Redirecting...', life: 2000 });
-                    // this.categoryService.deleteCategory(id).subscribe(data => {
-                    //     if (data.status == 200) {
-                    //         this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Category Deleted Successfully! Redirecting...', life: 2000 });
-                    //         setTimeout(() => this.router.navigate(['/asset-categories']), 2000);
-                    //     } else {
-                    //         this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Error Deleting Category!', life: 3000 });
-                    //     }
-                    // });
+                    this.categoryService.deleteCategory(id).subscribe(data => {
+                        if (data.status == 204) {
+                            this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Category Deleted Successfully! Redirecting...', life: 2000 });
+                            setTimeout(() => this.categoryService.getAllCategories().subscribe(data => this.categories = data as ICategory[]), 1500);
+                        } else {
+                            this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Error Deleting Category!', life: 2000 });
+                        }
+                    });
                 },
                 reject: () => {
-                    this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Category Deletion Cancelled!', life: 3000 });
+                    this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Category Deletion Cancelled!', life: 2000 });
                 }
             });
         }

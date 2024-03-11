@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EmployeesService } from '../services/employees/employees.service';
 import { IEmployee } from '../interfaces/iemployee';
 import { Column } from '../interfaces/column';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
@@ -11,14 +11,14 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     styleUrl: './employees.component.css'
 })
 export class EmployeesComponent implements OnInit {
-    constructor(private employeesService: EmployeesService, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService) { }
+    constructor(private employeesService: EmployeesService, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService, private activatedRoute: ActivatedRoute) { }
 
     employees!: IEmployee[];
     cols!: Column[];
     selectedEmployee!: IEmployee;
 
     ngOnInit(): void {
-        this.employeesService.getEmployees().subscribe(data => this.employees = data as IEmployee[]);
+        this.activatedRoute.data.subscribe(data => this.employees = data['employees'].body as IEmployee[]);
         this.cols = [
             { field: 'id', header: 'Employee ID' },
             { field: 'name', header: 'First Name' },
@@ -39,17 +39,22 @@ export class EmployeesComponent implements OnInit {
             icon: 'pi pi-exclamation-triangle',
             acceptIcon: "none",
             rejectIcon: "none",
-            rejectButtonStyleClass: "p-button-text",
+            rejectButtonStyleClass: "p-button-danger",
             accept: () => {
-                this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
-                // this.employeesService.deleteEmployee(id).subscribe(data => {
-                //     if (data.status == 200) {
-                //         this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
-                //         setTimeout(() => this.router.navigate(['/employees']), 2000);
-                //     } else {
-                //         this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Error Deleting Employee!', life: 3000 });
-                //     }
-                // });
+                // this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
+                this.employeesService.deleteEmployee(id).subscribe(data => {
+                    if (data.status == 200) {
+                        this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
+                        setTimeout(() => {
+                            this.employeesService.getEmployees().subscribe(d => {
+                                console.log(d);
+                                this.employees = d['body'] as IEmployee[];
+                            });
+                        }, 1500);
+                    } else {
+                        this.messageService.add({ severity: 'error', key: 'error', summary: 'Error', detail: 'Error Deleting Employee!', life: 3000 });
+                    }
+                });
             },
             reject: () => {
                 this.messageService.add({ severity: 'error', key: 'error', summary: 'Cancelled!', detail: 'Employee Deletion Cancelled!', life: 3000 });

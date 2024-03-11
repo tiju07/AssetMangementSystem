@@ -65,6 +65,7 @@ builder.Services.AddScoped<IAssetCategoryRepository, AssetCategoryRepository>();
 builder.Services.AddScoped<IAssetServiceRequestRepository, AssetServiceRequestRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IAuthUtilityRepository, AuthUtilityRepository>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddAuthentication(x =>
 {
@@ -113,6 +114,12 @@ if (app.Environment.IsDevelopment())
 		}
 	});
 }
+
+app.UseCors(x => x
+		   .WithOrigins("http://localhost:4200")
+		   .AllowAnyMethod()
+		   .AllowAnyHeader()
+		   .AllowCredentials());
 
 app.UseHttpsRedirection();
 

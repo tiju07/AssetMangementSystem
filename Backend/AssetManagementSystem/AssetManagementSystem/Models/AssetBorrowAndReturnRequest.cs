@@ -29,5 +29,6 @@ namespace AssetManagementSystem.Models
         [Required]
         public int AssetCount { get; set; }
         public string? RequestDetails { get; set; }
+        public string RequestStatus { get; set; }
     }
 }

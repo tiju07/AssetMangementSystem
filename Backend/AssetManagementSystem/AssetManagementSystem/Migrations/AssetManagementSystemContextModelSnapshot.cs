@@ -80,7 +80,10 @@ namespace AssetManagementSystem.Migrations
                     b.Property<string>("AssetDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AssetImage")
+                    b.Property<string>("AssetImageFilename")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AssetImageURL")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AssetModel")
@@ -214,6 +217,10 @@ namespace AssetManagementSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RequestDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestStatus")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RequestID");

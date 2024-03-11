@@ -5,12 +5,15 @@ using AssetManagementSystem.Dto;
 using AssetManagementSystem.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Cors;
+using System.Security.Cryptography;
+using System.Text;
 namespace AssetManagementSystem.Controllers.v1
 {
     [ApiVersion("1.0")]
-    [Authorize(Roles = "Admin")]
     [Route("api/v{version:apiversion}/Admins")]
     [ApiController]
+    [EnableCors]
     public class AdminsController : ControllerBase
     {
         private readonly IAdminRepository _adminRepository;
@@ -24,6 +27,7 @@ namespace AssetManagementSystem.Controllers.v1
         }
 
         [MapToApiVersion("1.0")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{adminID}")]
         public IActionResult GetAdminByID(int adminID)
         {
@@ -52,7 +56,8 @@ namespace AssetManagementSystem.Controllers.v1
         }
 
 		[MapToApiVersion("1.0")]
-		[HttpPut("{adminID}")]
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{adminID}")]
         public IActionResult UpdateAdmin(int adminID, AdminDto admin)
         {
             try
@@ -92,7 +97,8 @@ namespace AssetManagementSystem.Controllers.v1
         }
 
 		[MapToApiVersion("1.0")]
-		[HttpDelete("{adminID}")]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{adminID}")]
         public IActionResult DeleteAdmin(int adminID)
         {
             try
@@ -119,6 +125,38 @@ namespace AssetManagementSystem.Controllers.v1
                 _logger.LogCritical($"Exception error: {ex.Message}");
                 return StatusCode(500, "An error occured at the server!");
             }
+        }
+
+        [MapToApiVersion("1.0")]
+        [HttpPost]
+        [Route("ValidateUsernameOrEmail")]
+        public IActionResult ValidateUsernameOrEmail([FromBody] string username)
+        {
+            if(_adminRepository.AdminExists(username)) return Ok();
+            return NotFound();
+        }
+
+        [MapToApiVersion("1.0")]
+        [HttpPost]
+        [Route("UpdatePassword")]
+        public IActionResult UpdatePassword(LoginDto credentials)
+        {
+            //Will get by both checking username & email
+            var adminToUpdate = _adminRepository.GetAdminByUsername(credentials.UserName);
+            if (adminToUpdate != null)
+            {
+                using (HMACSHA512? hmac = new HMACSHA512())
+                {
+                    adminToUpdate.PasswordSalt = hmac.Key;
+                    adminToUpdate.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(credentials.Password));
+                }
+
+                var result = _adminRepository.UpdateAdmin(adminToUpdate);
+
+                if (result) return Ok();
+            }
+
+            return NotFound("Could not find any admin with matching username or email!");
         }
     }
 }

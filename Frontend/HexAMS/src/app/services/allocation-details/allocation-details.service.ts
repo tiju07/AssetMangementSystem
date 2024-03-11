@@ -7,6 +7,9 @@ import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
     providedIn: 'root'
 })
 export class AllocationDetailsService {
+    getAllocationDetailsByEmployee(employeeID: number) {
+        return this.http.get<IAllocation[]>('http://localhost:7234/api/v1/AllocationDetails/Employee/' + employeeID, { withCredentials: true, observe: 'response' })
+    }
 
     constructor(private http: HttpClient, private jwtService: JwtDecryptorService) { }
 

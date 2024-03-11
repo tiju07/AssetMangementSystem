@@ -4,7 +4,8 @@ export interface IAsset {
     assetCategoryID: number | null;
     assetModel: string | null;
     assetSpecifications: string | null;
-    assetImage: string | null;
+    assetImageURL: string | null;
+    assetImageFilename: string | null;
     assetDescription: string | null;
     assetStatus: string | null;
     manufacturingDate: Date | null;

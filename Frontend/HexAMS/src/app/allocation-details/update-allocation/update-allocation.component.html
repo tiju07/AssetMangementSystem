@@ -22,7 +22,7 @@
                                 'is-valid': form.get('employeeID')?.valid
                             }"
                         >
-                            <option selected [value]="" disabled>
+                            <option selected value="null" disabled>
                                 Select an Employee
                             </option>
                             <option
@@ -219,12 +219,12 @@
                         class="btn btn-outline-warning p-3 create-btn"
                         type="submit"
                     >
-                        Create
+                        Update
                     </button>
                 </form>
             </div>
         </div>
     </section>
-    <p-toast styleClass="custom-error-toast" *ngIf="!form.valid"> </p-toast>
-    <p-toast styleClass="custom-success-toast" *ngIf="form.valid"> </p-toast>
+    <p-toast styleClass="custom-error-toast" key="success"> </p-toast>
+    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
 </main>

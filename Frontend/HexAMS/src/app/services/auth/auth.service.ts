@@ -29,6 +29,24 @@ export class AuthService {
         }
     }
 
+    validateUsernameOrEmail(email: string, role: string) {
+        if (role == 'admin') {
+            return this.http.post<any>('http://localhost:7234/api/v1/Admins/ValidateUsernameOrEmail', email, { observe: 'response' });
+        }
+        else {
+            return this.http.post<any>('http://localhost:7234/api/v1/Employees/ValidateUsernameOrEmail', email, { observe: 'response' });
+        }
+    }
+
+    updatePassword(credentials: ILogin, role: string) {
+        if (role == 'admin') {
+            return this.http.post<any>('http://localhost:7234/api/v1/Admins/UpdatePassword', credentials, { observe: 'response' });
+        }
+        else {
+            return this.http.post<any>('http://localhost:7234/api/v1/Employees/UpdatePassword', credentials, { observe: 'response' });
+        }
+    }
+
     logout() {
         return this.http.post('http://localhost:7234/api/v1/Auth/Logout', { withCredentials: true, observe: 'response' });
     }

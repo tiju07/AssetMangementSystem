@@ -8,13 +8,15 @@ using AssetManagementSystem.Utils;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Cors;
 
 namespace AssetManagementSystem.Controllers.v1
 {
 	[ApiVersion("1.0")]
 	[Route("api/v{version:apiversion}/AuditReportRequests")]
     [ApiController]
-    public class AssetAuditReportRequestsController : ControllerBase
+	[EnableCors]
+	public class AssetAuditReportRequestsController : ControllerBase
     {
         private readonly IAssetAuditReportRequestRepository _assetAuditReportRequestRepository;
         private readonly IEmployeeRepository _employeeRepository;

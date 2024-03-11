@@ -2,7 +2,7 @@
     <section class="employees cta">
         <div class="container" data-aos="fade-up">
             <div class="section-title">
-                <h2>Employee Details</h2>
+                <h2>Profile</h2>
             </div>
             <div class="row">
                 <div class="col-6">
@@ -40,21 +40,12 @@
                 <div class="col-6 d-flex flex-column">
                     <button
                         class="btn btn-outline-warning p-3 m-3"
-                        (click)="update()"
+                        routerLink="update"
                     >
                         Update Profile
-                    </button>
-                    <button class="btn btn-outline-warning p-3 m-3">
-                        Create Audit Request
-                    </button>
-                    <button class="btn btn-outline-warning p-3 m-3">
-                        Update Allocations
                     </button>
                 </div>
             </div>
         </div>
     </section>
-    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
-    <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
-    <p-confirmDialog></p-confirmDialog>
 </main>

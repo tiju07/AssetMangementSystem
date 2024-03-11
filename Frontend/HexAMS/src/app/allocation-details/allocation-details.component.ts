@@ -22,10 +22,16 @@ export class AllocationDetailsComponent implements OnInit {
     selectedAllocation!: IAllocation;
 
     ngOnInit(): void {
-
-        this.activatedRoute.data.subscribe(data => {
-            this.allocationDetails = data['allocations'] as any;
-        })
+        if (!isNaN(this.activatedRoute.snapshot.params['employeeID'])) {
+            this.activatedRoute.data.subscribe(data => {
+                console.log(data['allocations'].body as IAllocation[]);
+                this.allocationDetails = data['allocations'].body as IAllocation[];
+            })
+        } else {
+            this.activatedRoute.data.subscribe(data => {
+                this.allocationDetails = data['allocations'] as IAllocation[];
+            })
+        }
         this.cols = [
             { field: 'assetAllocationID', header: 'Allocation ID' },
             { field: 'employeeID', header: 'Employee ID' },

@@ -16,6 +16,14 @@
                     class="p-datatable"
                     dataKey="categoryID"
                     (onRowSelect)="onRowSelect()"
+                    [paginator]="true"
+                    [rows]="5"
+                    [rowsPerPageOptions]="[5, 10, 15]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [scrollable]="true"
+                    scrollHeight="500px"
+                    [tableStyle]="{ 'min-width': '80vw' }"
                 >
                     <ng-template pTemplate="header" let-columns>
                         <tr>

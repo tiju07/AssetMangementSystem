@@ -54,36 +54,41 @@ export class RegisterComponent implements OnInit {
         }));
     }
 
+    passwordVisible = false;
+    confirmPasswordVisible = false;
+
+    togglePasswordVisibility() {
+        this.passwordVisible = !this.passwordVisible;
+    }
+
+    toggleConfirmPasswordVisibility() {
+        this.confirmPasswordVisible = !this.confirmPasswordVisible;
+    }
+
     registerUser() {
         if (this.selectedRole == null) {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please select a role!' });
-            return;
+            this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Please select a role!' });
         }
-        if (!this.form.valid) {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please enter all required details' });
-            return
+        else if (!this.form.valid) {
+            this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Please enter all required details' });
         }
         else {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Registration Successful! Redirecting...' });
-            setTimeout(() => {
-                this.router.navigate(['/login'])
-            }, 2000)
-            // this.authService.register(this.form.getRawValue(), this.selectedRole).subscribe({
-            //     next: data => {
-            //         if (data.status == 201) {
-            //             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Registration Successful! Redirecting...', life: 2000 });
-            //             setTimeout(() => {
-            //                 this.router.navigate(['/login'])
-            //             })
-            //         }
-            //         else {
-            //             this.messageService.add({ severity: 'error', summary: 'Error', detail: data.statusText });
-            //         }
-            //     },
-            //     error: err => {
-            //         this.messageService.add({ severity: 'error', summary: 'Error', detail: err.statusText });
-            //     }
-            // })
+            this.authService.register(this.form.getRawValue(), this.selectedRole).subscribe({
+                next: data => {
+                    if (data.status == 200) {
+                        this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Registration Successful! Redirecting...', life: 2000 });
+                        setTimeout(() => {
+                            this.router.navigate(['/login'])
+                        }, 1500)
+                    }
+                    else {
+                        this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: data.statusText });
+                    }
+                },
+                error: err => {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: err.error['Error'][0] });
+                }
+            })
         }
     }
 

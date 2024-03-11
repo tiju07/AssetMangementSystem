@@ -3,6 +3,7 @@ import { EmployeesService } from '../../services/employees/employees.service';
 import { IEmployee } from '../../interfaces/iemployee';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
 
 @Component({
     selector: 'app-view-employee',
@@ -11,9 +12,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class ViewEmployeeComponent implements OnInit {
 
-    constructor(private employeeService: EmployeesService, private activatedRoute: ActivatedRoute, private messageService: MessageService, private confirmationService: ConfirmationService, private router: Router) {
+    constructor(private employeeService: EmployeesService, private activatedRoute: ActivatedRoute, private messageService: MessageService, private confirmationService: ConfirmationService, private router: Router, private jwtService: JwtDecryptorService) {
     }
     employee!: IEmployee;
+    isAdmin = false;
+
     ngOnInit(): void {
         this.activatedRoute.data.subscribe({
             next: data => {
@@ -28,6 +31,9 @@ export class ViewEmployeeComponent implements OnInit {
                 this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: error });
             }
         })
+        if (this.jwtService.getRole() == 'Admin') {
+            this.isAdmin = true;
+        }
     }
 
     deleteEmployee(id: number) {
@@ -37,7 +43,7 @@ export class ViewEmployeeComponent implements OnInit {
             icon: 'pi pi-exclamation-triangle',
             acceptIcon: "none",
             rejectIcon: "none",
-            rejectButtonStyleClass: "p-button-text",
+            rejectButtonStyleClass: "p-button-danger",
             accept: () => {
                 this.messageService.add({ severity: 'success', key: 'success', summary: 'Successful', detail: 'Employee Deleted Successfully! Redirecting...', life: 2000 });
                 this.employeeService.deleteEmployee(id).subscribe(data => {

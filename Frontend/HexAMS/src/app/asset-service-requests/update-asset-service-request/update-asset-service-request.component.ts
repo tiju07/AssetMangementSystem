@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ServiceRequestsService } from '../../services/service-requests/service-requests.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AssetService } from '../../services/asset-catalogue/asset.service';
 import { MessageService } from 'primeng/api';
 import { IAsset } from '../../interfaces/iasset';
@@ -21,18 +21,19 @@ export class UpdateAssetServiceRequestComponent {
     statuses = ['Open', 'Servicing', 'Rejected', 'Closed']
 
     form = this.fb.group({
-        requestID: [0],
-        employeeID: [1],
-        assetID: [null, [Validators.required]],
-        issueType: ['', [Validators.required]],
-        requestDetails: [''],
-        requestStatus: ['', [Validators.required]]
+        requestID: new FormControl(null),
+        employeeID: new FormControl(null),
+        assetID: new FormControl(null, [Validators.required]),
+        issueType: new FormControl('', [Validators.required]),
+        requestDetails: new FormControl(''),
+        requestStatus: new FormControl('', [Validators.required])
     })
 
     ngOnInit(): void {
         this.activatedRoute.data.subscribe(data => this.assets = data['assets'] as IAsset[]);
         this.activatedRoute.data.subscribe((data) => {
-            this.form.patchValue(data['request'] as any);
+            console.log(data)
+            this.form.patchValue(data['request'].body as any);
         })
     }
 
@@ -41,20 +42,19 @@ export class UpdateAssetServiceRequestComponent {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill all the required fields' });
             return;
         }
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request Updated Successfully! Redirecting...', life: 2000 });
-        // this.serviceRequestService.updateServiceRequest(this.activatedRoute.snapshot.params['id'], this.form.getRawValue()).subscribe({
-        //     next: (data) => {
-        //         if (data.status == 200) {
-        //             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request Updated Successfully! Redirecting...', life: 2000 });
-        //             setTimeout(() => this.router.navigate(['/asset-service-requests', this.activatedRoute.snapshot.params['id']]), 2000);
-        //         }
-        //         else {
-        //             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Request!' });
-        //         }
-        //     },
-        //     error: (err) => {
-        //         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Request!' });
-        //     }
-        // })
+        this.serviceRequestService.updateServiceRequest(this.activatedRoute.snapshot.params['id'], this.form.getRawValue()).subscribe({
+            next: (data) => {
+                if (data.status == 204) {
+                    this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Request Updated Successfully! Redirecting...', life: 2000 });
+                    setTimeout(() => this.router.navigate(['/asset-service-requests', 'view', this.activatedRoute.snapshot.params['id']]), 1500);
+                }
+                else {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Updating Request!' });
+                }
+            },
+            error: (err) => {
+                this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Updating Request!' });
+            }
+        })
     }
 }

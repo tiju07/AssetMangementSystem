@@ -5,8 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Column } from '../interfaces/column';
 
 
-
-
 @Component({
     selector: 'app-asset-borrow-return-requests',
     templateUrl: './asset-borrow-return-requests.component.html',
@@ -33,6 +31,7 @@ export class AssetBorrowReturnRequestsComponent implements OnInit {
             { field: 'assetAllocationTill', header: 'Asset Allocation Till' },
             { field: 'assetCount', header: 'Asset Count' },
             { field: 'requestDetails', header: 'Request Details' },
+            { field: 'requestStatus', header: 'Request Status' },
         ]
     }
 

@@ -32,7 +32,8 @@ export class CreateAssetBorrowReturnRequestComponent implements OnInit {
         assetAllocationFrom: new FormControl(null, [Validators.required]),
         assetAllocationTill: new FormControl(null, [Validators.required]),
         assetCount: new FormControl(null, [Validators.required, Validators.min(1)]),
-        requestDetails: new FormControl(null)
+        requestDetails: new FormControl(null),
+        requestStatus: new FormControl('Open', [Validators.required])
     }, { validators: this.dateRangeValidator });
 
     ngOnInit(): void {
@@ -56,18 +57,17 @@ export class CreateAssetBorrowReturnRequestComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 });
         }
         else {
-            // this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });
             this.borrowReturnRequestService.createBorrowReturnRequest({ requestID: 0, ...this.form.getRawValue() }).subscribe({
                 next: data => {
                     if (data.status == 200) {
-                        this.messageService.add({key: 'success', severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });
+                        this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });
                         setTimeout(() => this.router.navigate(['/asset-borrow-return-requests']), 2000);
                     } else {
-                        this.messageService.add({key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
+                        this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
                     }
                 },
                 error: err => {
-                    this.messageService.add({key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Request!' });
                     console.log(err);
                 }
             })

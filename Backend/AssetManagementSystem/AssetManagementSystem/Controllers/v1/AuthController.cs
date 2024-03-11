@@ -5,6 +5,7 @@ using AssetManagementSystem.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,9 +16,10 @@ using System.Text;
 
 namespace AssetManagementSystem.Controllers.v1
 {
-	[ApiVersion("1.0")]
-	[Route("api/v{version:apiversion}")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiversion}")]
     [ApiController]
+    [EnableCors]
     public class AuthController : ControllerBase
     {
         private readonly AppSettings _applicationSettings;
@@ -26,8 +28,9 @@ namespace AssetManagementSystem.Controllers.v1
         private readonly IAuthUtilityRepository _authUtilityRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthController> _logger;
+        private readonly IEmailService _emailService;
 
-        public AuthController(IOptions<AppSettings> applicationSettings, IAdminRepository adminRepository, IEmployeeRepository employeeRepository, IAuthUtilityRepository authUtilityRepository, IMapper mapper, ILogger<AuthController> logger)
+        public AuthController(IOptions<AppSettings> applicationSettings, IAdminRepository adminRepository, IEmployeeRepository employeeRepository, IAuthUtilityRepository authUtilityRepository, IMapper mapper, ILogger<AuthController> logger, IEmailService emailService)
         {
             _applicationSettings = applicationSettings.Value;
             _adminRepository = adminRepository;
@@ -35,10 +38,11 @@ namespace AssetManagementSystem.Controllers.v1
             _authUtilityRepository = authUtilityRepository;
             _mapper = mapper;
             _logger = logger;
+            _emailService = emailService;
         }
 
-		[MapToApiVersion("1.0")]
-		[HttpPost("Admin/Register")]
+        [MapToApiVersion("1.0")]
+        [HttpPost("Admin/Register")]
         public IActionResult RegisterAdmin(RegistrationDto registrationData)
         {
             try
@@ -87,8 +91,8 @@ namespace AssetManagementSystem.Controllers.v1
             }
         }
 
-		[MapToApiVersion("1.0")]
-		[HttpPost("Employee/Register")]
+        [MapToApiVersion("1.0")]
+        [HttpPost("Employee/Register")]
         public IActionResult RegisterEmployee(RegistrationDto registrationData)
         {
             try
@@ -130,8 +134,8 @@ namespace AssetManagementSystem.Controllers.v1
             }
         }
 
-		[MapToApiVersion("1.0")]
-		[HttpPost("Admin/Login")]
+        [MapToApiVersion("1.0")]
+        [HttpPost("Admin/Login")]
         public IActionResult AdminLogin(LoginDto loginCredentials)
         {
             try
@@ -169,8 +173,8 @@ namespace AssetManagementSystem.Controllers.v1
             }
         }
 
-		[MapToApiVersion("1.0")]
-		[HttpPost("Employee/Login")]
+        [MapToApiVersion("1.0")]
+        [HttpPost("Employee/Login")]
         public IActionResult EmployeeLogin(LoginDto loginCredentials)
         {
             try
@@ -209,8 +213,8 @@ namespace AssetManagementSystem.Controllers.v1
             }
         }
 
-		[MapToApiVersion("1.0")]
-		[Authorize(Roles = "Admin, Employee")]
+        [MapToApiVersion("1.0")]
+        [Authorize(Roles = "Admin, Employee")]
         [HttpPost("Logout")]
         public IActionResult Logout()
         {
@@ -226,5 +230,24 @@ namespace AssetManagementSystem.Controllers.v1
                 return StatusCode(500, ModelState);
             }
         }
+
+        [MapToApiVersion("1.0")]
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto forgotPassword)
+        {
+            var admin = _adminRepository.GetAdminByUsername(forgotPassword.Email);
+            var employee = _employeeRepository.GetEmployeeByUserName(forgotPassword.Email);
+
+            if (admin != null)
+            {
+                await _emailService.Send("tijulukose0402@gmail.com", "Test", "Test Mail");
+            }
+            if (employee != null)
+            {
+                await _emailService.Send("tijulukose0402@gmail.com", "Test", "Test Mail");
+            }
+            return Ok();
+        }
+
     }
 }

@@ -9,13 +9,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Cors;
 
 namespace AssetManagementSystem.Controllers.v1
 {
 	[ApiVersion("1.0")]
 	[Route("api/v{version:apiversion}/AssetServiceRequests")]
     [ApiController]
-    public class AssetServiceRequestsController : ControllerBase
+	[EnableCors]
+	public class AssetServiceRequestsController : ControllerBase
     {
         private readonly IAssetServiceRequestRepository _assetServiceRequestRepository;
         private readonly IEmployeeRepository _employeeRepository;

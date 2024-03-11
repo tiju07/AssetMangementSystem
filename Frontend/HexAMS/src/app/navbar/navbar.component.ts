@@ -4,6 +4,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { MessageService } from 'primeng/api';
 import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
 import { AuthService } from '../services/auth/auth.service';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
     selector: 'app-navbar',
@@ -14,6 +15,14 @@ export class NavbarComponent implements OnInit {
     constructor(private cookieService: CookieService, private messageService: MessageService, private router: Router, private jwtService: JwtDecryptorService, private authService: AuthService) {
 
     }
+
+    toggleNavbarMobile(event: Event) {
+        const navbar = document.querySelector('#navbar') as HTMLElement;
+        navbar.classList.toggle('navbar-mobile');
+        (event.currentTarget as HTMLElement).classList.toggle('bi-list');
+        (event.currentTarget as HTMLElement).classList.toggle('bi-x');
+    }
+
 
     user!: string | undefined;
     isAuthenticatd!: boolean;

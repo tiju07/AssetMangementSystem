@@ -48,13 +48,14 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .invalid-fb {
-    color: orangered
+    color: rgb(255, 109, 109);
+    padding-top: 5px;
 }
 
 .is-invalid {
-    border: 2px solid rgb(255, 47, 47) !important;
-    border-color: rgb(255, 47, 47);
-    box-shadow: 0 2px 2px rgba(255, 255, 255, 0.075) inset, 0px 1px 8px rgb(255, 47, 47), 0.3em 0.3em 1em rgb(200 0 0 / 60%);
+    border: 2px solid rgb(255, 109, 109) !important;
+    border-color: rgb(255, 109, 109);
+    box-shadow: 0 2px 2px rgba(255, 255, 255, 0.075) inset, 0px 1px 8px rgb(255, 109, 109), 0.3em 0.3em 1em rgb(200 0 0 / 60%);
 }
 
 .is-valid {
@@ -103,6 +104,15 @@ input[type=number]::-webkit-outer-spin-button {
     color: black !important;
 }
 
+.border-custom {
+    width: 100%;
+    border-top: 1px solid rgb(133, 133, 133);
+    justify-content: center;
+}
+
+.border-custom span a {
+    text-decoration: underline;
+}
 
 @media screen and (max-width: 1920px) {
     .form-floating {

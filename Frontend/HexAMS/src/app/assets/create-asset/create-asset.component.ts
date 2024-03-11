@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AssetService } from '../../services/asset-catalogue/asset.service';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ICategory } from '../../interfaces/icategory';
 import { CategoriesService } from '../../services/categories/categories.service';
 import { MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IAsset } from '../../interfaces/iasset';
+import { ICloudinaryUploadResponse } from '../../interfaces/iclodinaryuploadresponse';
+import { CloudinaryImageUploadService } from '../../services/image-upload/cloudinary-image-upload.service';
 
 @Component({
     selector: 'app-create-asset',
@@ -15,17 +16,20 @@ import { IAsset } from '../../interfaces/iasset';
 })
 export class CreateAssetComponent {
 
-    constructor(private assetService: AssetService, private categoryService: CategoriesService, private fb: FormBuilder, private messageService: MessageService, private router: Router, private activatedRoute: ActivatedRoute) { }
+    constructor(private assetService: AssetService, private categoryService: CategoriesService, private fb: FormBuilder, private messageService: MessageService, private router: Router, private activatedRoute: ActivatedRoute, private cloudinaryService: CloudinaryImageUploadService) { }
 
     categories!: ICategory[]
-
+    image!: File | null;
+    touched = false;
+    @ViewChild('imageInput') fileInput!: ElementRef;
 
     form = this.fb.group({
         assetName: new FormControl('', [Validators.required]),
         assetCategoryID: new FormControl(null, [Validators.required]),
         assetModel: new FormControl(''),
         assetSpecifications: new FormControl(''),
-        assetImage: new FormControl('', [Validators.required]),
+        assetImageURL: [File, [Validators.required]],
+        assetImageFilename: [''],
         assetDescription: new FormControl(''),
         assetStatus: new FormControl('', [Validators.required]),
         manufacturingDate: new FormControl(null),
@@ -37,28 +41,76 @@ export class CreateAssetComponent {
         return this.form.get(control)?.hasError('required') && this.form.get(control)?.touched;
     }
 
+    toggleTouched() {
+        this.touched = true;
+    }
+
+    resetFileInput() {
+        this.fileInput.nativeElement.value = null;
+        this.image = null;
+    }
 
     ngOnInit(): void {
         this.activatedRoute.data.subscribe(data => this.categories = data['categories']);
     }
 
-    createAsset() {
-        if (!this.form.valid) {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 });
 
-            return
+    onFileChange(event: Event) {
+        this.image = (event.target as HTMLInputElement).files![0];
+        console.log("File: " + this.image.name);
+    }
+
+    createAsset(formData: any) {
+        this.assetService.createAsset(formData).subscribe({
+            next: data => {
+                if (data.status == 200) {
+                    this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Asset Creation Successful! Redirecting...', life: 2000 });
+                    setTimeout(() => {
+                        this.router.navigate(['/assets', 'view', data['body'].assetID])
+                    }, 2000)
+                }
+                else {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Asset!' });
+                }
+            },
+            error: err => {
+                this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Asset!' });
+            }
+        });
+    }
+
+    onSubmit() {
+        if (!this.form.valid || this.image == null) {
+            this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 });
+            return;
         }
-        // this.assetService.createAsset({ assetID: 0, ...this.form.getRawValue() }).subscribe(data => {
-        //     if (data.status == 201) {
-        //         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset Creation Successful! Redirecting...', life: 2000 });
-        //         console.log("Success: " + this.form.getRawValue());
-        //         const d = data as unknown as IAsset;
-        //         this.router.navigate(['/assets' + d.assetID]);
-        //     }
-        //     else {
-        //         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Creating Asset!' });
-        //     }
-        // });
-
+        var formData = {
+            assetID: 0,
+            assetName: this.form.get('assetName')!.value,
+            assetCategoryID: this.form.get('assetCategoryID')!.value,
+            assetModel: this.form.get('assetModel')!.value,
+            assetSpecifications: this.form.get('assetSpecifications')!.value,
+            assetImageURL: '',
+            assetImageFilename: '',
+            assetDescription: this.form.get('assetDescription')!.value,
+            assetStatus: this.form.get('assetStatus')!.value,
+            manufacturingDate: this.form.get('manufacturingDate')!.value,
+            expiryDate: this.form.get('expiryDate')!.value,
+            assetValue: this.form.get('assetValue')!.value,
+        };
+        this.cloudinaryService.uploadImage(this.image).subscribe({
+            next: (data) => {
+                const d = data as ICloudinaryUploadResponse
+                formData = { ...formData, assetImageURL: d.url, assetImageFilename: d.original_filename };
+                console.log(formData);
+                console.log(d.url, d.original_filename);
+                this.createAsset(formData);
+            },
+            error: err => {
+                this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Error Uploading Image!', life: 1500 });
+                console.log(err);
+                return;
+            }
+        })
     }
 }

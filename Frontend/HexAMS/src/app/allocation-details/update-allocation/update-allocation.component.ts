@@ -38,20 +38,34 @@ export class UpdateAllocationComponent {
 
     ngOnInit(): void {
         this.activatedRoute.data.subscribe(data => {
-            this.employees = data['employees'];
+            this.employees = data['employees'].body as IEmployee[];
         })
         this.activatedRoute.data.subscribe(data => {
-            this.assets = data['assets'];
+            this.assets = data['assets'] as IAsset[];
         })
         this.activatedRoute.data.subscribe({
             next: (data) => {
-                const d = data['allocation'] as IAllocation;
-                this.allocationDetail = d;
+                this.allocationDetail = data['allocation'].body as IAllocation;
                 this.form.patchValue(this.allocationDetail as any);
-                this.form.patchValue({
-                    assetAllocatedFrom: formatDate(this.allocationDetail.assetAllocatedFrom as Date, "yyyy-MM-dd", "en"),
-                    assetAllocatedTill: formatDate(this.allocationDetail.assetAllocatedTill as Date, "yyyy-MM-dd", "en")
-                })
+                if (this.allocationDetail.assetAllocatedFrom) {
+                    this.form.patchValue({
+                        assetAllocatedFrom: formatDate(this.allocationDetail.assetAllocatedFrom as Date, "yyyy-MM-dd", "en")
+                    });
+                } else {
+                    this.form.patchValue({
+                        assetAllocatedFrom: ''
+                    });
+                }
+
+                if (this.allocationDetail.assetAllocatedTill) {
+                    this.form.patchValue({
+                        assetAllocatedTill: formatDate(this.allocationDetail.assetAllocatedTill as Date, "yyyy-MM-dd", "en")
+                    });
+                } else {
+                    this.form.patchValue({
+                        assetAllocatedTill: ''
+                    });
+                }
 
             },
             error: (error) => { console.log("Error: " + error) }
@@ -68,28 +82,27 @@ export class UpdateAllocationComponent {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 });
         }
         else {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Allocation Update Successful! Redirecting...', life: 2000 });
-            // const formValue = this.form.getRawValue();
-            // const updateParam = {
-            //     assetAllocationID: this.allocationDetail.assetAllocationID,
-            //     ...formValue,
-            //     assetAllocatedFrom: formValue.assetAllocatedFrom ? new Date(formValue.assetAllocatedFrom) : null,
-            //     assetAllocatedTill: formValue.assetAllocatedTill ? new Date(formValue.assetAllocatedTill) : null
-            // };
-            // this.allocationService.updateAllocation(this.allocationDetail.assetAllocationID, updateParam).subscribe({
-            //     next: data => {
-            //         if (data.status == 200) {
-            //             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Allocation Update Successful! Redirecting...', life: 2000 });
-            //             setTimeout(() => this.router.navigate(['/allocation-details']), 2000);
-            //         }
-            //         else {
-            //             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Allocation!' });
-            //         }
-            //     },
-            //     error: err => {
-            //         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Updating Allocation!' });
-            //     }
-            // })
+            const formValue = this.form.getRawValue();
+            const updateParam = {
+                assetAllocationID: this.allocationDetail.assetAllocationID,
+                ...formValue,
+                assetAllocatedFrom: formValue.assetAllocatedFrom ? new Date(formValue.assetAllocatedFrom) : null,
+                assetAllocatedTill: formValue.assetAllocatedTill ? new Date(formValue.assetAllocatedTill) : null
+            };
+            this.allocationService.updateAllocation(this.allocationDetail.assetAllocationID, updateParam).subscribe({
+                next: data => {
+                    if (data.status == 200) {
+                        this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Allocation Update Successful! Redirecting...', life: 2000 });
+                        setTimeout(() => this.router.navigate(['/allocation-details']), 2000);
+                    }
+                    else {
+                        this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Updating Allocation!' });
+                    }
+                },
+                error: err => {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Updating Allocation!' });
+                }
+            })
         }
     }
 }

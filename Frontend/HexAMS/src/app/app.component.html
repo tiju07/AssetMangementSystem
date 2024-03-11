@@ -4,4 +4,9 @@
         <router-outlet (activate)="onActivate($event)"></router-outlet>
     </div>
     <app-footer></app-footer>
+    <p-scrollTop
+        [threshold]="50"
+        styleClass="custom-scrolltop"
+        icon="pi pi-arrow-up"
+    ></p-scrollTop>
 </div>

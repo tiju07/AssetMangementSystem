@@ -19,15 +19,15 @@ export class CategoriesService {
     }
 
     createCategory(category: ICategory) {
-        return this.http.post<HttpResponse<any>>('http://localhost:7234/api/v1/Categories', category, { withCredentials: true, observe: 'response' })
+        return this.http.post<any>('http://localhost:7234/api/v1/Categories', category, { withCredentials: true, observe: 'response' })
     }
 
     updateCategory(id: number, category: ICategory) {
-        return this.http.put<HttpResponse<any>>('http://localhost:7234/api/v1/Categories/' + id, category, { withCredentials: true, observe: 'response' })
+        return this.http.put<any>('http://localhost:7234/api/v1/Categories/' + id, category, { withCredentials: true, observe: 'response' })
     }
 
     deleteCategory(id: number) {
-        return this.http.delete<HttpResponse<any>>('http://localhost:7234/api/v1/Categories/' + id, { withCredentials: true, observe: 'response' })
+        return this.http.delete<any>('http://localhost:7234/api/v1/Categories/' + id, { withCredentials: true, observe: 'response' })
     }
 }
 

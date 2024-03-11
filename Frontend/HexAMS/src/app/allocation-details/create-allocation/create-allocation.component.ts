@@ -23,8 +23,8 @@ export class CreateAllocationComponent implements OnInit {
     assets!: IAsset[];
 
     form = this.fb.group({
-        employeeID: new FormControl('', [Validators.required]),
-        assetID: new FormControl('', [Validators.required]),
+        employeeID: new FormControl(null, [Validators.required]),
+        assetID: new FormControl(null, [Validators.required]),
         assetCount: new FormControl(null, [Validators.required, Validators.min(1)]),
         allocationDetails: new FormControl(null),
         assetAllocatedFrom: new FormControl(null, [Validators.required]),
@@ -34,9 +34,10 @@ export class CreateAllocationComponent implements OnInit {
 
     ngOnInit(): void {
         this.activatedRoute.data.subscribe(data => {
-            this.employees = data['employees'] as IEmployee[];
+            this.employees = data['employees'].body as IEmployee[];
         })
         this.activatedRoute.data.subscribe(data => {
+            console.log(data);
             this.assets = data['assets'] as IAsset[];
         })
     }
@@ -50,21 +51,21 @@ export class CreateAllocationComponent implements OnInit {
         if (!this.form.valid) {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 });
         } else {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Allocation Creation Successful! Redirecting...', life: 2000 });
-        }// this.allocationService.createAllocation({ assetAllocationID: 0, ...this.form.getRawValue() }).subscribe({
-        //     next: data => {
-        //         if (data.status == 201) {
-        //             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Allocation Creation Successful! Redirecting...', life: 2000 });
-        //             setTimeout(() => this.router.navigate(['/allocation-details']), 2000);
-        //         }
-        //         else {
-        //             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Creating Allocation!' });
-        //         }
-        //     },
-        //     error: err => {
-        //         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed Creating Allocation!' });
-        //     }
-        // })
+            this.allocationService.createAllocation({ assetAllocationID: 0, ...this.form.getRawValue() }).subscribe({
+                next: data => {
+                    if (data.status == 200) {
+                        this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Allocation Creation Successful! Redirecting...', life: 2000 });
+                        setTimeout(() => this.router.navigate(['/allocation-details']), 2000);
+                    }
+                    else {
+                        this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Allocation!' });
+                    }
+                },
+                error: err => {
+                    this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Failed Creating Allocation!' });
+                }
+            })
+        }
     }
 }
 

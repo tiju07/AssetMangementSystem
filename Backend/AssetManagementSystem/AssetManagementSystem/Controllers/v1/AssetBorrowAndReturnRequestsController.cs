@@ -7,13 +7,15 @@ using AssetManagementSystem.Utils;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Cors;
 
 namespace AssetManagementSystem.Controllers.v1
 {
 	[ApiVersion("1.0")]
 	[Route("api/v{version:apiversion}/AssetBorrowReturnRequests")]
     [ApiController]
-    public class AssetBorrowAndReturnRequestsController : ControllerBase
+	[EnableCors]
+	public class AssetBorrowAndReturnRequestsController : ControllerBase
     {
         private readonly IAssetBorrowAndReturnRequestRepository _assetBorrowAndReturnRequestRepository;
         private readonly IEmployeeRepository _employeeRepository;
@@ -132,6 +134,11 @@ namespace AssetManagementSystem.Controllers.v1
                     return BadRequest(ModelState);
                 }
 
+                if(!AssetBorrowAndReturnRequestUtils.RequestStatusIsValid(assetBorrowAndReturnRequest.RequestStatus))
+                {
+                    ModelState.AddModelError("Error", "Invalid Request Status!");
+                }
+
                 if (!(assetBorrowAndReturnRequest.AssetCount > 0)) return BadRequest("Asset count should be atleast 1!");
 
                 var request = _mapper.Map<AssetBorrowAndReturnRequest>(assetBorrowAndReturnRequest);
@@ -177,6 +184,11 @@ namespace AssetManagementSystem.Controllers.v1
                 {
                     ModelState.AddModelError("Error", "Invalid request type!");
                     return BadRequest(ModelState);
+                }
+
+                if (!AssetBorrowAndReturnRequestUtils.RequestStatusIsValid(assetBorrowAndReturnRequest.RequestStatus))
+                {
+                    ModelState.AddModelError("Error", "Invalid Request Status!");
                 }
 
                 if (!(assetBorrowAndReturnRequest.AssetCount > 0)) return BadRequest("Asset count should be atleast 1!");

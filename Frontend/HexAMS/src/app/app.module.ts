@@ -20,6 +20,8 @@ import { DividerModule } from 'primeng/divider';
 import { PasswordStrengthComponent } from './password-strength/password-strength.component';
 import { CookieService } from 'ngx-cookie-service';
 import { Location } from '@angular/common';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { ScrollTopModule } from 'primeng/scrolltop';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -57,6 +59,8 @@ import { ViewAssetServiceRequestComponent } from './asset-service-requests/view-
 import { ViewAssetAuditRequestComponent } from './asset-audit-requests/view-asset-audit-request/view-asset-audit-request.component';
 import { CreateAuditRequestComponent } from './asset-audit-requests/create-audit-request/create-audit-request.component';
 import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit-request/update-audit-request.component';
+import { ForgotPasswordComponent } from './login/forgot-password/forgot-password.component';
+import { UpdateProfileComponent } from './profile/update-profile/update-profile.component';
 
 
 
@@ -97,7 +101,9 @@ import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit
         ViewAssetAuditRequestComponent,
         CreateAuditRequestComponent,
         UpdateAuditRequestComponent,
-        PasswordStrengthComponent
+        PasswordStrengthComponent,
+        ForgotPasswordComponent,
+        UpdateProfileComponent
     ],
     imports: [
         BrowserModule,
@@ -119,6 +125,8 @@ import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit
         SelectButtonModule,
         PasswordModule,
         DividerModule,
+        PopoverModule,
+        ScrollTopModule
     ],
     providers: [MessageService, ConfirmationService, CookieService, Location],
     bootstrap: [AppComponent]

@@ -13,8 +13,9 @@ namespace AssetManagementSystem.Dto
 		public int AssetCategoryID { get; set; }
 		public string? AssetModel { get; set; }
 		public string? AssetSpecifications { get; set; }
-		public string? AssetImage { get; set; }
-		public string? AssetDescription { get; set; }
+        public string? AssetImageURL { get; set; }
+        public string? AssetImageFilename { get; set; }
+        public string? AssetDescription { get; set; }
 		[Required]
 		public string AssetStatus { get; set; }
 		public DateTime? ManufacturingDate { get; set; }

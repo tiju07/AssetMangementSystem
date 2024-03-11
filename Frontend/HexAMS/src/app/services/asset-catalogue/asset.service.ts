@@ -20,11 +20,11 @@ export class AssetService {
     }
 
     createAsset(asset: IAsset) {
-        return this.http.post<HttpResponse<IAsset | any>>('http://localhost:7234/api/v1/Assets', asset, { withCredentials: true, observe: 'response' })
+        return this.http.post<any>('http://localhost:7234/api/v1/Assets', asset, { withCredentials: true, observe: 'response' })
     }
 
     updateAsset(id: number, asset: IAsset) {
-        return this.http.put<HttpResponse<IAsset | any>>('http://localhost:7234/api/v1/Assets/' + id, asset, { withCredentials: true, observe: 'response' })
+        return this.http.put<any>('http://localhost:7234/api/v1/Assets/' + id, asset, { withCredentials: true, observe: 'response' })
     }
 
     deleteAsset(id: number) {

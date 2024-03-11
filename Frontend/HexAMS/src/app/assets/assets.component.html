@@ -91,7 +91,7 @@
                         >
                             <div class="asset-img">
                                 <img
-                                    [src]="asset.assetImage"
+                                    [src]="asset.assetImageURL"
                                     class="img-fluid"
                                     alt=""
                                 />
@@ -102,6 +102,7 @@
                                         ></i
                                     ></a>
                                     <a
+                                        *ngIf="!isAdmin"
                                         routerLink="../asset-borrow-return-requests/add/{{
                                             asset.assetID
                                         }}"
@@ -111,6 +112,13 @@
                                         *ngIf="isAdmin"
                                         routerLink="update/{{ asset.assetID }}"
                                         ><i class="bi bi-pencil-square"></i
+                                    ></a>
+                                    <a
+                                        *ngIf="isAdmin"
+                                        routerLink="/assets/delete/{{
+                                            asset.assetID
+                                        }}"
+                                        ><i class="bi bi-trash"></i
                                     ></a>
                                 </div>
                             </div>

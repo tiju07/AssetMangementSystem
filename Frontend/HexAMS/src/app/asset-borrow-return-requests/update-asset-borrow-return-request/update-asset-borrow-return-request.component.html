@@ -2,7 +2,7 @@
     <section id="about" class="assets cta">
         <div class="container mb-3" data-aos="fade-up">
             <div class="section-title">
-                <h2>Add New Allocation</h2>
+                <h2>Update Request</h2>
             </div>
             <div class="d-flex flex-column flex-wrap align-items-center form">
                 <form
@@ -22,7 +22,7 @@
                                 'is-valid': form.get('assetID')?.valid
                             }"
                         >
-                            <option selected disabled value="null">
+                            <option disabled value="null">
                                 Select an Asset
                             </option>
                             <option
@@ -179,6 +179,39 @@
                         />
                         <label for="floatingInput">Allocation Details</label>
                     </div>
+                    <div class="form-floating mb-3">
+                        <select
+                            class="form-select"
+                            formControlName="requestStatus"
+                            [ngClass]="{
+                                'is-invalid':
+                                    !form.get('requestStatus')?.valid &&
+                                    form.get('requestStatus')?.touched,
+                                'is-valid': form.get('requestStatus')?.valid
+                            }"
+                        >
+                            <option selected value="" disabled>
+                                Select a Status
+                            </option>
+                            <option
+                                *ngFor="let status of statuses"
+                                [value]="status"
+                            >
+                                {{ status }}
+                            </option>
+                        </select>
+                        <label for="floatingSelect"
+                            >Request Status <span>*</span></label
+                        >
+                        <span
+                            class="invalid-fb"
+                            *ngIf="
+                                !form.get('requestStatus')?.valid &&
+                                form.get('requestStatus')?.touched
+                            "
+                            >Please select a status!</span
+                        >
+                    </div>
                     <button
                         pButton
                         class="btn btn-outline-warning p-3 create-btn"
@@ -190,6 +223,6 @@
             </div>
         </div>
     </section>
-    <p-toast styleClass="custom-error-toast" *ngIf="!form.valid"> </p-toast>
-    <p-toast styleClass="custom-success-toast" *ngIf="form.valid"> </p-toast>
+    <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
+    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
 </main>

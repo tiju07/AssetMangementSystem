@@ -2,7 +2,7 @@
     <section id="about" class="assets cta">
         <div class="container mb-3" data-aos="fade-up">
             <div class="section-title">
-                <h2>Raise New Audit Request</h2>
+                <h2>Update Audit Request</h2>
             </div>
             <div class="d-flex flex-column flex-wrap align-items-center form">
                 <form
@@ -11,27 +11,12 @@
                     class="d-flex flex-column"
                     (ngSubmit)="updateRequest()"
                 >
-                    <div class="form-floating mb-3">
-                        <select
-                            class="form-select"
+                    <div *ngIf="!this.isEmployee" class="form-floating mb-3">
+                        <input
+                            type="number"
+                            class="form-control"
                             formControlName="employeeID"
-                            [ngClass]="{
-                                'is-invalid':
-                                    !form.get('employeeID')?.valid &&
-                                    form.get('employeeID')?.touched,
-                                'is-valid': form.get('employeeID')?.valid
-                            }"
-                        >
-                            <option selected value="null" disabled>
-                                Select an Employee
-                            </option>
-                            <option
-                                *ngFor="let employee of employees"
-                                [value]="employee.id"
-                            >
-                                {{ employee.id + " - (" + employee.name + ")" }}
-                            </option>
-                        </select>
+                        />
                         <label for="floatingSelect"
                             >Employee <span>*</span></label
                         >
@@ -130,12 +115,12 @@
                         class="btn btn-outline-warning p-3 create-btn"
                         employee="submit"
                     >
-                        Create
+                        Update
                     </button>
                 </form>
             </div>
         </div>
     </section>
-    <p-toast styleClass="custom-error-toast" *ngIf="!form.valid"> </p-toast>
-    <p-toast styleClass="custom-success-toast" *ngIf="form.valid"> </p-toast>
+    <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
+    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
 </main>

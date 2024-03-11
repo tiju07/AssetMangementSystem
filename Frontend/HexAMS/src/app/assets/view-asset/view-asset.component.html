@@ -62,6 +62,7 @@
                             Delete Asset
                         </button>
                         <button
+                            *ngIf="!isAdmin"
                             routerLink="../../../asset-borrow-return-requests/add/{{
                                 asset.assetID
                             }}"
@@ -73,7 +74,7 @@
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <img
-                        src="{{ asset.assetImage }}"
+                        [src]="asset.assetImageURL"
                         class="img-fluid"
                         alt="Asset Image"
                     />

@@ -16,6 +16,7 @@ import { LastActivePageService } from '../services/last-active-page/last-active-
 export class LoginComponent {
     roles: any[] = [{ label: 'Admin', value: 'admin' }, { label: 'Employee', value: 'employee' }];
     selectedRole!: string;
+    passwordVisible = false;
 
     constructor(private fb: FormBuilder, private messageService: MessageService, private authService: AuthService, private router: Router, private cookieService: CookieService, private location: Location, private jwtService: JwtDecryptorService, private lastActivePageService: LastActivePageService) {
     }
@@ -25,6 +26,9 @@ export class LoginComponent {
         password: new FormControl('', [Validators.required]),
     })
 
+    togglePasswordVisibility() {
+        this.passwordVisible = !this.passwordVisible;
+    }
     login() {
         if (this.selectedRole == undefined) {
             console.log("Select role!")
