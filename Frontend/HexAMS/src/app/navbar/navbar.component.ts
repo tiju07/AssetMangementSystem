@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { MessageService } from 'primeng/api';
 import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
@@ -29,9 +29,25 @@ export class NavbarComponent implements OnInit {
     ngOnInit() {
         this.jwtService._demoSubject.subscribe(res => {
             this.isAuthenticatd = res.isAuthenticated;
-            this.user = res.user;
+            this.user = res.user.toString().split(' ')[0];
             console.log("State: " + JSON.stringify(res))
         });
+    }
+
+    onActivateRequestUrls() {
+        const currentUrl = this.router.url;
+        if (currentUrl.includes("request")) {
+            return true;
+        }
+        return false;
+    }
+
+    onActivateAssetUrls() {
+        const currentUrl = this.router.url;
+        if ((currentUrl.includes("asset") || currentUrl.includes('allocation')) && !currentUrl.includes('audit') && !currentUrl.includes('borrow') && !currentUrl.includes('service')) {
+            return true;
+        }
+        return false;
     }
 
     logout() {

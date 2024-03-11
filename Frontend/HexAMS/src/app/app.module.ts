@@ -22,6 +22,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { Location } from '@angular/common';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { ScrollTopModule } from 'primeng/scrolltop';
+import { ProgressBarModule } from 'primeng/progressbar';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -61,6 +63,8 @@ import { CreateAuditRequestComponent } from './asset-audit-requests/create-audit
 import { UpdateAuditRequestComponent } from './asset-audit-requests/update-audit-request/update-audit-request.component';
 import { ForgotPasswordComponent } from './login/forgot-password/forgot-password.component';
 import { UpdateProfileComponent } from './profile/update-profile/update-profile.component';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
+import { ContactComponent } from './contact/contact.component';
 
 
 
@@ -103,7 +107,9 @@ import { UpdateProfileComponent } from './profile/update-profile/update-profile.
         UpdateAuditRequestComponent,
         PasswordStrengthComponent,
         ForgotPasswordComponent,
-        UpdateProfileComponent
+        UpdateProfileComponent,
+        ResetPasswordComponent,
+        ContactComponent
     ],
     imports: [
         BrowserModule,
@@ -126,7 +132,8 @@ import { UpdateProfileComponent } from './profile/update-profile/update-profile.
         PasswordModule,
         DividerModule,
         PopoverModule,
-        ScrollTopModule
+        ScrollTopModule,
+        ProgressBarModule
     ],
     providers: [MessageService, ConfirmationService, CookieService, Location],
     bootstrap: [AppComponent]

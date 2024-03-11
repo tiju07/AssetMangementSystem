@@ -24,14 +24,14 @@
                             type="text"
                             class="form-control"
                             id="floatingInput"
-                            formControlName="username"
+                            formControlName="userName"
                             placeholder=""
-                            autocomplete="username"
+                            autocomplete="userName"
                             [ngClass]="{
                                 'is-invalid':
-                                    form.get('username')?.touched &&
-                                    !form.get('username')?.valid,
-                                'is-valid': !form.get('username')?.errors
+                                    form.get('userName')?.touched &&
+                                    !form.get('userName')?.valid,
+                                'is-valid': !form.get('userName')?.errors
                             }"
                         />
                         <label for="floatingInput"
@@ -40,8 +40,8 @@
                         <span
                             class="invalid-fb"
                             *ngIf="
-                                form.get('username')?.errors &&
-                                form.get('username')?.touched
+                                form.get('userName')?.errors &&
+                                form.get('userName')?.touched
                             "
                             >Please enter a valid username!</span
                         >
@@ -99,7 +99,7 @@
                         Login
                     </button>
                     <h6 class="text-tertiary mt-4">
-                        <a routerLink="/forgot-password">Forgot Password?</a>
+                        <a routerLink="/reset-password">Forgot Password?</a>
                     </h6>
                     <div class="d-flex flex-row border-custom">
                         <span class="text-light mt-2">

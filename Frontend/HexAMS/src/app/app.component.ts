@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { JwtDecryptorService } from './helpers/jwt-decryptor.service';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -8,7 +9,17 @@ import { JwtDecryptorService } from './helpers/jwt-decryptor.service';
     styleUrl: './app.component.css'
 })
 export class AppComponent {
-    constructor(private cookieService: CookieService, private jwtService: JwtDecryptorService) { }
+    displayProgress = false;
+    constructor(private cookieService: CookieService, private jwtService: JwtDecryptorService, private router: Router) {
+        this.router.events.subscribe(event => {
+            if (event instanceof NavigationStart) {
+                this.displayProgress = true;
+            }
+            else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+                this.displayProgress = false;
+            }
+        });
+    }
     isAuthenticated!: boolean;
     user!: string | undefined;
     ngOnInit() {

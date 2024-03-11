@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { IUser } from '../../interfaces/iuser';
 import { ILogin } from '../../interfaces/ilogin';
 import { CookieService } from 'ngx-cookie-service';
+import { IForgotPassword } from '../../interfaces/iforgotpassword';
 
 @Injectable({
     providedIn: 'root'
@@ -39,12 +40,18 @@ export class AuthService {
     }
 
     updatePassword(credentials: ILogin, role: string) {
-        if (role == 'admin') {
+        console.log(role);
+        if (role == 'Admin' || role == 'admin') {
             return this.http.post<any>('http://localhost:7234/api/v1/Admins/UpdatePassword', credentials, { observe: 'response' });
         }
         else {
             return this.http.post<any>('http://localhost:7234/api/v1/Employees/UpdatePassword', credentials, { observe: 'response' });
         }
+    }
+
+    sendPasswordResetLink(data: IForgotPassword) {
+        console.log(data);
+        return this.http.post<any>('http://localhost:7234/api/v1/ForgotPassword', data, { observe: 'response' });
     }
 
     logout() {

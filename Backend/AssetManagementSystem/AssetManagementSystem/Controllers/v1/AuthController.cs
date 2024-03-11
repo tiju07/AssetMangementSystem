@@ -240,11 +240,15 @@ namespace AssetManagementSystem.Controllers.v1
 
             if (admin != null)
             {
-                await _emailService.Send("tijulukose0402@gmail.com", "Test", "Test Mail");
+                var jwt = _authUtilityRepository.JwtGenerator(admin.ID, admin.Name, "Admin");
+                string body = $"Reset Password Link: http://localhost:4200/forgot-password/{jwt.token}/{admin.Email}";
+                await _emailService.Send("tijulukose0402@gmail.com", "Test", body);
             }
             if (employee != null)
             {
-                await _emailService.Send("tijulukose0402@gmail.com", "Test", "Test Mail");
+                var jwt = _authUtilityRepository.JwtGenerator(employee.ID, employee.Name, "Employee");
+                string body = $"Reset Password Link: http://localhost:4200/forgot-password/{jwt.token}/{employee.Email}";
+                await _emailService.Send("tijulukose0402@gmail.com", "Test", body);
             }
             return Ok();
         }

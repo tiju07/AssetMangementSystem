@@ -2,7 +2,7 @@ import { Component, OnChanges, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
 import { LastActivePageService } from '../../services/last-active-page/last-active-page.service';
@@ -18,10 +18,12 @@ export class ForgotPasswordComponent {
     // isValid = false;
     strongPassword = false;
     currPwd = '';
+    token!: string | null;
+    email!: string | null;
 
     pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    constructor(private fb: FormBuilder, private messageService: MessageService, private authService: AuthService, private router: Router, private cookieService: CookieService, private jwtService: JwtDecryptorService, private lastActivePageService: LastActivePageService) {
+    constructor(private fb: FormBuilder, private messageService: MessageService, private authService: AuthService, private router: Router, private jwtService: JwtDecryptorService, private activatedRoute: ActivatedRoute) {
     }
 
     form = this.fb.group({
@@ -34,10 +36,16 @@ export class ForgotPasswordComponent {
         this.currPwd = this.form.get('password')?.value as string;
     }
 
-    // ngOnInit() {
-    //     this.form.get('password')?.disable();
-    //     this.form.get('confirmPassword')?.disable();
-    // }
+    ngOnInit() {
+        this.token = this.activatedRoute.snapshot?.params['token'];
+        this.email = this.activatedRoute.snapshot?.params['email'];
+        this.form.patchValue({ username: this.email })
+        this.form.get('username')?.disable();
+        const payload = this.jwtService.decodeToken(this.token as string);
+        this.selectedRole = payload['role'] as string;
+        console.log(payload);
+        console.log(this.selectedRole);
+    }
 
     passwordMatchValidator(control: FormGroup) {
         const password = control.get('password')?.value;
@@ -62,11 +70,6 @@ export class ForgotPasswordComponent {
     }
 
     updatePassword() {
-        if (this.selectedRole == undefined) {
-            console.log("Select role!")
-            this.messageService.add({ key: 'success', severity: 'error', summary: 'Error', detail: 'Please select a role!' });
-            return;
-        }
         if (!this.form.valid) {
             this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Please enter all required details' });
             return;

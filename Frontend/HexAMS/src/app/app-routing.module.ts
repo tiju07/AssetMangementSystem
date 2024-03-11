@@ -46,12 +46,16 @@ import { GetAllServiceRequestsResolver, GetServiceRequestByIDResolver } from './
 import { ForgotPasswordComponent } from './login/forgot-password/forgot-password.component';
 import { UpdateProfileComponent } from './profile/update-profile/update-profile.component';
 import { isLoggedInGuard } from './guards/is-logged-in.guard';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
+import { ContactComponent } from './contact/contact.component';
 
 const routes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'register', component: RegisterComponent, canActivate: [isLoggedInGuard] },
     { path: 'login', component: LoginComponent, canActivate: [isLoggedInGuard] },
-    { path: 'forgot-password', component: ForgotPasswordComponent },
+    { path: 'contact', component: ContactComponent },
+    { path: 'reset-password', component: ResetPasswordComponent },
+    { path: 'forgot-password/:token/:email', component: ForgotPasswordComponent },
     { path: 'profile', component: ProfileComponent, canActivate: [generalGuard], resolve: { user: GetUserByIDResolver } },
     { path: 'profile/update', component: UpdateProfileComponent, canActivate: [generalGuard], resolve: { user: GetUserByIDResolver } },
     { path: 'employees', component: EmployeesComponent, canActivate: [adminGuard], resolve: { employees: GetAllEmployeesResolver } },

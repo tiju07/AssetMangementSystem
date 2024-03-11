@@ -22,7 +22,7 @@ export class LoginComponent {
     }
 
     form = this.fb.group({
-        username: new FormControl('', [Validators.required, Validators.min(5)]),
+        userName: new FormControl('', [Validators.required, Validators.min(5)]),
         password: new FormControl('', [Validators.required]),
     })
 
@@ -48,7 +48,6 @@ export class LoginComponent {
                         this.cookieService.deleteAll();
                         this.cookieService.set('auth-token', data.body.token, { sameSite: 'Lax', expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) });
                         this.cookieService.set('name', data.body.name, { sameSite: 'Lax', expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) });
-
                         this.jwtService.setSubject({ isAuthenticated: true, user: this.cookieService.get('name') });
                         const lastActivePage = this.lastActivePageService.getLastActivePage();
                         this.lastActivePageService.clearLastActivePage()

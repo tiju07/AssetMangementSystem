@@ -20,13 +20,17 @@ export class JwtDecryptorService {
         return this.payload;
     }
 
+    decodeToken(token: string) {
+        return jose.decodeJwt(token);
+    }
+
     getRole() {
         if (this.cookieService.check('auth-token')) {
             return this.getUserData().role;
         }
         return 'Guest';
     }
-    
+
 
     public _demoSubject: BehaviorSubject<any> = new BehaviorSubject({ isAuthenticated: false, user: undefined });
     setSubject(value: object) {

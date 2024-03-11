@@ -18,6 +18,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<IAdminRepository> _adminRepositoryMock;
 		private Mock<IEmployeeRepository> _employeeRepositoryMock;
 		private Mock<IAuthUtilityRepository> _authUtilityRepositoryMock;
+		private Mock<IEmailService> _emailServiceMock;
 		private Mock<IMapper> _mapperMock;
 		private Fixture _fixture;
 		private AuthController _controller;
@@ -35,11 +36,12 @@ namespace AssetManagementSystemTestProject
 			_adminRepositoryMock = new Mock<IAdminRepository>();
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
 			_authUtilityRepositoryMock = new Mock<IAuthUtilityRepository>();
+			_emailServiceMock = new Mock<IEmailService>();
 			_mapperMock = new Mock<IMapper>();
 			_fixture = new Fixture();
 			_loggerMock = new Mock<ILogger<AuthController>>();
 
-			_controller = new AuthController(_applicationSettings.Object, _adminRepositoryMock.Object, _employeeRepositoryMock.Object, _authUtilityRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object);
+			_controller = new AuthController(_applicationSettings.Object, _adminRepositoryMock.Object, _employeeRepositoryMock.Object, _authUtilityRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object, _emailServiceMock.Object);
 
 			_fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
 	.ForEach(b => _fixture.Behaviors.Remove(b));
