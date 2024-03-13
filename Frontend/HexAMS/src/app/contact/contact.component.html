@@ -20,6 +20,7 @@
                             class="form d-flex flex-column flex-wrap"
                             style="margin-top: 2rem"
                             [formGroup]="form"
+                            (ngSubmit)="onSubmit()"
                         >
                             <div class="form-floating mb-3">
                                 <input
@@ -29,8 +30,15 @@
                                     placeholder="Name"
                                     formControlName="name"
                                     autocomplete="name"
+                                    [ngClass]="{
+                                        'is-invalid':
+                                            form.get('name')?.errors &&
+                                            form.get('name')?.touched
+                                    }"
                                 />
-                                <label for="floatingInput">Name</label>
+                                <label for="floatingInput"
+                                    >Name <span>*</span></label
+                                >
                             </div>
                             <div class="form-floating mb-3">
                                 <input
@@ -40,8 +48,15 @@
                                     placeholder="name@example.com"
                                     formControlName="email"
                                     autocomplete="email"
+                                    [ngClass]="{
+                                        'is-invalid':
+                                            form.get('email')?.errors &&
+                                            form.get('email')?.touched
+                                    }"
                                 />
-                                <label for="floatingInput">Email address</label>
+                                <label for="floatingInput"
+                                    >Email address <span>*</span></label
+                                >
                             </div>
                             <div class="form-floating">
                                 <textarea
@@ -49,8 +64,17 @@
                                     placeholder="Leave a message for us here..."
                                     style="height: 100px"
                                     formControlName="message"
+                                    minlength="15"
+                                    [ngClass]="{
+                                        'is-invalid':
+                                            form.get('message')?.errors &&
+                                            form.get('message')?.touched
+                                    }"
                                 ></textarea>
-                                <label for="floatingTextarea2">Message</label>
+                                <label for="floatingTextarea2"
+                                    >Message(Minimum 15 characters)
+                                    <span>*</span></label
+                                >
                             </div>
                             <button
                                 class="btn btn-outline-warning p-3 mt-3"
@@ -65,4 +89,6 @@
             </div>
         </div>
     </section>
+    <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
+    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
 </main>

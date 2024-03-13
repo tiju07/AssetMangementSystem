@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AssetService } from '../../services/asset-catalogue/asset.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ICategory } from '../../interfaces/icategory';
 import { CategoriesService } from '../../services/categories/categories.service';
 import { MessageService } from 'primeng/api';
@@ -35,10 +35,23 @@ export class CreateAssetComponent {
         manufacturingDate: new FormControl(null),
         expiryDate: new FormControl(null),
         assetValue: new FormControl(null, [Validators.required, Validators.min(1)]),
-    })
+    }, { validators: dateRangeValidator })
 
     validator(control: string) {
         return this.form.get(control)?.hasError('required') && this.form.get(control)?.touched;
+    }
+
+    validateDateRange() {
+        return this.form.get('manufacturingDate')?.dirty && this.form.get('expiryDate')?.dirty &&
+            this.form.hasError('dateRange');
+    }
+
+    minManufacturingDateValidator() {
+        const value = this.form.get('manufacturingDate')?.value;
+        if (value != null && value != "") {
+            return new Date() < new Date(value)
+        }
+        return false;
     }
 
     toggleTouched() {
@@ -57,6 +70,12 @@ export class CreateAssetComponent {
 
     onFileChange(event: Event) {
         this.image = (event.target as HTMLInputElement).files![0];
+        if (this.image.type != "image/png" && this.image.type != "image/jpg" && this.image.type != "image/jpeg" && this.image.type != "image/webp") {
+            this.image = null;
+            this.fileInput.nativeElement.value = null;
+            this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Invalid File Type! Please use any of the following formats for images: png, jpg or jpeg.' });
+            return;
+        }
         console.log("File: " + this.image.name);
     }
 
@@ -94,8 +113,8 @@ export class CreateAssetComponent {
             assetImageFilename: '',
             assetDescription: this.form.get('assetDescription')!.value,
             assetStatus: this.form.get('assetStatus')!.value,
-            manufacturingDate: this.form.get('manufacturingDate')!.value,
-            expiryDate: this.form.get('expiryDate')!.value,
+            manufacturingDate: this.form.get('manufacturingDate')!.value != "" ? this.form.get('manufacturingDate')!.value : null,
+            expiryDate: this.form.get('expiryDate')!.value != "" ? this.form.get('expiryDate')!.value : null,
             assetValue: this.form.get('assetValue')!.value,
         };
         this.cloudinaryService.uploadImage(this.image).subscribe({
@@ -114,3 +133,9 @@ export class CreateAssetComponent {
         })
     }
 }
+
+export const dateRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const from = control.get('manufacturingDate');
+    const to = control.get('expiryDate');
+    return from && to && from?.value != null && to?.value != null && new Date(to.value) <= new Date(from.value) ? { dateRange: true } : null;
+};

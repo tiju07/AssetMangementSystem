@@ -83,6 +83,9 @@
                     <div
                         class="col-lg-3 col-md-6 d-flex align-items-center ml-5"
                         *ngFor="let asset of assets"
+                        [ngClass]="{
+                            unavailable: asset.assetStatus == 'Unavailable'
+                        }"
                     >
                         <div
                             class="asset"
@@ -120,6 +123,12 @@
                                         }}"
                                         ><i class="bi bi-trash"></i
                                     ></a>
+                                </div>
+                                <div
+                                    *ngIf="asset.assetStatus == 'Unavailable'"
+                                    class="unavailable-text"
+                                >
+                                    Not Available
                                 </div>
                             </div>
                             <div class="asset-info">

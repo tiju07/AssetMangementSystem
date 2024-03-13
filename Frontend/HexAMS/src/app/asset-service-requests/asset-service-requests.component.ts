@@ -4,6 +4,7 @@ import { IServiceRequest } from '../interfaces/iservicerequest';
 import { Column } from '../interfaces/column';
 import { ServiceRequestsService } from '../services/service-requests/service-requests.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
 
 @Component({
     selector: 'app-asset-service-requests',
@@ -12,13 +13,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class AssetServiceRequestsComponent implements OnInit {
 
-    constructor(private serviceRequestService: ServiceRequestsService, private router: Router, private activatedRoute: ActivatedRoute) { }
+    constructor(private serviceRequestService: ServiceRequestsService, private router: Router, private activatedRoute: ActivatedRoute, private jwtService: JwtDecryptorService) { }
 
     cols!: Column[];
     requests!: IServiceRequest[];
     selectedRequest!: IServiceRequest;
+    isAdmin = false;
 
     ngOnInit(): void {
+        if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
         this.cols = [
             { field: 'requestID', header: 'Request ID' },
             { field: 'employeeID', header: 'Employee ID' },

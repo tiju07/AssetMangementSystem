@@ -74,7 +74,7 @@ namespace AssetManagementSystem.Controllers.v1
                 adminToUpdate.PasswordSalt = originalData.PasswordSalt;
 
 
-                if (_adminRepository.AdminExists(_mapper.Map<AdminDto>(adminToUpdate))) ModelState.AddModelError("Errors", "A user with the given details already exists!");
+                if (originalData.Email != adminToUpdate.Email && _adminRepository.AdminExists(_mapper.Map<AdminDto>(adminToUpdate))) ModelState.AddModelError("Errors", "A user with the given details already exists!");
 
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 

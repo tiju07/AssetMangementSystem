@@ -35,13 +35,10 @@
                 </div>
                 <div class="col-lg-6 col-md-6 d-flex flex-column">
                     <button
+                        *ngIf="isAdmin"
                         class="btn btn-outline-warning p-3 my-2"
                         routerLink="../../update/{{ request.requestID }}"
                     >
-                        <i
-                            class="pi pi-pencil"
-                            style="color: rgb(0, 183, 255)"
-                        ></i>
                         Update
                     </button>
                 </div>

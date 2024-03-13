@@ -214,8 +214,8 @@ namespace AssetManagementSystem.Controllers.v1
         }
 
         [MapToApiVersion("1.0")]
-        [Authorize(Roles = "Admin, Employee")]
-        [HttpPost("Logout")]
+        [HttpPost]
+        [Route("Logout")]
         public IActionResult Logout()
         {
             try

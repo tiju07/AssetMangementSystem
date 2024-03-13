@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IAllocation } from '../interfaces/iallocationdetails';
 import { AllocationDetailsService } from '../services/allocation-details/allocation-details.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
 
 interface Column {
     field: string;
@@ -15,13 +16,15 @@ interface Column {
 })
 export class AllocationDetailsComponent implements OnInit {
 
-    constructor(private allocationService: AllocationDetailsService, private router: Router, private activatedRoute: ActivatedRoute) { }
+    constructor(private allocationService: AllocationDetailsService, private router: Router, private activatedRoute: ActivatedRoute, private jwtService: JwtDecryptorService) { }
 
     allocationDetails!: IAllocation[];
     cols!: Column[];
     selectedAllocation!: IAllocation;
+    isAdmin = false;
 
     ngOnInit(): void {
+        if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
         if (!isNaN(this.activatedRoute.snapshot.params['employeeID'])) {
             this.activatedRoute.data.subscribe(data => {
                 console.log(data['allocations'].body as IAllocation[]);

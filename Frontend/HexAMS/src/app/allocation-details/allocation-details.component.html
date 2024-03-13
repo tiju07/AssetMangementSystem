@@ -30,7 +30,7 @@
                             <th *ngFor="let col of columns">
                                 {{ col.header }}
                             </th>
-                            <th>Update</th>
+                            <th *ngIf="isAdmin">Update</th>
                         </tr>
                     </ng-template>
                     <ng-template
@@ -54,7 +54,7 @@
                                         : rowData[col.field]
                                 }}
                             </td>
-                            <td>
+                            <td *ngIf="isAdmin">
                                 <a
                                     routerLink="/allocation-details/update/{{
                                         rowData.assetAllocationID

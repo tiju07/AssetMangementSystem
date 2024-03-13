@@ -1,7 +1,4 @@
 export const environment = {
     production: false,
-    cloudinary: {
-        cloudName: 'domp5l8sc',
-        uploadPreset: 'ml_default'
-    }
+    apiUrl: "http://localhost:7234/api/v1"
 };

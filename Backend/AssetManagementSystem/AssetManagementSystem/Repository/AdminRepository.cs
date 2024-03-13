@@ -19,7 +19,7 @@ namespace AssetManagementSystem.Repository
         }
         public Admin? GetAdminByID(int id)
         {
-            return _context.Admins.FirstOrDefault(a => a.ID == id);
+            return _context.Admins.AsNoTracking().FirstOrDefault(a => a.ID == id);
         }
         public bool UpdateAdmin(Admin admin)
         {

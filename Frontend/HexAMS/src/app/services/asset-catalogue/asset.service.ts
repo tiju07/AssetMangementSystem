@@ -1,8 +1,7 @@
 import { HttpClient, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { IAsset } from '../../interfaces/iasset';
-import { filter } from 'rxjs';
-import { ActivatedRouteSnapshot, ResolveData, ResolveFn, RouterStateSnapshot } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -11,23 +10,25 @@ export class AssetService {
 
     constructor(private http: HttpClient) { }
 
+    url = environment.apiUrl;
+
     getAllAssets(searchQuery: string = '', categoryFilter: string = '') {
-        return this.http.get<IAsset[]>('http://localhost:7234/api/v1/Assets?searchQuery=' + searchQuery + '&categoryFilter=' + categoryFilter, { withCredentials: true })
+        return this.http.get<IAsset[]>(`${this.url}/Assets?searchQuery=` + searchQuery + '&categoryFilter=' + categoryFilter, { withCredentials: true })
     }
 
     getAssetByID(id: number) {
-        return this.http.get<IAsset>('http://localhost:7234/api/v1/Assets/' + id, { withCredentials: true })
+        return this.http.get<IAsset>(`${this.url}/Assets/` + id, { withCredentials: true })
     }
 
     createAsset(asset: IAsset) {
-        return this.http.post<any>('http://localhost:7234/api/v1/Assets', asset, { withCredentials: true, observe: 'response' })
+        return this.http.post<any>(`${this.url}/Assets`, asset, { withCredentials: true, observe: 'response' })
     }
 
     updateAsset(id: number, asset: IAsset) {
-        return this.http.put<any>('http://localhost:7234/api/v1/Assets/' + id, asset, { withCredentials: true, observe: 'response' })
+        return this.http.put<any>(`${this.url}/Assets/` + id, asset, { withCredentials: true, observe: 'response' })
     }
 
     deleteAsset(id: number) {
-        return this.http.delete<HttpResponse<IAsset | any>>('http://localhost:7234/api/v1/Assets/' + id, { withCredentials: true, observe: 'response' })
+        return this.http.delete<HttpResponse<IAsset | any>>(`${this.url}/Assets/` + id, { withCredentials: true, observe: 'response' })
     }
 }

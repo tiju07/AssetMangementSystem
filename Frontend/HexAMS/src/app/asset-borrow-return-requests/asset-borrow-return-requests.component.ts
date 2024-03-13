@@ -3,6 +3,7 @@ import { IBorrowReturnRequest } from '../interfaces/iborrowreturnrequest';
 import { BorrowReturnRequestsService } from '../services/borrow-return-requests/borrow-return-requests.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Column } from '../interfaces/column';
+import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
 
 
 @Component({
@@ -11,13 +12,15 @@ import { Column } from '../interfaces/column';
     styleUrl: './asset-borrow-return-requests.component.css'
 })
 export class AssetBorrowReturnRequestsComponent implements OnInit {
-    constructor(private borrowReturnRequestService: BorrowReturnRequestsService, private router: Router, private activatedRoute: ActivatedRoute) { }
+    constructor(private borrowReturnRequestService: BorrowReturnRequestsService, private router: Router, private activatedRoute: ActivatedRoute, private jwtService: JwtDecryptorService) { }
 
     requests!: IBorrowReturnRequest[];
     cols!: Column[];
     selectedRequest!: IBorrowReturnRequest;
+    isAdmin = false;
 
     ngOnInit(): void {
+        if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
         this.activatedRoute.data.subscribe((data) => {
             this.requests = data['requests'] as IBorrowReturnRequest[];
         })

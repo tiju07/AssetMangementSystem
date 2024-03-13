@@ -50,12 +50,14 @@
                     </table>
                     <div class="d-flex flex-column mt-3">
                         <button
+                            *ngIf="isAdmin"
                             class="btn btn-outline-warning p-2 my-2"
                             routerLink="../../update/{{ asset.assetID }}"
                         >
                             Update Asset
                         </button>
                         <button
+                            *ngIf="isAdmin"
                             class="btn btn-outline-warning p-2 my-2"
                             routerLink="../../delete/{{ asset.assetID }}"
                         >

@@ -11,7 +11,7 @@
     <WebStackScaffolding_DbContextTypeFullName>AssetManagementSystem.Models.AssetManagementSystemContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <ActiveDebugProfile>AssetManagementSystem</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\Properties\PublishProfiles\FolderProfile.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\Properties\PublishProfiles\AssetManagementSystemAPI - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>

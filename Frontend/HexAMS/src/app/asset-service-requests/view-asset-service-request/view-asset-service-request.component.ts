@@ -3,6 +3,7 @@ import { IServiceRequest } from '../../interfaces/iservicerequest';
 import { ServiceRequestsService } from '../../services/service-requests/service-requests.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
 
 @Component({
     selector: 'app-view-asset-service-request',
@@ -11,10 +12,14 @@ import { MessageService } from 'primeng/api';
 })
 export class ViewAssetServiceRequestComponent implements OnInit {
 
-    constructor(private activatedRoute: ActivatedRoute, private messageService: MessageService, private router: Router) { }
+    constructor(private activatedRoute: ActivatedRoute, private messageService: MessageService, private router: Router, private jwtService: JwtDecryptorService) { }
     request!: IServiceRequest;
+    isAdmin = false;
+
 
     ngOnInit(): void {
+        if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
+
         this.activatedRoute.data.subscribe({
             next: (data) => {
                 if (data['request'].error && data['request'].error.status == 401) {

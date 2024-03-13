@@ -74,3 +74,4 @@ export const dateRangeValidator: ValidatorFn = (control: AbstractControl): Valid
     const to = control.get('assetAllocatedTill');
     return from && to && new Date(to.value) <= new Date(from.value) ? { dateRange: true } : null;
 };
+
