@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { MessageService } from 'primeng/api';
@@ -22,6 +22,24 @@ export class NavbarComponent implements OnInit {
         (event.currentTarget as HTMLElement).classList.toggle('bi-list');
         (event.currentTarget as HTMLElement).classList.toggle('bi-x');
     }
+
+    @ViewChild('navbar') navbar!: ElementRef;
+
+    nav = document.querySelector('#navbar') as HTMLElement;
+
+    @HostListener('click', ['$event', '$event.target'])
+    toggleDropdown(event: Event, targetElement: HTMLElement) {
+        console.log("Clicked!")
+        const nav = document.querySelector('#navbar') as HTMLElement;
+        console.log(nav);
+        if (event.target instanceof HTMLElement && targetElement.parentElement?.classList.contains('dropdown') && nav.classList.contains('navbar-mobile')) {
+            console.log("Clicked2!")
+            event.preventDefault();
+            targetElement.nextElementSibling?.classList.toggle('dropdown-active');
+        }
+    }
+
+
 
 
     user!: string | undefined;
@@ -52,12 +70,11 @@ export class NavbarComponent implements OnInit {
 
     logout() {
         this.authService.logout().subscribe(data => console.log(data));
-        console.log("Cookies present before?:" + this.cookieService.check('auth-token') && this.cookieService.check('name'));
-        this.cookieService.deleteAll('/', 'localhost', false, 'Lax');
-        console.log("Cookies present after?:" + this.cookieService.check('auth-token') && this.cookieService.check('name'));
+        this.cookieService.set('auth-token', '', { sameSite: 'None', expires: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), secure: true, path: '/' });
+        this.cookieService.set('name', '', { sameSite: 'None', expires: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), secure: true, path: '/' });
         if (!this.cookieService.check('auth-token') && !this.cookieService.check('name')) {
             this.messageService.add({ key: 'success', severity: "success", summary: "Success", detail: "Logout Successful!", life: 1500 });
-            this.jwtService.setSubject({ isAuthenticatd: false, user: undefined });
+            this.jwtService.setSubject({ isAuthenticated: false, user: undefined });
             this.router.navigate(['/login']);
         }
         else {

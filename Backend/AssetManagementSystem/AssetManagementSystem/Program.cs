@@ -47,7 +47,7 @@ builder.Services.AddApiVersioning().AddApiExplorer(options =>
 
 builder.Services.AddDbContext<AssetManagementSystemContext>(options =>
 {
-	options.UseSqlServer(builder.Configuration.GetConnectionString("ProductionConnection"));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.Configure<AppSettings>(

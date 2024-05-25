@@ -48,12 +48,14 @@ import { UpdateProfileComponent } from './profile/update-profile/update-profile.
 import { isLoggedInGuard } from './guards/is-logged-in.guard';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { ContactComponent } from './contact/contact.component';
+import { PendingAccessAccountsComponent } from './pending-access-accounts/pending-access-accounts.component';
 
 const routes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'register', component: RegisterComponent, canActivate: [isLoggedInGuard] },
     { path: 'login', component: LoginComponent, canActivate: [isLoggedInGuard] },
     { path: 'contact', component: ContactComponent },
+    { path: 'pending-access-accounts', component: PendingAccessAccountsComponent, canActivate: [adminGuard] },
     { path: 'reset-password', component: ResetPasswordComponent },
     { path: 'forgot-password/:token/:email', component: ForgotPasswordComponent },
     { path: 'profile', component: ProfileComponent, canActivate: [generalGuard], resolve: { user: GetUserByIDResolver } },

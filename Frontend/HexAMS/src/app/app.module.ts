@@ -65,6 +65,7 @@ import { ForgotPasswordComponent } from './login/forgot-password/forgot-password
 import { UpdateProfileComponent } from './profile/update-profile/update-profile.component';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { ContactComponent } from './contact/contact.component';
+import { PendingAccessAccountsComponent } from './pending-access-accounts/pending-access-accounts.component';
 
 
 
@@ -109,7 +110,8 @@ import { ContactComponent } from './contact/contact.component';
         ForgotPasswordComponent,
         UpdateProfileComponent,
         ResetPasswordComponent,
-        ContactComponent
+        ContactComponent,
+        PendingAccessAccountsComponent
     ],
     imports: [
         BrowserModule,

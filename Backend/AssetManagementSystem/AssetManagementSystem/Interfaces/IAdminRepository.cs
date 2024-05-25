@@ -6,6 +6,7 @@ namespace AssetManagementSystem.Interfaces
 {
     public interface IAdminRepository
     {
+        public ICollection<Admin> GetAdminsWithPendingAccess();
         public Admin? GetAdminByID(int id);
         public Admin GetAdminByUsername(string username);
         public bool UpdateAdmin(Admin admin);

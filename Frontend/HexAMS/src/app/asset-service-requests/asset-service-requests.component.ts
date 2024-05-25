@@ -38,4 +38,15 @@ export class AssetServiceRequestsComponent implements OnInit {
     onRowSelect() {
         this.router.navigate(['/asset-service-requests', 'view', this.selectedRequest.requestID]);
     }
+
+    getStyleClass(status: string, field: string) {
+        if (field == 'requestID') return 'id-col';
+        else if (field == 'requestStatus') {
+            if (status == 'Open') return 'open';
+            if (status == 'Servicing') return 'servicing';
+            if (status == 'Rejected') return 'rejected';
+            if (status == 'Closed') return 'closed';
+        }
+        return ''
+    }
 }

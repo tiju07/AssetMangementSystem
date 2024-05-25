@@ -1,0 +1,72 @@
+<main id="main">
+    <section id="about" class="assets cta">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Asset Borrow & Return Requests</h2>
+            </div>
+            <div
+                class="container d-flex align-items-end justify-content-between mb-5"
+            >
+                <p-table
+                    [columns]="cols"
+                    [value]="accounts"
+                    dataKey="id"
+                    class="p-datatable"
+                    responsiveLayout="stack"
+                    [breakpoint]="'992px'"
+                    [tableStyle]="{ 'min-width': '80vw' }"
+                >
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of cols">
+                                {{ col.header }}
+                            </th>
+                            <th>Allow</th>
+                            <th>Reject</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template
+                        pTemplate="body"
+                        let-rowData
+                        let-columns="columns"
+                    >
+                        <tr [pSelectableRow]="rowData">
+                            <td
+                                *ngFor="let col of columns"
+                                [ngClass]="col.field === 'id' ? 'id-col' : ''"
+                            >
+                                <span class="p-column-title">{{
+                                    col.header
+                                }}</span>
+                                {{ rowData[col.field] }}
+                            </td>
+                            <td>
+                                <a
+                                    (click)="allowAccess(rowData.id)"
+                                    class="p-button p-button-success"
+                                    ><i
+                                        class="pi pi-check"
+                                        style="color: white"
+                                    ></i
+                                ></a>
+                            </td>
+                            <td>
+                                <a
+                                    (click)="denyAccess(rowData.id)"
+                                    class="p-button p-button-danger"
+                                    ><i
+                                        class="pi pi-times"
+                                        style="color: white"
+                                    ></i
+                                ></a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </section>
+    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
+    <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
+    <p-confirmDialog></p-confirmDialog>
+</main>

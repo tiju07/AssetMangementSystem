@@ -6,3 +6,20 @@
 .id-col {
     background-color: rgb(212, 212, 212);
 }
+
+.open {
+    color: green;
+    font-size: large;
+}
+
+.rejected {
+    color: red;
+}
+
+.servicing {
+    color: orange;
+}
+
+.closed {
+    color: blue;
+}

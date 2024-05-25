@@ -24,6 +24,9 @@
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     [scrollable]="true"
                     scrollHeight="500px"
+                    responsiveLayout="stack"
+                    [breakpoint]="'992px'"
+                    [tableStyle]="{ 'min-width': '80vw' }"
                 >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
@@ -42,10 +45,15 @@
                             <td
                                 *ngFor="let col of columns"
                                 [ngClass]="
-                                    col.field === 'requestID' ? 'id-col' : ''
+                                    getStyleClass(rowData[col.field], col.field)
                                 "
                             >
-                                {{ rowData[col.field] }}
+                                <span class="p-column-title">{{
+                                    col.header
+                                }}</span>
+                                <span *ngIf="col.field == 'requestStatus'"
+                                    >.</span
+                                >{{ rowData[col.field] }}
                             </td>
                             <td *ngIf="isAdmin">
                                 <a

@@ -116,18 +116,30 @@ input[type=number]::-webkit-outer-spin-button {
 
 @media screen and (max-width: 1920px) {
     .form-floating {
-        width: 50em !important;
+        width: 800px !important;
     }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 992px) {
     .form-floating {
-        width: 20em !important;
+        width: 650px !important;
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 768px) {
     .form-floating {
-        width: 10em !important;
+        width: 480px !important;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .form-floating {
+        width: 380px !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .form-floating {
+        width: 320px !important;
     }
 }

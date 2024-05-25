@@ -6,3 +6,16 @@
 .id-col {
     background-color: rgb(212, 212, 212);
 }
+
+
+.verified {
+    color: green;
+}
+
+.rejected {
+    color: red;
+}
+
+.pending {
+    color: orange;
+}

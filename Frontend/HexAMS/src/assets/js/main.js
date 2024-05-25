@@ -129,10 +129,20 @@
      */
     on('click', '.navbar .dropdown > a', function (e) {
         if (select('#navbar').classList.contains('navbar-mobile')) {
-            e.preventDefault()
-            this.nextElementSibling.classList.toggle('dropdown-active')
+        e.preventDefault()
+        this.nextElementSibling.classList.toggle('dropdown-active')
         }
     }, true)
+    // let navbar = select('#navbar', true);
+    // console.log("Navbar: " + navbar);
+    // navbar.forEach(el => {
+    //     on('click', '.navbar li > a', function (e) {
+    //         console.log("Clicked!")
+    //         e.preventDefault()
+    //         this.nextElementSibling.classList.toggle('dropdown-active')
+    //     }, el, true)
+    // })
+
 
     /**
      * Scrool with ofset on links with a class name .scrollto

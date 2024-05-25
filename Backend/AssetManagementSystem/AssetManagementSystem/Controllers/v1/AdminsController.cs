@@ -55,7 +55,26 @@ namespace AssetManagementSystem.Controllers.v1
             }
         }
 
-		[MapToApiVersion("1.0")]
+        [MapToApiVersion("1.0")]
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("GetAccountsWithPendingAccess")]
+        public IActionResult GetAccountsWithPendingAccess()
+        {
+            try
+            {
+                var admins = _mapper.Map<AdminDto[]>(_adminRepository.GetAdminsWithPendingAccess());
+                return Ok(admins);
+
+            }catch (Exception ex)
+            {
+                _logger.LogCritical($"Exception error: {ex.Message}");
+                return StatusCode(500, "An error occured at the server!");
+            }
+
+        }
+
+        [MapToApiVersion("1.0")]
         [Authorize(Roles = "Admin")]
         [HttpPut("{adminID}")]
         public IActionResult UpdateAdmin(int adminID, AdminDto admin)
@@ -105,7 +124,8 @@ namespace AssetManagementSystem.Controllers.v1
             {
                 int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                if (currentAdminID != adminID) return Unauthorized();
+                var admin = _adminRepository.GetAdminByID(currentAdminID);
+                if (!admin.IsVerified) return BadRequest();
 
                 if (!_adminRepository.AdminExists(adminID)) return NotFound();
 
@@ -141,7 +161,6 @@ namespace AssetManagementSystem.Controllers.v1
         [Route("UpdatePassword")]
         public IActionResult UpdatePassword(LoginDto credentials)
         {
-            //Will get by both checking username & email
             var adminToUpdate = _adminRepository.GetAdminByUsername(credentials.UserName);
             if (adminToUpdate != null)
             {
@@ -157,6 +176,36 @@ namespace AssetManagementSystem.Controllers.v1
             }
 
             return NotFound("Could not find any admin with matching username or email!");
+        }
+
+        [MapToApiVersion("1.0")]
+        [Authorize(Roles ="Admin")]
+        [HttpPost("AllowAdminAccess/{adminID}")]
+        public IActionResult AllowAdminAccess(int adminID)
+        {
+            try
+            {
+                int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
+                var admin = _adminRepository.GetAdminByID(currentAdminID);
+
+                if (adminID == admin.ID) return BadRequest();
+
+                if(!admin.IsVerified) return Unauthorized();
+
+                var adminToUpdate = _adminRepository.GetAdminByID(adminID);
+                if (adminToUpdate == null) return NotFound();
+
+                adminToUpdate.IsVerified = true;
+                var result = _adminRepository.UpdateAdmin(adminToUpdate);
+                if (result) return Ok();
+
+                return StatusCode(500, "An internal error occured!");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

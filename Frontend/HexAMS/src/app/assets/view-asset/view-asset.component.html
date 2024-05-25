@@ -5,7 +5,7 @@
                 <h2>Asset Details</h2>
             </div>
             <div class="row">
-                <div class="col-lg-6 col-md-6">
+                <div class="col-lg-6 col-md-12">
                     <table class="table table-dark">
                         <tr>
                             <th>Asset ID</th>
@@ -17,7 +17,7 @@
                         </tr>
                         <tr>
                             <th>Asset Type</th>
-                            <td>{{ asset.assetCategoryID }}</td>
+                            <td>{{ category }}</td>
                         </tr>
                         <tr>
                             <th>Asset Model</th>
@@ -37,15 +37,23 @@
                         </tr>
                         <tr>
                             <th>Manufacturing Date</th>
-                            <td>{{ asset.manufacturingDate | date }}</td>
+                            <td>
+                                {{
+                                    asset.manufacturingDate != null
+                                        ? (asset.manufacturingDate | date)
+                                        : "N/A"
+                                }}
+                            </td>
                         </tr>
                         <tr>
                             <th>Expiry Date</th>
-                            <td>{{ asset.expiryDate ?? "-" }}</td>
+                            <td>
+                                {{ asset.expiryDate ?? "N/A" }}
+                            </td>
                         </tr>
                         <tr>
                             <th>Asset Value</th>
-                            <td>{{ asset.assetValue | currency : "USD" }}</td>
+                            <td>{{ asset.assetValue | currency : "INR" }}</td>
                         </tr>
                     </table>
                     <div class="d-flex flex-column mt-3">

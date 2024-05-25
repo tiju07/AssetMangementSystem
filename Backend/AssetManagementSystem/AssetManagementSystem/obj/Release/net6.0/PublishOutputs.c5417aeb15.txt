@@ -10,8 +10,10 @@ D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Rele
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Asp.Versioning.Mvc.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Asp.Versioning.Mvc.ApiExplorer.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\AutoMapper.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\BouncyCastle.Cryptography.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Humanizer.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\log4net.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\MailKit.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\MessagePack.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\MessagePack.Annotations.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Microsoft.AspNetCore.Authentication.JwtBearer.dll
@@ -59,6 +61,7 @@ D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Rele
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Microsoft.VisualStudio.Web.CodeGeneration.Utils.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Microsoft.Win32.SystemEvents.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\MimeKit.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\Newtonsoft.Json.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\NuGet.Common.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\NuGet.Configuration.dll
@@ -83,11 +86,14 @@ D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Rele
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Configuration.ConfigurationManager.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Diagnostics.DiagnosticSource.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Drawing.Common.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Formats.Asn1.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.IdentityModel.Tokens.Jwt.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Reflection.MetadataLoadContext.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Runtime.Caching.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Security.Cryptography.Pkcs.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Security.Cryptography.ProtectedData.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Security.Permissions.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Text.Encoding.CodePages.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\System.Windows.Extensions.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\af\Humanizer.resources.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\ar\Humanizer.resources.dll
@@ -260,6 +266,8 @@ D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Rele
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
+D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\obj\Release\net6.0\PubTmp\Out\AssetManagementSystem.deps.json

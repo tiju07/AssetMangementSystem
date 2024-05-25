@@ -69,4 +69,7 @@ export class AssetsComponent {
         return this.categories.filter(c => c.categoryID == id)[0].categoryName;
     }
 
+    navigateTo(assetID: number) {
+        this.router.navigate(['/assets', 'view', assetID]);
+    }
 }

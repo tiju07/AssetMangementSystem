@@ -10,13 +10,11 @@
                 <p-table
                     [columns]="cols"
                     [value]="employees"
-                    responsiveLayout="scroll"
                     selectionMode="single"
                     [(selection)]="selectedEmployee"
                     dataKey="categoryID"
                     (onRowSelect)="onRowSelect()"
                     class="p-datatable mb-3"
-                    [tableStyle]="{ 'min-width': '80vw' }"
                     [paginator]="true"
                     [rows]="10"
                     [rowsPerPageOptions]="[5, 10, 15]"
@@ -24,6 +22,9 @@
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     [scrollable]="true"
                     scrollHeight="500px"
+                    responsiveLayout="stack"
+                    [breakpoint]="'992px'"
+                    [tableStyle]="{ 'min-width': '80vw' }"
                 >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
@@ -43,6 +44,9 @@
                                 *ngFor="let col of columns"
                                 [ngClass]="col.field === 'id' ? 'id-col' : ''"
                             >
+                                <span class="p-column-title">{{
+                                    col.header
+                                }}</span>
                                 {{ rowData[col.field] }}
                             </td>
                             <td>

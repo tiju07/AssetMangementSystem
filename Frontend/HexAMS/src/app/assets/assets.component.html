@@ -78,14 +78,15 @@
                     </form>
                 </div>
             </div>
-            <div class="asset-list">
+            <div class="asset-list align-items-center">
                 <div class="row">
                     <div
-                        class="col-lg-3 col-md-6 d-flex align-items-center ml-5"
+                        class="col-xxl-3 col-md-4 col-sm-6 d-flex align-items-center justify-content-center ml-5"
                         *ngFor="let asset of assets"
                         [ngClass]="{
                             unavailable: asset.assetStatus == 'Unavailable'
                         }"
+                        (click)="navigateTo(asset.assetID)"
                     >
                         <div
                             class="asset"

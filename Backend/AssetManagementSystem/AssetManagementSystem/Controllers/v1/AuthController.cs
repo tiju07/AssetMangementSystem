@@ -134,18 +134,102 @@ namespace AssetManagementSystem.Controllers.v1
             }
         }
 
+        //[MapToApiVersion("1.0")]
+        //[HttpPost("Admin/Login")]
+        //public IActionResult AdminLogin(LoginDto loginCredentials)
+        //{
+        //    try
+        //    {
+        //        if (loginCredentials == null) return BadRequest(ModelState);
+
+        //        var admin = _adminRepository.GetAdminByUsername(loginCredentials.UserName);
+        //        if (admin == null) return BadRequest("Invalid Username or Password!");
+
+        //        if (!admin.IsVerified) return BadRequest("Your cannot login to your account as it is not verified!");
+
+        //        var match = _authUtilityRepository.CheckPassword(loginCredentials.Password, admin.PasswordSalt, admin.PasswordHash);
+
+        //        if (!match) return BadRequest("Invalid Username or Password!");
+
+        //        var jwt = _authUtilityRepository.JwtGenerator(admin.ID, admin.Name, "Admin");
+        //        try
+        //        {
+        //            HttpContext.Response.Cookies.Append("token", jwt.token,
+        //                new CookieOptions
+        //                {
+        //                    Expires = DateTime.UtcNow.AddDays(7),
+        //                    HttpOnly = true,
+        //                    Secure = true,
+        //                    IsEssential = true,
+        //                    SameSite = SameSiteMode.None
+        //                });
+        //        }
+        //        catch (Exception ex) { return Ok(jwt); }
+
+        //        return Ok(jwt);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogCritical($"Exception error: {ex.Message}");
+        //        return StatusCode(500, "An error occured at the server!");
+        //    }
+        //}
+
+        //[MapToApiVersion("1.0")]
+        //[HttpPost("Employee/Login")]
+        //public IActionResult EmployeeLogin(LoginDto loginCredentials)
+        //{
+        //    try
+        //    {
+        //        if (loginCredentials == null) return BadRequest(ModelState);
+
+        //        var employee = _employeeRepository.GetEmployeeByUserName(loginCredentials.UserName);
+        //        if (employee == null) return BadRequest("Invalid Username or Password!");
+
+        //        var match = _authUtilityRepository.CheckPassword(loginCredentials.Password, employee.PasswordSalt, employee.PasswordHash);
+
+        //        if (!match) return BadRequest("Invalid Username or Password!");
+
+        //        var jwt = _authUtilityRepository.JwtGenerator(employee.ID, employee.Name, "Employee");
+
+        //        try
+        //        {
+        //            HttpContext.Response.Cookies.Append("token", jwt.token,
+        //                new CookieOptions
+        //                {
+        //                    Expires = DateTime.UtcNow.AddDays(7),
+        //                    HttpOnly = true,
+        //                    Secure = true,
+        //                    IsEssential = true,
+        //                    SameSite = SameSiteMode.None
+        //                });
+        //        }
+        //        catch (Exception ex) { return Ok(jwt); }
+
+        //        return Ok(jwt);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogCritical($"Exception error: {ex.Message}");
+        //        return StatusCode(500, "An error occured at the server!");
+        //    }
+        //}
+
         [MapToApiVersion("1.0")]
-        [HttpPost("Admin/Login")]
-        public IActionResult AdminLogin(LoginDto loginCredentials)
+        [HttpPost("Login")]
+        public IActionResult Login(LoginDto credentials)
         {
-            try
+            if (credentials == null) return BadRequest(ModelState);
+
+            var admin = _adminRepository.GetAdminByUsername(credentials.UserName);
+            var employee = _employeeRepository.GetEmployeeByUserName(credentials.UserName);
+            if(admin == null && employee == null) return BadRequest("Invalid Username or Password!");
+
+            if(admin != null)
             {
-                if (loginCredentials == null) return BadRequest(ModelState);
+                if (!admin.IsVerified) return BadRequest("Invalid Username or Password!");
 
-                var admin = _adminRepository.GetAdminByUsername(loginCredentials.UserName);
-                if (admin == null) return BadRequest("Invalid Username or Password!");
-
-                var match = _authUtilityRepository.CheckPassword(loginCredentials.Password, admin.PasswordSalt, admin.PasswordHash);
+                var match = _authUtilityRepository.CheckPassword(credentials.Password, admin.PasswordSalt, admin.PasswordHash);
 
                 if (!match) return BadRequest("Invalid Username or Password!");
 
@@ -166,25 +250,9 @@ namespace AssetManagementSystem.Controllers.v1
 
                 return Ok(jwt);
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogCritical($"Exception error: {ex.Message}");
-                return StatusCode(500, "An error occured at the server!");
-            }
-        }
-
-        [MapToApiVersion("1.0")]
-        [HttpPost("Employee/Login")]
-        public IActionResult EmployeeLogin(LoginDto loginCredentials)
-        {
-            try
-            {
-                if (loginCredentials == null) return BadRequest(ModelState);
-
-                var employee = _employeeRepository.GetEmployeeByUserName(loginCredentials.UserName);
-                if (employee == null) return BadRequest("Invalid Username or Password!");
-
-                var match = _authUtilityRepository.CheckPassword(loginCredentials.Password, employee.PasswordSalt, employee.PasswordHash);
+                var match = _authUtilityRepository.CheckPassword(credentials.Password, employee.PasswordSalt, employee.PasswordHash);
 
                 if (!match) return BadRequest("Invalid Username or Password!");
 
@@ -205,11 +273,6 @@ namespace AssetManagementSystem.Controllers.v1
                 catch (Exception ex) { return Ok(jwt); }
 
                 return Ok(jwt);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"Exception error: {ex.Message}");
-                return StatusCode(500, "An error occured at the server!");
             }
         }
 

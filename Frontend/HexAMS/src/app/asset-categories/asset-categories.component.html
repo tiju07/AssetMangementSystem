@@ -24,6 +24,9 @@
                     [scrollable]="true"
                     scrollHeight="500px"
                     [tableStyle]="{ 'min-width': '80vw' }"
+                    responsiveLayout="stack"
+                    [breakpoint]="'992px'"
+                    [tableStyle]="{ 'min-width': '80vw' }"
                 >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
@@ -46,9 +49,15 @@
                                     col.field === 'categoryID' ? 'id-col' : ''
                                 "
                             >
+                                <span
+                                    class="p-column-title"
+                                    style="width: 15em"
+                                    >{{ col.header }}</span
+                                >
                                 {{ rowData[col.field] }}
                             </td>
                             <td *ngIf="isAdmin">
+                                <span class="p-column-title"></span>
                                 <a
                                     (click)="updateCategory(rowData.categoryID)"
                                     class="p-button p-button-info"
@@ -59,6 +68,7 @@
                                 ></a>
                             </td>
                             <td *ngIf="isAdmin">
+                                <span class="p-column-title"></span>
                                 <a
                                     class="p-button p-button-danger"
                                     (click)="deleteCategory(rowData.categoryID)"

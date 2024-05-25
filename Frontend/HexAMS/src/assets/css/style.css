@@ -308,7 +308,7 @@ h6 {
     transition: 0.5s;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1200px) {
     .mobile-nav-toggle {
         display: block;
     }
@@ -1137,18 +1137,23 @@ section {
 }
 
 /*--------------------------------------------------------------
-# Team
+# Asset List
 --------------------------------------------------------------*/
 .asset-list {
-    padding: 60px 0;
+    padding: 60px 0 0 0;
 }
 
 .asset-list .asset {
     margin-bottom: 20px;
+    width: 200px;
     overflow: hidden;
     border-radius: 5px;
     background: #fff;
     box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.asset:hover{
+    cursor: pointer;
 }
 
 .asset-list .asset .asset-img {

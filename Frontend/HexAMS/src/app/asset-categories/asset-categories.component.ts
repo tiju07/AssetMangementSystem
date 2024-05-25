@@ -59,7 +59,6 @@ export class AssetCategoriesComponent implements OnInit {
             this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'You are not authorized to perform this action!' });
         }
         else {
-            console.log("Clicked!: " + id);
             this.confirmationService.confirm({
                 message: 'Are you sure that you want to proceed?',
                 header: 'Confirmation',

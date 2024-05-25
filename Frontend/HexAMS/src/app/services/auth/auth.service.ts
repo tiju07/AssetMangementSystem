@@ -15,13 +15,8 @@ export class AuthService {
 
     url = environment.apiUrl;
 
-    login(credentials: ILogin, role: string) {
-        if (role == 'admin') {
-            return this.http.post<any>(`${this.url}/Admin/Login`, credentials, { withCredentials: true, observe: 'response' });
-        }
-        else {
-            return this.http.post<any>(`${this.url}/Employee/Login`, credentials, { withCredentials: true, observe: 'response' });
-        }
+    login(credentials: ILogin) {
+        return this.http.post<any>(`${this.url}/Login`, credentials, { withCredentials: true, observe: 'response' });
     }
 
     register(userData: IUser, role: string) {

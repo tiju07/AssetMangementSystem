@@ -4,15 +4,9 @@
             <div class="section-title">
                 <h2>Login</h2>
             </div>
-            <div class="d-flex flex-column flex-wrap align-items-center form">
-                <div class="">
-                    <p-selectButton
-                        [options]="roles"
-                        [(ngModel)]="selectedRole"
-                        optionLabel="label"
-                        optionValue="value"
-                    ></p-selectButton>
-                </div>
+            <div
+                class="d-flex flex-column flex-wrap align-items-center form mt-5"
+            >
                 <form
                     [formGroup]="form"
                     data-bs-theme="dark"
@@ -111,15 +105,6 @@
             </div>
         </div>
     </section>
-    <p-toast
-        styleClass="custom-error-toast"
-        *ngIf="!form.valid || selectedRole == undefined"
-    >
-    </p-toast>
-    <p-toast
-        styleClass="custom-success-toast"
-        *ngIf="form.valid && selectedRole != undefined"
-    >
-    </p-toast>
-    <p-toast key="error" styleClass="custom-error-toast"> </p-toast>
+    <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
+    <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
 </main>

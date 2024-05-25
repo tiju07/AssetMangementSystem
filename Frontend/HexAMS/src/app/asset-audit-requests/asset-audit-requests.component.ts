@@ -32,4 +32,16 @@ export class AssetAuditRequestsComponent implements OnInit {
     onRowSelect() {
         this.router.navigate(['/asset-audit-requests', 'view', this.selectedRequest.requestID]);
     }
+
+    getStyleClass(status: string, field: string) {
+        if (field == 'requestID') return 'id-col'
+
+        else if (field == 'requestStatus') {
+            if (status == 'Open') return 'open';
+            if (status == 'Verified') return 'verified';
+            if (status == 'Pending') return 'pending';
+            if (status == 'Rejected') return 'rejected';
+        }
+        return ''
+    }
 }

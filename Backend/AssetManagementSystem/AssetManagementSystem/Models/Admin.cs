@@ -31,5 +31,6 @@ namespace AssetManagementSystem.Models
 		[Required]
 		public string ContactNumber { get; set; }
 		public string? Address { get; set; }
-	}
+		public bool IsVerified { get; set; } = false;
+    }
 }

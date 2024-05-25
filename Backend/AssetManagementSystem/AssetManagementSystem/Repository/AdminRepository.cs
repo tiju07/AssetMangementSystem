@@ -71,5 +71,10 @@ namespace AssetManagementSystem.Repository
             return adminToUpdate;
 
         }
+
+        public ICollection<Admin> GetAdminsWithPendingAccess()
+        {
+            return _context.Admins.Where(a => !a.IsVerified).ToList();
+        }
     }
 }

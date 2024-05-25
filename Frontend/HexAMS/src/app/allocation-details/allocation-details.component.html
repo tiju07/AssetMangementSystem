@@ -24,6 +24,9 @@
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     [scrollable]="true"
                     scrollHeight="500px"
+                    responsiveLayout="stack"
+                    [breakpoint]="'992px'"
+                    [tableStyle]="{ 'min-width': '80vw' }"
                 >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
@@ -47,6 +50,9 @@
                                         : ''
                                 "
                             >
+                                <span class="p-column-title">{{
+                                    col.header
+                                }}</span>
                                 {{
                                     col.field == "assetAllocatedFrom" ||
                                     col.field == "assetAllocatedTill"

@@ -1,0 +1,12 @@
+@media screen and (width < 992px) {
+    .row {
+        display: flex;
+        align-items: center;
+        flex-direction: column-reverse !important;
+    }
+
+    img {
+        width: 100%;
+
+    }
+}
