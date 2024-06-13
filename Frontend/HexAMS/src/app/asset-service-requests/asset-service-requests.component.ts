@@ -24,8 +24,8 @@ export class AssetServiceRequestsComponent implements OnInit {
         if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
         this.cols = [
             { field: 'requestID', header: 'Request ID' },
-            { field: 'employeeID', header: 'Employee ID' },
-            { field: 'assetID', header: 'Asset ID' },
+            { field: 'employee', header: 'Employee' },
+            { field: 'asset', header: 'Asset' },
             { field: 'issueType', header: 'Issue Type' },
             { field: 'requestDetails', header: 'Request Details' },
             { field: 'requestStatus', header: 'Request Status' }

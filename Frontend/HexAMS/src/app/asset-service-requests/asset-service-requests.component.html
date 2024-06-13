@@ -53,10 +53,13 @@
                                 }}</span>
                                 <span *ngIf="col.field == 'requestStatus'"
                                     >.</span
-                                >{{ rowData[col.field] }}
+                                >{{ col.field == "asset" ? rowData["asset"].assetName :
+                                col.field == "employee" ? rowData["employee"].name : 
+                                rowData[col.field] }}
                             </td>
                             <td *ngIf="isAdmin">
                                 <a
+                                    *ngIf="rowData.requestStatus != 'Closed' && rowData.requestStatus != 'Rejected'"
                                     routerLink="update/{{ rowData.requestID }}"
                                     class="p-button p-button-info"
                                     ><i

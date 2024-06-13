@@ -86,7 +86,7 @@ namespace AssetManagementSystem.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Exception error: {ex.Message}");
+                _logger.LogCritical($"Exception error: ", ex.Message);
                 return StatusCode(500, "An error occured at the server!");
             }
         }
@@ -129,7 +129,7 @@ namespace AssetManagementSystem.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Exception error: {ex.Message}");
+                _logger.LogCritical($"Exception error: ", ex.Message);
                 return StatusCode(500, "An error occured at the server!");
             }
         }

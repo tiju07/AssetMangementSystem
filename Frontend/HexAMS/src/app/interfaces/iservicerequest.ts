@@ -1,3 +1,6 @@
+import { Asset, IAsset } from "./iasset";
+import { IEmployee } from "./iemployee";
+
 export interface IServiceRequest {
     requestID: number | null;
     employeeID: number | null;
@@ -5,6 +8,8 @@ export interface IServiceRequest {
     issueType: string | null;
     requestDetails: string | null;
     requestStatus: string | null;
+    asset: IAsset | null;
+    employee: IEmployee | null;
 }
 
 

@@ -111,7 +111,7 @@ namespace AssetManagementSystemTestProject
 			_authUtilityRepositoryMock.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).Returns(true);
 
 			//Act
-			var result = _controller.AdminLogin(loginCredentials);
+			var result = _controller.ogi(loginCredentials);
 			var obj = result as OkObjectResult;
 
 			//Assert

@@ -42,6 +42,11 @@ namespace AssetManagementSystem.Controllers.v1
             try
             {
                 var requests = _mapper.Map<ICollection<AssetBorrowAndReturnRequestDto>>(_assetBorrowAndReturnRequestRepository.GetAllRequests());
+                foreach(var request in requests)
+                {
+                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                }
                 return Ok(requests);
             }
             catch (Exception ex)
@@ -70,7 +75,8 @@ namespace AssetManagementSystem.Controllers.v1
                 var request = _mapper.Map<AssetBorrowAndReturnRequestDto>(_assetBorrowAndReturnRequestRepository.GetRequestById(requestID));
 
                 if (currentUserRole != "Admin" && currentUserID != request.EmployeeID) return Unauthorized();
-
+                request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
                 return Ok(request);
             }
             catch (Exception ex)
@@ -95,9 +101,13 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole == "Admin" && !_employeeRepository.EmployeeExists(employeeID)) return NotFound();
 
-                var request = _mapper.Map<ICollection<AssetBorrowAndReturnRequestDto>>(_assetBorrowAndReturnRequestRepository.GetRequestByEmployee(employeeID));
-
-                return Ok(request);
+                var requests = _mapper.Map<ICollection<AssetBorrowAndReturnRequestDto>>(_assetBorrowAndReturnRequestRepository.GetRequestByEmployee(employeeID));
+                foreach (var request in requests)
+                {
+                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                }
+                return Ok(requests);
             }
             catch (Exception ex)
             {

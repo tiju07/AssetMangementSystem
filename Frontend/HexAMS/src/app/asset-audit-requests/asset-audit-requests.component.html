@@ -60,11 +60,14 @@
                                     style="color: black"
                                     >{{ col.header }}</span
                                 >
-                                {{ rowData[col.field] }}
+                                {{ col.field == "asset" ? rowData["asset"].assetName :
+                                col.field == "employee" ? rowData["employee"].name : 
+                                rowData[col.field] }}
                             </td>
                             <td>
                                 <a
                                     routerLink="update/{{ rowData.requestID }}"
+                                    *ngIf="rowData.requestStatus != 'Closed' && rowData.requestStatus != 'Rejected'"
                                     class="p-button p-button-info"
                                     ><i
                                         class="pi pi-pencil"

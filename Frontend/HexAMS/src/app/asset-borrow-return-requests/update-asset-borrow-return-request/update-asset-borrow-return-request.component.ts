@@ -83,7 +83,9 @@ export class UpdateAssetBorrowReturnRequestComponent {
                 requestID: this.request.requestID,
                 ...formValue,
                 assetAllocationFrom: formValue.assetAllocationFrom ? new Date(formValue.assetAllocationFrom) : null,
-                assetAllocationTill: formValue.assetAllocationTill ? new Date(formValue.assetAllocationTill) : null
+                assetAllocationTill: formValue.assetAllocationTill ? new Date(formValue.assetAllocationTill) : null,
+                employee: null,
+                asset: null
             };
             this.borrowReturnRequestService.updateBorrowReturnRequest(this.activatedRoute.snapshot.params['id'], updateParam).subscribe({
                 next: data => {

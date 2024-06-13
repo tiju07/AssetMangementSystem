@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../services/auth/auth.service';
@@ -7,15 +7,19 @@ import { CookieService } from 'ngx-cookie-service';
 import { Location } from '@angular/common';
 import { JwtDecryptorService } from '../helpers/jwt-decryptor.service';
 import { LastActivePageService } from '../services/last-active-page/last-active-page.service';
+import { AppComponent } from '../app.component';
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+    ngOnInit(): void {
+        this.router.onSameUrlNavigation = 'reload';
+    }
     passwordVisible = false;
-
+    
     constructor(private fb: FormBuilder, private messageService: MessageService, private authService: AuthService, private router: Router, private cookieService: CookieService, private location: Location, private jwtService: JwtDecryptorService, private lastActivePageService: LastActivePageService) {
     }
 

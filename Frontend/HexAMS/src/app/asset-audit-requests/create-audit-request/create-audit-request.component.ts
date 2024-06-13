@@ -47,7 +47,7 @@ export class CreateAuditRequestComponent implements OnInit {
             return;
         }
         else {
-            this.auditRequestService.createAuditRequest(this.form.getRawValue()).subscribe({
+            this.auditRequestService.createAuditRequest({asset: null, employee: null, ...this.form.getRawValue()}).subscribe({
                 next: data => {
                     if (data.status == 200) {
                         this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Request Created Successfully! Redirecting...', life: 2000 });

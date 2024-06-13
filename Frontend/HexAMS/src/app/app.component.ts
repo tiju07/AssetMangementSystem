@@ -10,6 +10,8 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 })
 export class AppComponent {
     displayProgress = false;
+    isAdmin = false;
+
     constructor(private cookieService: CookieService, private jwtService: JwtDecryptorService, private router: Router) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -31,6 +33,7 @@ export class AppComponent {
         else {
             this.jwtService.setSubject({ isAuthenticated: false, user: undefined });
         }
+        if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
     }
 
     onActivate(_event: any) {

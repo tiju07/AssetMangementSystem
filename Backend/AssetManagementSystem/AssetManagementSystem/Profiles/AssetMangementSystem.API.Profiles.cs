@@ -31,6 +31,7 @@ namespace AssetManagementSystem.Profiles
             CreateMap<RegistrationDto, EmployeeDto>();
             CreateMap<Admin, AdminDto>();
             CreateMap<AdminDto, Admin>();
+
         }
 	}
 }

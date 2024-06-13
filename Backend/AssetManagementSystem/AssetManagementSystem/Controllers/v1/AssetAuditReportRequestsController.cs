@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Cors;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace AssetManagementSystem.Controllers.v1
 {
@@ -43,6 +44,11 @@ namespace AssetManagementSystem.Controllers.v1
             try
             {
                 var requests = _mapper.Map<ICollection<AssetAuditReportRequestDto>>(_assetAuditReportRequestRepository.GetAllAuditRequests());
+                foreach (var request in requests)
+                {
+                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                }
                 return Ok(requests);
             }
             catch (Exception ex)
@@ -72,7 +78,8 @@ namespace AssetManagementSystem.Controllers.v1
                 var assetAuditReportRequest = _mapper.Map<AssetAuditReportRequestDto>(_assetAuditReportRequestRepository.GetAuditRequestByID(requestID));
 
                 if (currentUserRole != "Admin" && currentUserID != assetAuditReportRequest.EmployeeID) return Unauthorized();
-
+                assetAuditReportRequest.Employee = _employeeRepository.GetEmployeeByID(assetAuditReportRequest.EmployeeID);
+                assetAuditReportRequest.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(assetAuditReportRequest.AssetID));
                 return Ok(assetAuditReportRequest);
             }
             catch (Exception ex)
@@ -102,7 +109,11 @@ namespace AssetManagementSystem.Controllers.v1
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
                 var assetAuditReportRequests = _mapper.Map<ICollection<AssetAuditReportRequestDto>>(_assetAuditReportRequestRepository.GetAuditRequestByEmployee(employeeID));
-
+                foreach (var request in assetAuditReportRequests)
+                {
+                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                }
 
                 return Ok(assetAuditReportRequests);
             }

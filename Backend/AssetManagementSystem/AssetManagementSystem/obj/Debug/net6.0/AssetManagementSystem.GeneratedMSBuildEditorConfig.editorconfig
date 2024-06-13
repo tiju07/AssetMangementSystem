@@ -9,15 +9,11 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = AssetManagementSystem
 build_property.RootNamespace = AssetManagementSystem
-build_property.ProjectDir = D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem\
+build_property.ProjectDir = C:\Users\2000123740\Project\AssetMangementSystem\Backend\AssetManagementSystem\AssetManagementSystem\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\Asset Management\Backend\AssetManagementSystem\AssetManagementSystem
+build_property.MSBuildProjectDirectory = C:\Users\2000123740\Project\AssetMangementSystem\Backend\AssetManagementSystem\AssetManagementSystem
 build_property._RazorSourceGeneratorDebug = 
-
-[C:/Users/Asus/AppData/Roaming/SonarLint for Visual Studio/Bindings/AssetManagementSystem/csharp/SonarLint.xml]
-build_metadata.AdditionalFiles.TargetPath = 
-build_metadata.AdditionalFiles.CssScope = 

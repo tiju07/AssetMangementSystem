@@ -57,7 +57,7 @@ export class CreateAssetBorrowReturnRequestComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill in all required fields!', life: 4000 });
         }
         else {
-            this.borrowReturnRequestService.createBorrowReturnRequest({ requestID: 0, ...this.form.getRawValue() }).subscribe({
+            this.borrowReturnRequestService.createBorrowReturnRequest({ requestID: 0, employee: null, asset: null, ...this.form.getRawValue() }).subscribe({
                 next: data => {
                     if (data.status == 200) {
                         this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Request Creation Successful! Redirecting...', life: 2000 });

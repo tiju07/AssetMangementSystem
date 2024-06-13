@@ -34,4 +34,13 @@ export class ViewAssetBorrowReturnRequestComponent implements OnInit {
             error: (error) => { console.log("Error: " + error) }
         });
     }
+
+    updateAssetRequest(){
+        if(this.request.requestStatus != "Rejected" && this.request.requestStatus != "Closed"){
+            this.router.navigate(['/asset-borrow-return-requests', 'update', this.request.requestID])
+        }
+        else{
+            this.messageService.add({ key: 'error', severity: 'error', summary: 'Error', detail: 'Request cannot be updated!' });
+        }
+    }
 }

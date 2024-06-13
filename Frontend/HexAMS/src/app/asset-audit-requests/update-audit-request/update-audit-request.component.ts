@@ -51,7 +51,7 @@ export class UpdateAuditRequestComponent {
         }
         else {
             const requestID = this.activatedRoute.snapshot.params['id'];
-            this.auditRequestService.updateAuditRequest(requestID, this.form.getRawValue()).subscribe({
+            this.auditRequestService.updateAuditRequest(requestID, {asset: null, employee: null, ...this.form.getRawValue()}).subscribe({
                 next: data => {
                     if (data.status == 204) {
                         this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Request Updated Successfully! Redirecting...', life: 2000 });

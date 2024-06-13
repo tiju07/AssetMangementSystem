@@ -22,8 +22,8 @@ export class AssetAuditRequestsComponent implements OnInit {
         });
         this.cols = [
             { field: 'requestID', header: 'Request ID' },
-            { field: 'employeeID', header: 'Employee ID' },
-            { field: 'assetID', header: 'Asset ID' },
+            { field: 'employee', header: 'Employee' },
+            { field: 'asset', header: 'Asset' },
             { field: 'requestDetails', header: 'Request Details' },
             { field: 'requestStatus', header: 'Request Status' }
         ]

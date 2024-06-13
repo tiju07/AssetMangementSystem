@@ -23,12 +23,13 @@ export class AssetBorrowReturnRequestsComponent implements OnInit {
         if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
         this.activatedRoute.data.subscribe((data) => {
             this.requests = data['requests'] as IBorrowReturnRequest[];
+            console.log(this.requests);
         })
         this.cols = [
             { field: 'requestID', header: 'Request ID' },
-            { field: 'employeeID', header: 'Employee ID' },
-            { field: 'adminID', header: 'Admin ID' },
-            { field: 'assetID', header: 'Asset ID' },
+            { field: 'employeeName', header: 'Employee' },
+            // { field: 'adminID', header: 'Admin ID' },
+            { field: 'assetName', header: 'Asset' },
             { field: 'assetRequestType', header: 'Asset Request Type' },
             { field: 'assetAllocationFrom', header: 'Asset Allocation From' },
             { field: 'assetAllocationTill', header: 'Asset Allocation Till' },

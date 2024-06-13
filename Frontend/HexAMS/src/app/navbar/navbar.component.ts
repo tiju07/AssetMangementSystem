@@ -12,9 +12,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
     styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
-    constructor(private cookieService: CookieService, private messageService: MessageService, private router: Router, private jwtService: JwtDecryptorService, private authService: AuthService) {
-
-    }
+    constructor(private cookieService: CookieService, private messageService: MessageService, private router: Router, private jwtService: JwtDecryptorService, private authService: AuthService) {}
 
     toggleNavbarMobile(event: Event) {
         const navbar = document.querySelector('#navbar') as HTMLElement;
@@ -22,7 +20,7 @@ export class NavbarComponent implements OnInit {
         (event.currentTarget as HTMLElement).classList.toggle('bi-list');
         (event.currentTarget as HTMLElement).classList.toggle('bi-x');
     }
-
+    @Input("isAdmin") isAdmin : boolean = false;
     @ViewChild('navbar') navbar!: ElementRef;
 
     nav = document.querySelector('#navbar') as HTMLElement;
@@ -39,17 +37,17 @@ export class NavbarComponent implements OnInit {
         }
     }
 
-
-
-
     user!: string | undefined;
     isAuthenticatd!: boolean;
     ngOnInit() {
         this.jwtService._demoSubject.subscribe(res => {
             this.isAuthenticatd = res.isAuthenticated;
             this.user = res.user.toString().split(' ')[0];
+            console.log("In ngoninit")
             console.log("State: " + JSON.stringify(res))
+            if (this.jwtService.getRole() == 'Admin') this.isAdmin = true;
         });
+        console.log(this.jwtService.getRole());
     }
 
     onActivateRequestUrls() {
@@ -69,6 +67,7 @@ export class NavbarComponent implements OnInit {
     }
 
     logout() {
+        this.isAdmin = false;
         this.authService.logout().subscribe(data => console.log(data));
         this.cookieService.set('auth-token', '', { sameSite: 'None', expires: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), secure: true, path: '/' });
         this.cookieService.set('name', '', { sameSite: 'None', expires: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), secure: true, path: '/' });

@@ -52,15 +52,18 @@
                                     col.header
                                 }}</span>
                                 {{
-                                    col.field == "assetAllocationFrom" ||
+                                    col.field == "assetName" ? rowData["asset"].assetName :
+                                    col.field == "employeeName" ? rowData["employee"].name : 
+                                    (col.field == "assetAllocationFrom" ||
                                     col.field == "assetAllocationTill"
                                         ? (rowData[col.field] | date)
-                                        : rowData[col.field]
+                                        : rowData[col.field])
                                 }}
                             </td>
                             <td *ngIf="isAdmin">
                                 <span class="p-column-title"></span>
                                 <a
+                                    *ngIf="rowData.requestStatus != 'Closed' && rowData.requestStatus != 'Rejected'"
                                     routerLink="update/{{ rowData.requestID }}"
                                     class="p-button p-button-info"
                                     ><i

@@ -47,7 +47,7 @@ builder.Services.AddApiVersioning().AddApiExplorer(options =>
 
 builder.Services.AddDbContext<AssetManagementSystemContext>(options =>
 {
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")??String.Empty);
 });
 
 builder.Services.Configure<AppSettings>(
@@ -82,7 +82,7 @@ builder.Services.AddAuthentication(x =>
 	x.TokenValidationParameters = new TokenValidationParameters
 	{
 		ValidateIssuerSigningKey = true,
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["ApplicationSettings:Secret"])),
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["ApplicationSettings:Secret"]??"")),
 		ValidateIssuer = false,
 		ValidateAudience = false
 	};

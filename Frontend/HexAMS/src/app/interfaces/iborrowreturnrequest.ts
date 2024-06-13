@@ -1,3 +1,6 @@
+import { IAsset } from "./iasset";
+import { IEmployee } from "./iemployee";
+
 export interface IBorrowReturnRequest {
     requestID: number | null;
     employeeID: number | null;
@@ -9,4 +12,6 @@ export interface IBorrowReturnRequest {
     assetCount: number | null;
     requestDetails: string | null;
     requestStatus: string | null;
+    employee: IEmployee | null;
+    asset: IAsset | null;
 }

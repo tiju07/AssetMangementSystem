@@ -12,12 +12,12 @@
                             <td>{{ request.requestID }}</td>
                         </tr>
                         <tr>
-                            <th>Employee ID</th>
-                            <td>{{ request.employeeID }}</td>
+                            <th>Employee</th>
+                            <td>{{ request.employee?.name + " ( " + request.employeeID + " )" }}</td>
                         </tr>
                         <tr>
-                            <th>Asset ID</th>
-                            <td>{{ request.assetID }}</td>
+                            <th>Asset</th>
+                            <td>{{ request.asset?.assetName }}</td>
                         </tr>
                         <tr>
                             <th>Issue Type</th>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-lg-6 col-md-6 d-flex flex-column">
                     <button
-                        *ngIf="isAdmin"
+                        *ngIf="isAdmin && this.request.requestStatus != 'Closed' && this.request.requestStatus != 'Rejected'"
                         class="btn btn-outline-warning p-3 my-2"
                         routerLink="../../update/{{ request.requestID }}"
                     >

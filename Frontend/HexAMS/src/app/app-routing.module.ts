@@ -49,6 +49,7 @@ import { isLoggedInGuard } from './guards/is-logged-in.guard';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { ContactComponent } from './contact/contact.component';
 import { PendingAccessAccountsComponent } from './pending-access-accounts/pending-access-accounts.component';
+import { updateAllowedGuard } from './guards/update-allowed.guard';
 
 const routes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -81,16 +82,16 @@ const routes: Routes = [
     { path: 'asset-borrow-return-requests/view/:id', component: ViewAssetBorrowReturnRequestComponent, canActivate: [generalGuard], resolve: { request: GetBorrowReturnRequestByID } },
     { path: 'asset-borrow-return-requests/add', component: CreateAssetBorrowReturnRequestComponent, canActivate: [employeeGuard], resolve: { assets: GetAllAssetsResolver } },
     { path: 'asset-borrow-return-requests/add/:assetID', component: CreateAssetBorrowReturnRequestComponent, canActivate: [employeeGuard], resolve: { assets: GetAllAssetsResolver } },
-    { path: 'asset-borrow-return-requests/update/:id', component: UpdateAssetBorrowReturnRequestComponent, canActivate: [adminGuard], resolve: { request: GetBorrowReturnRequestByID, assets: GetAllAssetsResolver } },
+    { path: 'asset-borrow-return-requests/update/:id', component: UpdateAssetBorrowReturnRequestComponent, canActivate: [adminGuard, updateAllowedGuard], resolve: { request: GetBorrowReturnRequestByID, assets: GetAllAssetsResolver } },
     { path: 'asset-audit-requests', component: AssetAuditRequestsComponent, canActivate: [generalGuard], resolve: { requests: GetAllAuditRequestsResolver } },
     { path: 'asset-audit-requests/view/:id', component: ViewAssetAuditRequestComponent, canActivate: [generalGuard], resolve: { request: GetAuditRequestByIDResolver } },
     { path: 'asset-audit-requests/add', component: CreateAuditRequestComponent, canActivate: [adminGuard], resolve: { assets: GetAllAssetsResolver, employees: GetAllEmployeesResolver } },
     { path: 'asset-audit-requests/add/:employeeID', component: CreateAuditRequestComponent, canActivate: [adminGuard], resolve: { assets: GetAllAssetsResolver, employees: GetAllEmployeesResolver } },
-    { path: 'asset-audit-requests/update/:id', component: UpdateAuditRequestComponent, canActivate: [generalGuard], resolve: { assets: GetAllAssetsResolver, request: GetAuditRequestByIDResolver } },
+    { path: 'asset-audit-requests/update/:id', component: UpdateAuditRequestComponent, canActivate: [generalGuard, updateAllowedGuard], resolve: { assets: GetAllAssetsResolver, request: GetAuditRequestByIDResolver } },
     { path: 'asset-service-requests', component: AssetServiceRequestsComponent, canActivate: [generalGuard], resolve: { requests: GetAllServiceRequestsResolver } },
     { path: 'asset-service-requests/view/:id', component: ViewAssetServiceRequestComponent, canActivate: [generalGuard], resolve: { request: GetServiceRequestByIDResolver } },
     { path: 'asset-service-requests/add', component: CreateAssetServiceRequestComponent, canActivate: [employeeGuard], resolve: { assets: GetAllAssetsResolver } },
-    { path: 'asset-service-requests/update/:id', component: UpdateAssetServiceRequestComponent, canActivate: [adminGuard], resolve: { request: GetServiceRequestByIDResolver, assets: GetAllAssetsResolver } },
+    { path: 'asset-service-requests/update/:id', component: UpdateAssetServiceRequestComponent, canActivate: [adminGuard, updateAllowedGuard], resolve: { request: GetServiceRequestByIDResolver, assets: GetAllAssetsResolver } },
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: '**', redirectTo: 'home' }
 ];

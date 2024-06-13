@@ -44,7 +44,11 @@ namespace AssetManagementSystem.Controllers.v1
             try
             {
                 var requests = _mapper.Map<ICollection<AssetServiceRequestDto>>(_assetServiceRequestRepository.GetAllServiceRequests());
-
+                foreach (var request in requests)
+                {
+                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                }
                 return Ok(requests);
             }
             catch (Exception ex)
@@ -74,6 +78,8 @@ namespace AssetManagementSystem.Controllers.v1
                 var request = _mapper.Map<AssetServiceRequestDto>(_assetServiceRequestRepository.GetServiceRequestByID(requestID));
 
                 if (currentUserRole != "Admin" && currentUserID != request.EmployeeID) return Unauthorized();
+                request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
 
                 return Ok(request);
             }
@@ -104,7 +110,11 @@ namespace AssetManagementSystem.Controllers.v1
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
                 var requests = _mapper.Map<ICollection<AssetServiceRequestDto>>(_assetServiceRequestRepository.GetServiceRequestsByEmployee(employeeID));
-
+                foreach (var request in requests)
+                {
+                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                }
                 return Ok(requests);
             }
             catch (Exception ex)

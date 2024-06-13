@@ -7,7 +7,7 @@ namespace AssetManagementSystem.Interfaces
     public interface IEmployeeRepository
     {
         public ICollection<EmployeeAdminViewModel> GetAllEmployees();
-        public EmployeeAdminViewModel GetEmployeeByID(int employeeID);
+        public EmployeeAdminViewModel? GetEmployeeByID(int employeeID);
         public Employee GetEmployeeByIDWithCredentials(int employeeID);
         public Employee GetEmployeeByUserName(string username);
         public bool CreateEmployee(Employee employee);

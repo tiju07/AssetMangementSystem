@@ -15,7 +15,7 @@ export class PendingAccessAccountsComponent implements OnInit {
 
     accounts!: IUserProfile[];
     cols!: Column[];
-
+    
     ngOnInit() {
         this.adminService.getAccountsWithPendingAccess().subscribe(data => this.accounts = data.body as IUserProfile[]);
         this.cols = [

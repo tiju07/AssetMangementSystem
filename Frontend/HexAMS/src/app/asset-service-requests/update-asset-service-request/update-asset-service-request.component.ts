@@ -42,7 +42,7 @@ export class UpdateAssetServiceRequestComponent {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please fill all the required fields' });
             return;
         }
-        this.serviceRequestService.updateServiceRequest(this.activatedRoute.snapshot.params['id'], this.form.getRawValue()).subscribe({
+        this.serviceRequestService.updateServiceRequest(this.activatedRoute.snapshot.params['id'], {asset: null, employee: null, ...this.form.getRawValue()}).subscribe({
             next: (data) => {
                 if (data.status == 204) {
                     this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Request Updated Successfully! Redirecting...', life: 2000 });

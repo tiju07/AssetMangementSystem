@@ -1,9 +1,14 @@
+import { IAsset } from "./iasset";
+import { IEmployee } from "./iemployee";
+
 export interface IAuditRequest {
     requestID: number | null;
     employeeID: number | null;
     assetID: number | null;
     requestDetails: string | null;
     requestStatus: string | null;
+    asset: IAsset | null;
+    employee: IEmployee | null
 }
 
 

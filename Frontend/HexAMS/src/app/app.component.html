@@ -4,7 +4,7 @@
         mode="indeterminate"
         [style]="{ height: '2px' }"
     ></p-progressBar>
-    <app-navbar></app-navbar>
+    <app-navbar [isAdmin]="isAdmin"></app-navbar>
     <div class="mt-2">
         <router-outlet (activate)="onActivate($event)"></router-outlet>
     </div>

@@ -17,7 +17,7 @@
                         >Home</a
                     >
                 </li>
-                <li>
+                <li *ngIf="isAdmin">
                     <a
                         class="nav-link scrollto"
                         routerLink="pending-access-accounts"
@@ -25,7 +25,7 @@
                         >Pending Registrations</a
                     >
                 </li>
-                <li class="dropdown">
+                <li class="dropdown" *ngIf="isAdmin">
                     <a
                         class="nav-link scrollto"
                         routerLink="employees"
@@ -222,3 +222,4 @@
     <p-toast styleClass="custom-error-toast" key="error"> </p-toast>
     <p-toast styleClass="custom-success-toast" key="success"> </p-toast>
 </header>
+

@@ -11,7 +11,6 @@ import { JwtDecryptorService } from '../../helpers/jwt-decryptor.service';
     styleUrl: './view-asset-service-request.component.css'
 })
 export class ViewAssetServiceRequestComponent implements OnInit {
-
     constructor(private activatedRoute: ActivatedRoute, private messageService: MessageService, private router: Router, private jwtService: JwtDecryptorService) { }
     request!: IServiceRequest;
     isAdmin = false;

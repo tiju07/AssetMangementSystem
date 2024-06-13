@@ -37,7 +37,7 @@ export class CreateAssetServiceRequestComponent implements OnInit {
             return;
         }
         // this.messageService.add({ key: 'success', severity: 'success', summary: 'Success', detail: 'Request Createed Successfully! Redirecting...', life: 2000 });
-        this.serviceRequestService.createServiceRequest(this.form.getRawValue()).subscribe({
+        this.serviceRequestService.createServiceRequest({asset: null, employee: null, ...this.form.getRawValue()}).subscribe({
             next: data => {
                 console.log(data);
                 if (data.status == 200) {

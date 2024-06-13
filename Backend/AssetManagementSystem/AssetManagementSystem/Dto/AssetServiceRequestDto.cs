@@ -1,4 +1,5 @@
 ﻿using AssetManagementSystem.Models;
+using AssetManagementSystem.ViewModels;
 using System.ComponentModel.DataAnnotations;
 
 namespace AssetManagementSystem.Dto
@@ -20,5 +21,7 @@ namespace AssetManagementSystem.Dto
 
 		[Required]
 		public string RequestStatus { get; set; }
-	}
+        public EmployeeAdminViewModel Employee { get; set; }
+        public AssetDto Asset { get; set; }
+    }
 }
