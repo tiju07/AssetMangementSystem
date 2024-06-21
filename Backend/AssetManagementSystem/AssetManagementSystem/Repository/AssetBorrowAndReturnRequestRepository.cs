@@ -1,6 +1,7 @@
 ﻿using AssetManagementSystem.Data;
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagementSystem.Repository
 {
@@ -12,42 +13,42 @@ namespace AssetManagementSystem.Repository
         {
             _context = context;
         }
-        public bool CreateRequest(AssetBorrowAndReturnRequest request)
+        public async Task<bool> CreateRequest(AssetBorrowAndReturnRequest request)
         {
             _context.AssetBorrowAndReturnRequests.Add(request);
-            return Save();
+            return await Save();
         }
 
-        public ICollection<AssetBorrowAndReturnRequest> GetAllRequests()
+        public async Task<ICollection<AssetBorrowAndReturnRequest>> GetAllRequests()
         {
             return _context.AssetBorrowAndReturnRequests.ToList();
         }
 
-        public AssetBorrowAndReturnRequest GetRequestById(int requestID)
+        public async Task<AssetBorrowAndReturnRequest> GetRequestById(int requestID)
         {
             return _context.AssetBorrowAndReturnRequests.Find(requestID);
         }
 
-        public bool RequestExists(int requestID)
+        public async Task<bool> RequestExists(int requestID)
         {
             return _context.AssetBorrowAndReturnRequests.Any(a => a.RequestID == requestID);
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var result = _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public bool UpdateRequest(AssetBorrowAndReturnRequest request)
+        public async Task<bool> UpdateRequest(AssetBorrowAndReturnRequest request)
         {
             _context.AssetBorrowAndReturnRequests.Update(request);
-            return Save();
+            return await Save();
         }
 
-        public ICollection<AssetBorrowAndReturnRequest> GetRequestByEmployee(int employeeID)
+        public async Task<ICollection<AssetBorrowAndReturnRequest>> GetRequestByEmployee(int employeeID)
         {
-            return _context.AssetBorrowAndReturnRequests.Where(r => r.EmployeeID == employeeID).ToList();
+            return await _context.AssetBorrowAndReturnRequests.Where(r => r.EmployeeID == employeeID).ToListAsync();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<ILogger<AssetBorrowAndReturnRequestsController>> _loggerMock;
 
 		[SetUp]
-		public void SetUp()
+		public async Task SetUp()
 		{
 			_assetBorrowAndReturnRequestRepositoryMock = new Mock<IAssetBorrowAndReturnRequestRepository>();
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
@@ -47,7 +47,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAssetBorrowAndReturnRequests_ReturnsOk()
+		public async Task GetAssetBorrowAndReturnRequests_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -69,14 +69,14 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetBorrowAndReturnRequestDto>>(It.IsAny<AssetAuditReportRequest>)).Returns(requests);
 
-			var result = _controller.GetAssetBorrowAndReturnRequests();
+			var result = await _controller.GetAssetBorrowAndReturnRequests();
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetBorrowAndReturnRequestByID_ReturnsOk()
+		public async Task GetAssetBorrowAndReturnRequestByID_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -96,18 +96,18 @@ namespace AssetManagementSystemTestProject
 
 			var request = _fixture.Create<AssetBorrowAndReturnRequestDto>();
 
-			_assetBorrowAndReturnRequestRepositoryMock.Setup(a => a.RequestExists(It.IsAny<int>())).Returns(true);
+			_assetBorrowAndReturnRequestRepositoryMock.Setup(a => a.RequestExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetBorrowAndReturnRequestDto>(It.IsAny<AssetBorrowAndReturnRequest>())).Returns(request);
 
-			var result = _controller.GetAssetBorrowAndReturnRequestByID(1);
+			var result = await _controller.GetAssetBorrowAndReturnRequestByID(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetBorrowAndReturnRequestByEmployee_ReturnsOk()
+		public async Task GetAssetBorrowAndReturnRequestByEmployee_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -127,18 +127,18 @@ namespace AssetManagementSystemTestProject
 
 			var requests = _fixture.CreateMany<AssetBorrowAndReturnRequestDto>(5).ToList();
 
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetBorrowAndReturnRequestDto>>(It.IsAny<AssetBorrowAndReturnRequest>())).Returns(requests);
 
-			var result = _controller.GetAssetBorrowAndReturnRequestByEmployee(1);
+			var result = await _controller.GetAssetBorrowAndReturnRequestByEmployee(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void CreateAssetBorrowAndReturnRequest_ReturnsOk()
+		public async Task CreateAssetBorrowAndReturnRequest_ReturnsOk()
 		{
 			var employee = _fixture.Create<Employee>();
 
@@ -164,22 +164,22 @@ namespace AssetManagementSystemTestProject
 			mappedRequest.AssetAllocationTill = DateTime.Now.AddDays(1);
 			mappedRequest.AssetRequestType = "Borrow";
 			
-			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<int>())).Returns(true);
+			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetBorrowAndReturnRequest>(It.IsAny<AssetBorrowAndReturnRequestDto>)).Returns(request);
 
-			_assetBorrowAndReturnRequestRepositoryMock.Setup(r => r.CreateRequest(It.IsAny<AssetBorrowAndReturnRequest>())).Returns(true);
+			_assetBorrowAndReturnRequestRepositoryMock.Setup(r => r.CreateRequest(It.IsAny<AssetBorrowAndReturnRequest>())).Returns(Task.FromResult(true));
 
-			var result = _controller.CreateAssetBorrowAndReturnRequest(mappedRequest);
+			var result = await _controller.CreateAssetBorrowAndReturnRequest(mappedRequest);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void UpdateAssetBorrowAndReturnRequest_ReturnsOk()
+		public async Task UpdateAssetBorrowAndReturnRequest_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -205,19 +205,19 @@ namespace AssetManagementSystemTestProject
 			mappedRequest.AssetAllocationTill = DateTime.Now.AddDays(1);
 			mappedRequest.AssetRequestType = "Borrow";
 
-			_assetBorrowAndReturnRequestRepositoryMock.Setup(x => x.RequestExists(It.IsAny<int>())).Returns(true);
+			_assetBorrowAndReturnRequestRepositoryMock.Setup(x => x.RequestExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<int>())).Returns(true);
+			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetBorrowAndReturnRequest>(It.IsAny<AssetBorrowAndReturnRequestDto>)).Returns(request);
 
-			_assetBorrowAndReturnRequestRepositoryMock.Setup(r => r.UpdateRequest(It.IsAny<AssetBorrowAndReturnRequest>())).Returns(true);
+			_assetBorrowAndReturnRequestRepositoryMock.Setup(r => r.UpdateRequest(It.IsAny<AssetBorrowAndReturnRequest>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateAssetBorrowAndReturnRequest(mappedRequest.RequestID, mappedRequest);
+			var result = await _controller.UpdateAssetBorrowAndReturnRequest(mappedRequest.RequestID, mappedRequest);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);

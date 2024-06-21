@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -25,16 +26,18 @@ namespace AssetManagementSystem.Controllers.v1
         private readonly AppSettings _applicationSettings;
         private readonly IAdminRepository _adminRepository;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IExternalAuthRepository _externalAuthRepository;
         private readonly IAuthUtilityRepository _authUtilityRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthController> _logger;
         private readonly IEmailService _emailService;
 
-        public AuthController(IOptions<AppSettings> applicationSettings, IAdminRepository adminRepository, IEmployeeRepository employeeRepository, IAuthUtilityRepository authUtilityRepository, IMapper mapper, ILogger<AuthController> logger, IEmailService emailService)
+        public AuthController(IOptions<AppSettings> applicationSettings, IAdminRepository adminRepository, IEmployeeRepository employeeRepository, IExternalAuthRepository externalAuthRepository, IAuthUtilityRepository authUtilityRepository, IMapper mapper, ILogger<AuthController> logger, IEmailService emailService)
         {
             _applicationSettings = applicationSettings.Value;
             _adminRepository = adminRepository;
             _employeeRepository = employeeRepository;
+            _externalAuthRepository = externalAuthRepository;
             _authUtilityRepository = authUtilityRepository;
             _mapper = mapper;
             _logger = logger;
@@ -43,7 +46,7 @@ namespace AssetManagementSystem.Controllers.v1
 
         [MapToApiVersion("1.0")]
         [HttpPost("Admin/Register")]
-        public IActionResult RegisterAdmin(RegistrationDto registrationData)
+        public async Task<IActionResult> RegisterAdmin(RegistrationDto registrationData)
         {
             try
             {
@@ -60,7 +63,7 @@ namespace AssetManagementSystem.Controllers.v1
                 AdminDto admin = _mapper.Map<AdminDto>(registrationData);
 
 
-                if (_adminRepository.AdminExists(admin) || _employeeRepository.EmployeeExists(admin.Email))
+                if (await _adminRepository.AdminExists(admin) || await _employeeRepository.EmployeeExists(admin.Email))
                 {
                     ModelState.AddModelError("Error", "A user with the email already exists!");
                     return BadRequest(ModelState);
@@ -74,7 +77,7 @@ namespace AssetManagementSystem.Controllers.v1
                     adminToCreate.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registrationData.Password));
                 }
 
-                var result = _adminRepository.CreateAdmin(adminToCreate);
+                var result = await _adminRepository.CreateAdmin(adminToCreate);
 
                 if (result)
                 {
@@ -93,7 +96,7 @@ namespace AssetManagementSystem.Controllers.v1
 
         [MapToApiVersion("1.0")]
         [HttpPost("Employee/Register")]
-        public IActionResult RegisterEmployee(RegistrationDto registrationData)
+        public async Task<IActionResult> RegisterEmployee(RegistrationDto registrationData)
         {
             try
             {
@@ -107,7 +110,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var employee = _mapper.Map<EmployeeDto>(registrationData);
 
-                if (_employeeRepository.EmployeeExists(employee) || _adminRepository.AdminExists(employee.Email))
+                if (await _employeeRepository.EmployeeExists(employee) || await _adminRepository.AdminExists(employee.Email))
                 {
                     return BadRequest("A user with the email already exists!");
                 }
@@ -120,7 +123,7 @@ namespace AssetManagementSystem.Controllers.v1
                     employeeToCreate.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registrationData.Password));
                 }
 
-                var result = _employeeRepository.CreateEmployee(employeeToCreate);
+                var result = await _employeeRepository.CreateEmployee(employeeToCreate);
 
                 if (result) return Ok(employeeToCreate);
 
@@ -136,13 +139,13 @@ namespace AssetManagementSystem.Controllers.v1
 
         //[MapToApiVersion("1.0")]
         //[HttpPost("Admin/Login")]
-        //public IActionResult AdminLogin(LoginDto loginCredentials)
+        //public async Task<IActionResult> AdminLogin(LoginDto loginCredentials)
         //{
         //    try
         //    {
         //        if (loginCredentials == null) return BadRequest(ModelState);
 
-        //        var admin = _adminRepository.GetAdminByUsername(loginCredentials.UserName);
+        //        var admin = await _adminRepository.GetAdminByUsername(loginCredentials.UserName);
         //        if (admin == null) return BadRequest("Invalid Username or Password!");
 
         //        if (!admin.IsVerified) return BadRequest("Your cannot login to your account as it is not verified!");
@@ -177,13 +180,13 @@ namespace AssetManagementSystem.Controllers.v1
 
         //[MapToApiVersion("1.0")]
         //[HttpPost("Employee/Login")]
-        //public IActionResult EmployeeLogin(LoginDto loginCredentials)
+        //public async Task<IActionResult> EmployeeLogin(LoginDto loginCredentials)
         //{
         //    try
         //    {
         //        if (loginCredentials == null) return BadRequest(ModelState);
 
-        //        var employee = _employeeRepository.GetEmployeeByUserName(loginCredentials.UserName);
+        //        var employee = await _employeeRepository.GetEmployeeByUserName(loginCredentials.UserName);
         //        if (employee == null) return BadRequest("Invalid Username or Password!");
 
         //        var match = _authUtilityRepository.CheckPassword(loginCredentials.Password, employee.PasswordSalt, employee.PasswordHash);
@@ -217,12 +220,12 @@ namespace AssetManagementSystem.Controllers.v1
 
         [MapToApiVersion("1.0")]
         [HttpPost("Login")]
-        public IActionResult Login(LoginDto credentials)
+        public async Task<IActionResult> Login(LoginDto credentials)
         {
             if (credentials == null) return BadRequest(ModelState);
 
-            var admin = _adminRepository.GetAdminByUsername(credentials.UserName);
-            var employee = _employeeRepository.GetEmployeeByUserName(credentials.UserName);
+            var admin = await _adminRepository.GetAdminByUsername(credentials.UserName);
+            var employee = await _employeeRepository.GetEmployeeByUserName(credentials.UserName);
             if(admin == null && employee == null) return BadRequest("Invalid Username or Password!");
 
             if(admin != null)
@@ -276,10 +279,62 @@ namespace AssetManagementSystem.Controllers.v1
             }
         }
 
+        [HttpPost("Login/Google")]
+        public async Task<IActionResult> LoginWithGoogle(ExternalAuthDto externalAuth)
+        {
+            var payload = await _authUtilityRepository.VerifyGoogleToken(externalAuth);
+            if (payload == null) return BadRequest("Invalid Google Authentication");
+
+            var info = new UserLoginInfo(externalAuth.Provider, payload.Subject, externalAuth.Provider);
+
+            var admin = await _adminRepository.GetAdminByUsername(payload.Email);
+            var employee = await _employeeRepository.GetEmployeeByUserName(payload.Email);
+            var oauthAccount = await _externalAuthRepository.GetAccountByEmail(payload.Email);
+            //Uncomment this code after implementing functionality to ask user their role.
+
+            //if(oauthAccount.AdminID == null && oauthAccount.EmployeeID == null)
+            //{
+            //    return BadRequest("No role specified for the user!")
+            //}
+            if(oauthAccount != null)
+            {
+                return Ok(JWT_Cookie_Generator(oauthAccount.ID, oauthAccount.Name, "Employee"));
+            }
+            if (admin == null && employee == null)
+            {
+                var result = await _externalAuthRepository.CreateAccount(_mapper.Map<ExternalAuth>(externalAuth));
+                return result ? Ok(externalAuth) : BadRequest(externalAuth);
+            }
+            else if(admin == null){
+                var user = await _externalAuthRepository.GetAccountByEmail(employee.Email);
+                if (user == null)
+                {
+                    return BadRequest("Please login using your email and password");
+                }
+                else
+                {
+                    return Ok(JWT_Cookie_Generator(employee.ID, employee.Name, "Employee"));
+                }
+            }
+            else
+            {
+                var user = await _externalAuthRepository.GetAccountByEmail(admin.Email);
+                if (user == null)
+                {
+                    return BadRequest("Please login using your email and password");
+                }
+                else
+                {
+                    return Ok(JWT_Cookie_Generator(admin.ID, admin.Name, "Admin"));
+                }
+            }
+            return BadRequest("Error authenticating user!");
+        }
+
         [MapToApiVersion("1.0")]
         [HttpPost]
         [Route("Logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             try
             {
@@ -298,8 +353,8 @@ namespace AssetManagementSystem.Controllers.v1
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto forgotPassword)
         {
-            var admin = _adminRepository.GetAdminByUsername(forgotPassword.Email);
-            var employee = _employeeRepository.GetEmployeeByUserName(forgotPassword.Email);
+            var admin = await _adminRepository.GetAdminByUsername(forgotPassword.Email);
+            var employee = await _employeeRepository.GetEmployeeByUserName(forgotPassword.Email);
 
             if (admin != null)
             {
@@ -314,6 +369,27 @@ namespace AssetManagementSystem.Controllers.v1
                 await _emailService.Send("tijulukose0402@gmail.com", "Test", body);
             }
             return Ok();
+        }
+
+        private dynamic JWT_Cookie_Generator(int id, string name, string role)
+        {
+            var jwt = _authUtilityRepository.JwtGenerator(id, name, role);
+
+            try
+            {
+                HttpContext.Response.Cookies.Append("token", jwt.token,
+                    new CookieOptions
+                    {
+                        Expires = DateTime.UtcNow.AddDays(7),
+                        HttpOnly = true,
+                        Secure = true,
+                        IsEssential = true,
+                        SameSite = SameSiteMode.None
+                    });
+            }
+            catch (Exception ex) { return Ok(jwt); }
+
+            return jwt;
         }
 
     }

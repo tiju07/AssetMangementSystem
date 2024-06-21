@@ -23,6 +23,9 @@ import { Location } from '@angular/common';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { ScrollTopModule } from 'primeng/scrolltop';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { SocialLoginModule, SocialAuthServiceConfig, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { environment as env } from '../environments/environment';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -135,9 +138,34 @@ import { PendingAccessAccountsComponent } from './pending-access-accounts/pendin
         DividerModule,
         PopoverModule,
         ScrollTopModule,
-        ProgressBarModule
+        ProgressBarModule,
+        SocialLoginModule,
+        GoogleSigninButtonModule,
     ],
-    providers: [MessageService, ConfirmationService, CookieService, Location],
+    providers: [MessageService, 
+                ConfirmationService, 
+                CookieService, 
+                Location,
+                {
+                    provide: 'SocialAuthServiceConfig',
+                    useValue: {
+                        autoLogin: false,
+                        providers: [
+                        {
+                            id: GoogleLoginProvider.PROVIDER_ID,
+                            provider: new GoogleLoginProvider(
+                                env.clientID, {
+                                    scopes: 'email',
+                                }
+                            )
+                        },
+                        ],
+                        onError: (err) => {
+                        console.error(err);
+                        }
+                    } as SocialAuthServiceConfig
+                }
+            ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

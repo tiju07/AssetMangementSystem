@@ -27,7 +27,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<ILogger<AssetCataloguesController>> _loggerMock;
 
 		[SetUp]
-		public void SetUp()
+		public async Task SetUp()
 		{
 			_fixture = new Fixture();
 			_assetCatalogueRepositoryMock = new Mock<IAssetCatalogueRepository>();
@@ -43,7 +43,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAllAssetDetails_ReturnsOk()
+		public async Task GetAllAssetDetails_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -65,14 +65,14 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetDto>>(It.IsAny<Asset>)).Returns(assets);
 
-			var result = _controller.GetAllAssetDetails(null, null);
+			var result = await _controller.GetAllAssetDetails(null, null);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetDetailsByID_ReturnsOk()
+		public async Task GetAssetDetailsByID_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -92,18 +92,18 @@ namespace AssetManagementSystemTestProject
 
 			var asset = _fixture.Create<AssetDto>();
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetDto>(It.IsAny<Asset>)).Returns(asset);
 
-			var result = _controller.GetAssetDetailsByID(1);
+			var result = await _controller.GetAssetDetailsByID(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void CreateAssetDetails_ReturnsOk()
+		public async Task CreateAssetDetails_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -124,18 +124,18 @@ namespace AssetManagementSystemTestProject
 			var asset = _fixture.Create<AssetDto>();
 			asset.AssetStatus = "Available";
 
-			_assetCategoryRepositoryMock.Setup(a => a.AssetCategoryExists(It.IsAny<int>())).Returns(true);
+			_assetCategoryRepositoryMock.Setup(a => a.AssetCategoryExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.CreateAsset(It.IsAny<Asset>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.CreateAsset(It.IsAny<Asset>())).Returns(Task.FromResult(true));
 
-			var result = _controller.CreateAsset(asset);
+			var result = await _controller.CreateAsset(asset);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void UpdateAssetDetails_ReturnsOk()
+		public async Task UpdateAssetDetails_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -156,11 +156,11 @@ namespace AssetManagementSystemTestProject
 			var asset = _fixture.Create<AssetDto>();
 			asset.AssetStatus = "Available";
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.UpdateAsset(It.IsAny<Asset>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.UpdateAsset(It.IsAny<Asset>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateAssetDetails(asset.AssetID, asset);
+			var result = await _controller.UpdateAssetDetails(asset.AssetID, asset);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);

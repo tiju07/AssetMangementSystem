@@ -37,7 +37,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAdminByID_ReturnsOk()
+		public async Task GetAdminByID_ReturnsOk()
 		{
 			// Arrange
 			var admin = _fixture.Create<Admin>();
@@ -57,12 +57,12 @@ namespace AssetManagementSystemTestProject
 			};
 
 
-			_adminRepository.Setup(repo => repo.AdminExists(It.IsAny<int>())).Returns(true);
+			_adminRepository.Setup(repo => repo.AdminExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_adminRepository.Setup(repo => repo.GetAdminByID(It.IsAny<int>())).Returns(admin);
+			_adminRepository.Setup(repo => repo.GetAdminByID(It.IsAny<int>())).Returns(Task.FromResult(admin));
 
 			//Act
-			var result = _controller.GetAdminByID(admin.ID);
+			var result = await _controller.GetAdminByID(admin.ID);
 			var obj = result as OkResult;
 
 			//Assert
@@ -70,7 +70,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAdminByID_ReturnsUnauthorized()
+		public async Task GetAdminByID_ReturnsUnauthorized()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -92,14 +92,14 @@ namespace AssetManagementSystemTestProject
 				} 
 			};
 
-			var result = _controller.GetAdminByID(1);
+			var result = await _controller.GetAdminByID(1);
 			var obj = result as UnauthorizedResult;
 			
 			Assert.AreEqual(401, obj.StatusCode);
 		}
 
 		[Test]
-		public void UpdateAdmin_ReturnsOk()
+		public async Task UpdateAdmin_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 			var mappedAdmin = _fixture.Create<AdminDto>();
@@ -123,22 +123,22 @@ namespace AssetManagementSystemTestProject
 				}
 			};
 
-			_mapper.Setup<Admin>(m => m.Map<Admin>(It.IsAny<AdminDto>())).Returns(admin);
+			_mapper.Setup<Admin>(m => m.Map<Admin>(It.IsAny<AdminDto>())).Returns(await Task.FromResult(admin));
 
-			_adminRepository.Setup<Admin>(a => a.GetAdminByID(It.IsAny<int>())).Returns(admin);
+			_adminRepository.Setup(a => a.GetAdminByID(It.IsAny<int>())).Returns(Task.FromResult(admin));
 
-			_adminRepository.Setup(a => a.AdminExists(It.IsAny<AdminDto>())).Returns(false);
+			_adminRepository.Setup(a => a.AdminExists(It.IsAny<AdminDto>())).Returns(Task.FromResult(false));
 
-			_adminRepository.Setup(a => a.UpdateAdmin(It.IsAny<Admin>())).Returns(true);
+			_adminRepository.Setup(a => a.UpdateAdmin(It.IsAny<Admin>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateAdmin(admin.ID, mappedAdmin);
+			var result = await _controller.UpdateAdmin(admin.ID, mappedAdmin);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);
 		}
 
 		[Test]
-		public void DeleteAdmin_ReturnsOk()
+		public async Task DeleteAdmin_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 			var mappedAdmin = _fixture.Create<AdminDto>();
@@ -162,11 +162,11 @@ namespace AssetManagementSystemTestProject
 				}
 			};
 
-			_adminRepository.Setup(a => a.AdminExists(It.IsAny<int>())).Returns(true);
+			_adminRepository.Setup(a => a.AdminExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_adminRepository.Setup(a => a.DeleteAdmin(It.IsAny<int>())).Returns(true);
+			_adminRepository.Setup(a => a.DeleteAdmin(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			var result = _controller.DeleteAdmin(admin.ID);
+			var result = await _controller.DeleteAdmin(admin.ID);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);

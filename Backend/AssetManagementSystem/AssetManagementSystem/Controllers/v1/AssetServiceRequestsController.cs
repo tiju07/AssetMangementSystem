@@ -39,15 +39,15 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult GetAllAssetServiceRequests()
+        public async Task<IActionResult> GetAllAssetServiceRequests()
         {
             try
             {
-                var requests = _mapper.Map<ICollection<AssetServiceRequestDto>>(_assetServiceRequestRepository.GetAllServiceRequests());
+                var requests = _mapper.Map<ICollection<AssetServiceRequestDto>>(await _assetServiceRequestRepository.GetAllServiceRequests());
                 foreach (var request in requests)
                 {
-                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
-                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                    request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
                 }
                 return Ok(requests);
             }
@@ -61,7 +61,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("{requestID}")]
-        public IActionResult GetAssetServiceRequestByID(int requestID)
+        public async Task<IActionResult> GetAssetServiceRequestByID(int requestID)
         {
             try
             {
@@ -69,17 +69,17 @@ namespace AssetManagementSystem.Controllers.v1
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                if (!_assetServiceRequestRepository.ServiceRequestExists(requestID))
+                if (!await _assetServiceRequestRepository.ServiceRequestExists(requestID))
                 {
                     if (currentUserRole == "Admin") return NotFound();
                     return Unauthorized();
                 }
 
-                var request = _mapper.Map<AssetServiceRequestDto>(_assetServiceRequestRepository.GetServiceRequestByID(requestID));
+                var request = _mapper.Map<AssetServiceRequestDto>(await _assetServiceRequestRepository.GetServiceRequestByID(requestID));
 
                 if (currentUserRole != "Admin" && currentUserID != request.EmployeeID) return Unauthorized();
-                request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
-                request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
 
                 return Ok(request);
             }
@@ -93,7 +93,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("Employee/{employeeID}")]
-        public IActionResult GetAssetServiceRequestByEmployee(int employeeID)
+        public async Task<IActionResult> GetAssetServiceRequestByEmployee(int employeeID)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                if (!_employeeRepository.EmployeeExists(employeeID))
+                if (!await _employeeRepository.EmployeeExists(employeeID))
                 {
                     if (currentUserRole == "Admin") return NotFound();
                     return Unauthorized();
@@ -109,11 +109,11 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
-                var requests = _mapper.Map<ICollection<AssetServiceRequestDto>>(_assetServiceRequestRepository.GetServiceRequestsByEmployee(employeeID));
+                var requests = _mapper.Map<ICollection<AssetServiceRequestDto>>(await _assetServiceRequestRepository.GetServiceRequestsByEmployee(employeeID));
                 foreach (var request in requests)
                 {
-                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
-                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                    request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
                 }
                 return Ok(requests);
             }
@@ -127,7 +127,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPut("{requestID}")]
-        public IActionResult UpdateAssetServiceRequest(int requestID, AssetServiceRequestDto assetServiceRequest)
+        public async Task<IActionResult> UpdateAssetServiceRequest(int requestID, AssetServiceRequestDto assetServiceRequest)
         {
             try
             {
@@ -135,11 +135,11 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (requestID != assetServiceRequest.RequestID) return BadRequest();
 
-                if (!_employeeRepository.EmployeeExists(assetServiceRequest.EmployeeID)) return NotFound("Employee does not exist!");
+                if (!await _employeeRepository.EmployeeExists(assetServiceRequest.EmployeeID)) return NotFound("Employee does not exist!");
 
-                if (!_assetCatalogueRepository.AssetExists(assetServiceRequest.AssetID)) return NotFound("Asset does not exist!");
+                if (!await _assetCatalogueRepository.AssetExists(assetServiceRequest.AssetID)) return NotFound("Asset does not exist!");
 
-                if (!_assetAllocationRepository.AllocationDetailExists(assetServiceRequest.AssetID, assetServiceRequest.EmployeeID)) return NotFound("No matching allocatios found for the given employee and asset!");
+                if (!await _assetAllocationRepository.AllocationDetailExists(assetServiceRequest.AssetID, assetServiceRequest.EmployeeID)) return NotFound("No matching allocatios found for the given employee and asset!");
 
                 if (!AssetServiceRequestUtils.IssueTypeIsValid(assetServiceRequest.IssueType)) return BadRequest("Invalid issue type!");
 
@@ -147,7 +147,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var request = _mapper.Map<AssetServiceRequest>(assetServiceRequest);
 
-                var result = _assetServiceRequestRepository.UpdateServiceRequest(request);
+                var result = await _assetServiceRequestRepository.UpdateServiceRequest(request);
 
                 if (result) return NoContent();
 
@@ -164,7 +164,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Employee")]
         [HttpPost]
-        public IActionResult CreateAssetServiceRequest(AssetServiceRequestDto assetServiceRequest)
+        public async Task<IActionResult> CreateAssetServiceRequest(AssetServiceRequestDto assetServiceRequest)
         {
             try
             {
@@ -176,9 +176,9 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserID != assetServiceRequest.EmployeeID) return Unauthorized();
 
-                if (!_assetCatalogueRepository.AssetExists(assetServiceRequest.AssetID)) return NotFound("Asset does not exist!");
+                if (!await _assetCatalogueRepository.AssetExists(assetServiceRequest.AssetID)) return NotFound("Asset does not exist!");
 
-                if (!_assetAllocationRepository.AllocationDetailExists(assetServiceRequest.AssetID, assetServiceRequest.EmployeeID)) return NotFound("No matching allocatios found for the given employee and asset!");
+                if (!await _assetAllocationRepository.AllocationDetailExists(assetServiceRequest.AssetID, assetServiceRequest.EmployeeID)) return NotFound("No matching allocatios found for the given employee and asset!");
 
                 if (!AssetServiceRequestUtils.IssueTypeIsValid(assetServiceRequest.IssueType)) return BadRequest("Invalid issue type!");
 
@@ -186,7 +186,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var request = _mapper.Map<AssetServiceRequest>(assetServiceRequest);
 
-                var result = _assetServiceRequestRepository.CreateServiceRequest(request);
+                var result = await _assetServiceRequestRepository.CreateServiceRequest(request);
 
                 if (result) return Ok(_mapper.Map<AssetServiceRequestDto>(request));
 

@@ -1,4 +1,6 @@
-﻿using AssetManagementSystem.Interfaces;
+﻿using AssetManagementSystem.Dto;
+using AssetManagementSystem.Interfaces;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,11 +13,15 @@ namespace AssetManagementSystem.Repository
 	public class AuthUtilityRepository : IAuthUtilityRepository
 	{
 		private readonly AppSettings _appSettings;
+		private readonly GoogleSettings _googleSettings;
+        private readonly IConfigurationSection _googleOAuthSettings;
+        private readonly IConfiguration _configuration;
 
-		public AuthUtilityRepository(IOptions<AppSettings> appSettings)
+        public AuthUtilityRepository(IOptions<AppSettings> appSettings, IOptions<GoogleSettings> googleSettings, IConfiguration configuration)
         {
 			_appSettings = appSettings.Value;
-		}
+            _googleSettings = googleSettings.Value;
+        }
 
 		public bool CheckPassword(string password, byte[] passwordSalt, byte[] passwordHash)
 		{
@@ -47,5 +53,23 @@ namespace AssetManagementSystem.Repository
 
 			return new { token = encryptorToken, name = name };
 		}
-	}
+
+        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(ExternalAuthDto externalAuth)
+        {
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings()
+                {
+                    Audience = new List<string>() { _googleSettings.ClientID }
+                };
+
+                var payload = await GoogleJsonWebSignature.ValidateAsync(externalAuth.IdToken, settings);
+                return payload;
+            }
+            catch (Exception ex)
+            {
+				return null;
+            }
+        }
+    }
 }

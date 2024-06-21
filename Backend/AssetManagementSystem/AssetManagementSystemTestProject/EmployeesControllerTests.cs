@@ -28,7 +28,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<ILogger<EmployeesController>> _loggerMock;
 
 		[SetUp]
-		public void SetUp()
+		public async Task SetUp()
 		{
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
 			_mapperMock = new Mock<IMapper>();
@@ -43,7 +43,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAllEmployees_ReturnsOk()
+		public async Task GetAllEmployees_ReturnsOk()
 		{
 			// Arrange
 			var admin = _fixture.Create<Admin>();
@@ -67,7 +67,7 @@ namespace AssetManagementSystemTestProject
 			_mapperMock.Setup(m => m.Map<ICollection<EmployeeAdminViewModel>>(It.IsAny<Employee>)).Returns(employees);
 
 			//Act
-			var result = _controller.GetAllEmployees();
+			var result = await _controller.GetAllEmployees();
 			var obj = result as OkObjectResult;
 
 			//Assert
@@ -75,7 +75,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetEmployeeByID_ReturnsOk()
+		public async Task GetEmployeeByID_ReturnsOk()
 		{
 			// Arrange
 			var admin = _fixture.Create<Admin>();
@@ -96,12 +96,12 @@ namespace AssetManagementSystemTestProject
 			};
 
 
-			_employeeRepositoryMock.Setup(repo => repo.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(repo => repo.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<EmployeeAdminViewModel>(It.IsAny<Employee>())).Returns(employeeVM);
 
 			//Act
-			var result = _controller.GetEmployeeByID(1);
+			var result = await _controller.GetEmployeeByID(1);
 			var obj = result as OkObjectResult;
 
 			//Assert
@@ -109,7 +109,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void UpdateEmployee_ReturnsOk()
+		public async Task UpdateEmployee_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 			var employee = _fixture.Create<Employee>();
@@ -138,22 +138,22 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup<Employee>(m => m.Map<Employee>(It.IsAny<EmployeeDto>())).Returns(employee);
 
-			_employeeRepositoryMock.Setup<EmployeeAdminViewModel>(a => a.GetEmployeeByID(It.IsAny<int>())).Returns(employeeVM);
+			_employeeRepositoryMock.Setup(a => a.GetEmployeeByID(It.IsAny<int>())).Returns(Task.FromResult(employeeVM));
 
-			_employeeRepositoryMock.Setup(e => e.GetEmployeeByIDWithCredentials(It.IsAny<int>())).Returns(employee);
+			_employeeRepositoryMock.Setup(e => e.GetEmployeeByIDWithCredentials(It.IsAny<int>())).Returns(Task.FromResult(employee));
 
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<EmployeeDto>())).Returns(false);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<EmployeeDto>())).Returns(Task.FromResult(false));
 
-			_employeeRepositoryMock.Setup(a => a.UpdateEmployee(It.IsAny<Employee>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.UpdateEmployee(It.IsAny<Employee>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateEmployee(employee.ID, mappedEmployee);
+			var result = await _controller.UpdateEmployee(employee.ID, mappedEmployee);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);
 		}
 
 		[Test]
-		public void DeleteEmployee_ReturnsOk()
+		public async Task DeleteEmployee_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -175,11 +175,11 @@ namespace AssetManagementSystemTestProject
 				}
 			};
 
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_employeeRepositoryMock.Setup(a => a.DeleteEmployee(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.DeleteEmployee(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			var result = _controller.DeleteEmployee(admin.ID);
+			var result = await _controller.DeleteEmployee(admin.ID);
 			var obj = result as OkResult;
 
 			Assert.AreEqual(200, obj.StatusCode);

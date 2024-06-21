@@ -3,6 +3,7 @@ using AssetManagementSystem.Dto;
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using NuGet.ContentModel;
 
 namespace AssetManagementSystem.Repository
@@ -17,55 +18,55 @@ namespace AssetManagementSystem.Repository
             _context = context;
             _mapper = mapper;
         }
-        public bool AllocateAsset(AssetAllocationDetail assetAllocationDetail)
+        public async Task<bool> AllocateAsset(AssetAllocationDetail assetAllocationDetail)
         {
             _context.AssetAllocationDetails.Add(assetAllocationDetail);
-            return Save();
+            return await Save();
         }
 
-        public bool DeallocateAsset(int assetAllocationID)
+        public async Task<bool> DeallocateAsset(int assetAllocationID)
         {
-            var assetToDeallocate = _context.AssetAllocationDetails.FirstOrDefault(a => a.AssetAllocationID == assetAllocationID);
+            var assetToDeallocate = await _context.AssetAllocationDetails.FirstOrDefaultAsync(a => a.AssetAllocationID == assetAllocationID);
             assetToDeallocate.AllocationStatus = "De-allocated";
             _context.AssetAllocationDetails.Update(assetToDeallocate);
 
-            return Save();
+            return await Save();
         }
 
-        public ICollection<AssetAllocationDetail> GetAssetAllocationsByEmployee(int empoloyeeID)
+        public async Task<ICollection<AssetAllocationDetail>> GetAssetAllocationsByEmployee(int empoloyeeID)
         {
-            return _context.AssetAllocationDetails.Where(a => a.EmployeeID == empoloyeeID).ToList();
+            return await _context.AssetAllocationDetails.Where(a => a.EmployeeID == empoloyeeID).ToListAsync();
         }
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var result = _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public ICollection<AssetAllocationDetail> GetAllAssetAllocations()
+        public async  Task<ICollection<AssetAllocationDetail>> GetAllAssetAllocations()
         {
-            return _context.AssetAllocationDetails.ToList();
+            return await _context.AssetAllocationDetails.ToListAsync();
         }
 
-        public bool AllocationDetailExists(int assetAllocationID)
+        public async Task<bool> AllocationDetailExists(int assetAllocationID)
         {
-            return _context.AssetAllocationDetails.Any(a => a.AssetAllocationID == assetAllocationID);
+            return await _context.AssetAllocationDetails.AnyAsync(a => a.AssetAllocationID == assetAllocationID);
         }
 
-        public AssetAllocationDetail GetAssetAllocationByID(int assetAllocationID)
+        public async Task<AssetAllocationDetail> GetAssetAllocationByID(int assetAllocationID)
         {
-            return _context.AssetAllocationDetails.Find(assetAllocationID);
+            return await _context.AssetAllocationDetails.FindAsync(assetAllocationID);
         }
 
-        public bool UpdateAllocationDetails(AssetAllocationDetail assetAllocationDetail)
+        public async Task<bool> UpdateAllocationDetails(AssetAllocationDetail assetAllocationDetail)
         {
             _context.Update(assetAllocationDetail);
-            return Save();
+            return await Save();
         }
 
-        public bool AllocationDetailExists(int assetID, int employeeID)
+        public async Task<bool> AllocationDetailExists(int assetID, int employeeID)
         {
-            return _context.AssetAllocationDetails.Any(a => a.AssetID == assetID && a.EmployeeID == employeeID && a.AllocationStatus == "Allocated");
+            return await _context.AssetAllocationDetails.AnyAsync(a => a.AssetID == assetID && a.EmployeeID == employeeID && a.AllocationStatus == "Allocated");
         }
     }
 }

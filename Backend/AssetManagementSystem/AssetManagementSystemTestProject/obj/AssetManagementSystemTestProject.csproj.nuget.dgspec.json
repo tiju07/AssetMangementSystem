@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj": {}
+    "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj": {
+    "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj",
+        "projectUniqueName": "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj",
         "projectName": "AssetManagementSystemTestProject",
-        "projectPath": "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj",
+        "projectPath": "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\AssetManagementSystemTestProject.csproj",
         "packagesPath": "C:\\Users\\2000123740\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\obj\\",
+        "outputPath": "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystemTestProject\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj": {
-                "projectPath": "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj"
+              "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj": {
+                "projectPath": "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj"
               }
             }
           }
@@ -103,14 +103,14 @@
         }
       }
     },
-    "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj": {
+    "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj",
+        "projectUniqueName": "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj",
         "projectName": "AssetManagementSystem",
-        "projectPath": "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj",
+        "projectPath": "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\AssetManagementSystem.csproj",
         "packagesPath": "C:\\Users\\2000123740\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\2000123740\\Project\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\obj\\",
+        "outputPath": "C:\\Users\\2000123740\\Project\\AssetManagementSystem\\AssetMangementSystem\\Backend\\AssetManagementSystem\\AssetManagementSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -160,6 +160,10 @@
             "AutoMapper": {
               "target": "Package",
               "version": "[13.0.1, )"
+            },
+            "Google.Apis.Auth": {
+              "target": "Package",
+              "version": "[1.68.0, )"
             },
             "MailKit": {
               "target": "Package",

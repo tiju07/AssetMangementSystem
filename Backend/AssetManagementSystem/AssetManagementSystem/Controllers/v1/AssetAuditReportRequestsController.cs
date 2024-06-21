@@ -39,15 +39,15 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult GetAssetAuditReportRequests()
+        public async Task<IActionResult> GetAssetAuditReportRequests()
         {
             try
             {
-                var requests = _mapper.Map<ICollection<AssetAuditReportRequestDto>>(_assetAuditReportRequestRepository.GetAllAuditRequests());
+                var requests = _mapper.Map<ICollection<AssetAuditReportRequestDto>>(await _assetAuditReportRequestRepository.GetAllAuditRequests());
                 foreach (var request in requests)
                 {
-                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
-                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                    request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
                 }
                 return Ok(requests);
             }
@@ -61,7 +61,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("{requestID}")]
-        public IActionResult GetAssetAuditReportRequestByID(int requestID)
+        public async Task<IActionResult> GetAssetAuditReportRequestByID(int requestID)
         {
             try
             {
@@ -69,17 +69,17 @@ namespace AssetManagementSystem.Controllers.v1
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                if (!_assetAuditReportRequestRepository.AssetAuditReportRequestExists(requestID))
+                if (!await _assetAuditReportRequestRepository.AssetAuditReportRequestExists(requestID))
                 {
                     if (currentUserRole == "Admin") return NotFound();
                     return Unauthorized();
                 }
 
-                var assetAuditReportRequest = _mapper.Map<AssetAuditReportRequestDto>(_assetAuditReportRequestRepository.GetAuditRequestByID(requestID));
+                var assetAuditReportRequest = _mapper.Map<AssetAuditReportRequestDto>(await _assetAuditReportRequestRepository.GetAuditRequestByID(requestID));
 
                 if (currentUserRole != "Admin" && currentUserID != assetAuditReportRequest.EmployeeID) return Unauthorized();
-                assetAuditReportRequest.Employee = _employeeRepository.GetEmployeeByID(assetAuditReportRequest.EmployeeID);
-                assetAuditReportRequest.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(assetAuditReportRequest.AssetID));
+                assetAuditReportRequest.Employee = await _employeeRepository.GetEmployeeByID(assetAuditReportRequest.EmployeeID);
+                assetAuditReportRequest.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(assetAuditReportRequest.AssetID));
                 return Ok(assetAuditReportRequest);
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("Employee/{employeeID}")]
-        public IActionResult GetAssetAuditReportRequestByEmployee(int employeeID)
+        public async Task<IActionResult> GetAssetAuditReportRequestByEmployee(int employeeID)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                if (!_employeeRepository.EmployeeExists(employeeID))
+                if (!await _employeeRepository.EmployeeExists(employeeID))
                 {
                     if (currentUserRole == "Admin") return NotFound("Could not find employee!");
                     return Unauthorized();
@@ -108,11 +108,11 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
-                var assetAuditReportRequests = _mapper.Map<ICollection<AssetAuditReportRequestDto>>(_assetAuditReportRequestRepository.GetAuditRequestByEmployee(employeeID));
+                var assetAuditReportRequests = _mapper.Map<ICollection<AssetAuditReportRequestDto>>(await _assetAuditReportRequestRepository.GetAuditRequestByEmployee(employeeID));
                 foreach (var request in assetAuditReportRequests)
                 {
-                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
-                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                    request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
                 }
 
                 return Ok(assetAuditReportRequests);
@@ -127,7 +127,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpPut("{requestID}")]
-        public IActionResult UpdateAssetAuditReportRequest(int requestID, AssetAuditReportRequestDto assetAuditReportRequest)
+        public async Task<IActionResult> UpdateAssetAuditReportRequest(int requestID, AssetAuditReportRequestDto assetAuditReportRequest)
         {
             try
             {
@@ -137,13 +137,13 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (requestID != assetAuditReportRequest.RequestID) return BadRequest();
 
-                if (!_assetAuditReportRequestRepository.AssetAuditReportRequestExists(requestID))
+                if (!await _assetAuditReportRequestRepository.AssetAuditReportRequestExists(requestID))
                 {
                     if (currentUserRole == "Admin") return NotFound("Could not find request!");
                     return Unauthorized();
                 }
 
-                var originalRequest = _assetAuditReportRequestRepository.GetAuditRequestByID(requestID);
+                var originalRequest = await _assetAuditReportRequestRepository.GetAuditRequestByID(requestID);
 
                 if (currentUserRole != "Admin" && assetAuditReportRequest.EmployeeID != originalRequest.EmployeeID) return BadRequest();
 
@@ -151,9 +151,9 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole != "Admin" && assetAuditReportRequest.AssetID != originalRequest.AssetID) return BadRequest();
 
-                if (!_employeeRepository.EmployeeExists(assetAuditReportRequest.EmployeeID)) return NotFound("Employee does not exist!");
+                if (!await _employeeRepository.EmployeeExists(assetAuditReportRequest.EmployeeID)) return NotFound("Employee does not exist!");
 
-                if (!_assetCatalogueRepository.AssetExists(assetAuditReportRequest.AssetID)) return NotFound("Asset does not exist!");
+                if (!await _assetCatalogueRepository.AssetExists(assetAuditReportRequest.AssetID)) return NotFound("Asset does not exist!");
 
                 if (!AssetAuditReportRequestUtils.RequestStatusIsValid(assetAuditReportRequest.RequestStatus))
                 {
@@ -163,7 +163,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var requestToUpdate = _mapper.Map<AssetAuditReportRequest>(assetAuditReportRequest);
 
-                var result = _assetAuditReportRequestRepository.UpdateAuditRequest(requestToUpdate);
+                var result = await _assetAuditReportRequestRepository.UpdateAuditRequest(requestToUpdate);
                 if (result) return NoContent();
 
                 ModelState.AddModelError("Error", "An error occured updating the request!");
@@ -179,15 +179,15 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult CreateAssetAuditReportRequest(AssetAuditReportRequestDto assetAuditReportRequest)
+        public async Task<IActionResult> CreateAssetAuditReportRequest(AssetAuditReportRequestDto assetAuditReportRequest)
         {
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                if (!_employeeRepository.EmployeeExists(assetAuditReportRequest.EmployeeID)) return NotFound("Could not find employee!");
+                if (!await _employeeRepository.EmployeeExists(assetAuditReportRequest.EmployeeID)) return NotFound("Could not find employee!");
 
-                if (!_assetCatalogueRepository.AssetExists(assetAuditReportRequest.AssetID)) return NotFound("Could not find asset");
+                if (!await _assetCatalogueRepository.AssetExists(assetAuditReportRequest.AssetID)) return NotFound("Could not find asset");
 
                 if (!AssetAuditReportRequestUtils.RequestStatusIsValid(assetAuditReportRequest.RequestStatus))
                 {
@@ -197,7 +197,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var requestToCreate = _mapper.Map<AssetAuditReportRequest>(assetAuditReportRequest);
 
-                var result = _assetAuditReportRequestRepository.CreateAuditRequest(requestToCreate);
+                var result = await _assetAuditReportRequestRepository.CreateAuditRequest(requestToCreate);
 
                 if (result) return Ok(_mapper.Map<AssetAuditReportRequestDto>(requestToCreate));
 

@@ -13,40 +13,40 @@ namespace AssetManagementSystem.Repository
         {
             _context = context;
         }
-        public bool CreateAuditRequest(AssetAuditReportRequest request)
+        public async Task<bool> CreateAuditRequest(AssetAuditReportRequest request)
         {
-            _context.AssetAuditReportRequests.Add(request);
-            return Save();
+            await _context.AssetAuditReportRequests.AddAsync(request);
+            return await Save();
         }
 
-        public ICollection<AssetAuditReportRequest> GetAllAuditRequests()
+        public async Task<ICollection<AssetAuditReportRequest>> GetAllAuditRequests()
         {
-            return _context.AssetAuditReportRequests.ToList();
+            return await _context.AssetAuditReportRequests.ToListAsync();
         }
 
-        public AssetAuditReportRequest? GetAuditRequestByID(int requestID)
+        public async Task<AssetAuditReportRequest?> GetAuditRequestByID(int requestID)
         {
-            return _context.AssetAuditReportRequests.AsNoTracking().FirstOrDefault(r => r.RequestID == requestID);
+            return await _context.AssetAuditReportRequests.AsNoTracking().FirstOrDefaultAsync(r => r.RequestID == requestID);
         }
 
-        public bool UpdateAuditRequest(AssetAuditReportRequest request)
+        public async Task<bool> UpdateAuditRequest(AssetAuditReportRequest request)
         {
             _context.AssetAuditReportRequests.Update(request);
-            return Save();
+            return await Save();
         }
-        public bool AssetAuditReportRequestExists(int requestID)
+        public async Task<bool> AssetAuditReportRequestExists(int requestID)
         {
-            return _context.AssetAuditReportRequests.Any(r => r.RequestID == requestID);
+            return await _context.AssetAuditReportRequests.AnyAsync(r => r.RequestID == requestID);
         }
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var result = _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public ICollection<AssetAuditReportRequest> GetAuditRequestByEmployee(int employeeID)
+        public async Task<ICollection<AssetAuditReportRequest>> GetAuditRequestByEmployee(int employeeID)
         {
-            return _context.AssetAuditReportRequests.Where(a => a.EmployeeID == employeeID).ToList();
+            return await _context.AssetAuditReportRequests.Where(a => a.EmployeeID == employeeID).ToListAsync();
         }
     }
 }

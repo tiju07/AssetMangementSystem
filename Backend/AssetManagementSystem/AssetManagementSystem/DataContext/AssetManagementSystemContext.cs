@@ -21,5 +21,6 @@ namespace AssetManagementSystem.Data
         public virtual DbSet<AssetCategory> AssetCategories { get; set; }
         public virtual DbSet<AssetServiceRequest> AssetServiceRequests { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<ExternalAuth> ExternalAuth { get; set; }
     }
 }

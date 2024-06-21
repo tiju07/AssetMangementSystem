@@ -29,7 +29,7 @@ namespace AssetManagementSystem.Controllers.v1
         [MapToApiVersion("1.0")]
         [Authorize(Roles = "Admin")]
         [HttpGet("{adminID}")]
-        public IActionResult GetAdminByID(int adminID)
+        public async Task<IActionResult> GetAdminByID(int adminID)
         {
             try
             {
@@ -37,12 +37,12 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentAdminID != adminID) return Unauthorized();
 
-                if (!_adminRepository.AdminExists(adminID))
+                if (!await _adminRepository.AdminExists(adminID))
                 {
                     return NotFound();
                 }
 
-                var admin = _mapper.Map<AdminDto>(_adminRepository.GetAdminByID(adminID));
+                var admin = _mapper.Map<AdminDto>(await _adminRepository.GetAdminByID(adminID));
 
                 _logger.LogInformation($"Getting admin with ID: {admin.ID}");
 
@@ -59,11 +59,11 @@ namespace AssetManagementSystem.Controllers.v1
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [Route("GetAccountsWithPendingAccess")]
-        public IActionResult GetAccountsWithPendingAccess()
+        public async Task<IActionResult> GetAccountsWithPendingAccess()
         {
             try
             {
-                var admins = _mapper.Map<AdminDto[]>(_adminRepository.GetAdminsWithPendingAccess());
+                var admins = _mapper.Map<ICollection<AdminDto>>(await _adminRepository.GetAdminsWithPendingAccess());
                 return Ok(admins);
 
             }catch (Exception ex)
@@ -77,7 +77,7 @@ namespace AssetManagementSystem.Controllers.v1
         [MapToApiVersion("1.0")]
         [Authorize(Roles = "Admin")]
         [HttpPut("{adminID}")]
-        public IActionResult UpdateAdmin(int adminID, AdminDto admin)
+        public async Task<IActionResult> UpdateAdmin(int adminID, AdminDto admin)
         {
             try
             {
@@ -87,17 +87,17 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var adminToUpdate = _mapper.Map<Admin>(admin);
 
-                var originalData = _adminRepository.GetAdminByID(adminID);
+                var originalData = await _adminRepository.GetAdminByID(adminID);
 
                 adminToUpdate.PasswordHash = originalData.PasswordHash;
                 adminToUpdate.PasswordSalt = originalData.PasswordSalt;
 
 
-                if (originalData.Email != adminToUpdate.Email && _adminRepository.AdminExists(_mapper.Map<AdminDto>(adminToUpdate))) ModelState.AddModelError("Errors", "A user with the given details already exists!");
+                if (originalData.Email != adminToUpdate.Email && await _adminRepository.AdminExists(_mapper.Map<AdminDto>(adminToUpdate))) ModelState.AddModelError("Errors", "A user with the given details already exists!");
 
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                var result = _adminRepository.UpdateAdmin(adminToUpdate);
+                var result = await _adminRepository.UpdateAdmin(adminToUpdate);
 
                 if (result)
                 {
@@ -118,18 +118,18 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
         [Authorize(Roles = "Admin")]
         [HttpDelete("{adminID}")]
-        public IActionResult DeleteAdmin(int adminID)
+        public async Task<IActionResult> DeleteAdmin(int adminID)
         {
             try
             {
                 int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                var admin = _adminRepository.GetAdminByID(currentAdminID);
+                var admin = await _adminRepository.GetAdminByID(currentAdminID);
                 if (!admin.IsVerified) return BadRequest();
 
-                if (!_adminRepository.AdminExists(adminID)) return NotFound();
+                if (!await _adminRepository.AdminExists(adminID)) return NotFound();
 
-                var result = _adminRepository.DeleteAdmin(adminID);
+                var result = await _adminRepository.DeleteAdmin(adminID);
                 if (result)
                 {
                     _logger.LogInformation($"Deleting admin with ID: {adminID}");
@@ -150,18 +150,18 @@ namespace AssetManagementSystem.Controllers.v1
         [MapToApiVersion("1.0")]
         [HttpPost]
         [Route("ValidateUsernameOrEmail")]
-        public IActionResult ValidateUsernameOrEmail([FromBody] string username)
+        public async Task<IActionResult> ValidateUsernameOrEmail([FromBody] string username)
         {
-            if(_adminRepository.AdminExists(username)) return Ok();
+            if(await _adminRepository.AdminExists(username)) return Ok();
             return NotFound();
         }
 
         [MapToApiVersion("1.0")]
         [HttpPost]
         [Route("UpdatePassword")]
-        public IActionResult UpdatePassword(LoginDto credentials)
+        public async Task<IActionResult> UpdatePassword(LoginDto credentials)
         {
-            var adminToUpdate = _adminRepository.GetAdminByUsername(credentials.UserName);
+            var adminToUpdate = await _adminRepository.GetAdminByUsername(credentials.UserName);
             if (adminToUpdate != null)
             {
                 using (HMACSHA512? hmac = new HMACSHA512())
@@ -170,7 +170,7 @@ namespace AssetManagementSystem.Controllers.v1
                     adminToUpdate.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(credentials.Password));
                 }
 
-                var result = _adminRepository.UpdateAdmin(adminToUpdate);
+                var result = await _adminRepository.UpdateAdmin(adminToUpdate);
 
                 if (result) return Ok();
             }
@@ -181,22 +181,22 @@ namespace AssetManagementSystem.Controllers.v1
         [MapToApiVersion("1.0")]
         [Authorize(Roles ="Admin")]
         [HttpPost("AllowAdminAccess/{adminID}")]
-        public IActionResult AllowAdminAccess(int adminID)
+        public async Task<IActionResult> AllowAdminAccess(int adminID)
         {
             try
             {
                 int currentAdminID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
-                var admin = _adminRepository.GetAdminByID(currentAdminID);
+                var admin = await _adminRepository.GetAdminByID(currentAdminID);
 
                 if (adminID == admin.ID) return BadRequest();
 
                 if(!admin.IsVerified) return Unauthorized();
 
-                var adminToUpdate = _adminRepository.GetAdminByID(adminID);
+                var adminToUpdate = await _adminRepository.GetAdminByID(adminID);
                 if (adminToUpdate == null) return NotFound();
 
                 adminToUpdate.IsVerified = true;
-                var result = _adminRepository.UpdateAdmin(adminToUpdate);
+                var result = await _adminRepository.UpdateAdmin(adminToUpdate);
                 if (result) return Ok();
 
                 return StatusCode(500, "An internal error occured!");

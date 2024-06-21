@@ -30,7 +30,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<AssetAllocationUtils> _utilsMock;
 		private Mock<ILogger<AssetAllocationDetailsController>> _loggerMock;
 		[SetUp]
-		public void SetUp()
+		public async Task SetUp()
 		{
 			_fixture = new Fixture();
 			_assetAllocationRepositoryMock = new Mock<IAssetAllocationRepository>();
@@ -42,7 +42,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAllAssetAllocationDetails_ReturnsOk()
+		public async Task GetAllAssetAllocationDetails_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -64,14 +64,14 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetAllocationDetailDto>>(It.IsAny<ICollection<AssetAllocationDetail>>())).Returns(mappedAllocationDetails);
 
-			var result = _controller.GetAllAssetAllocationDetails();
+			var result = await _controller.GetAllAssetAllocationDetails();
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetAllocationDetailByID_ReturnsOk()
+		public async Task GetAssetAllocationDetailByID_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -91,18 +91,18 @@ namespace AssetManagementSystemTestProject
 
 			var details = _fixture.Create<AssetAllocationDetailDto>();
 
-			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>())).Returns(true);
+			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetAllocationDetailDto>(It.IsAny<AssetAllocationDetail>())).Returns(details);
 
-			var result = _controller.GetAssetAllocationDetailByID(details.EmployeeID);
+			var result = await _controller.GetAssetAllocationDetailByID(details.EmployeeID);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetAllocationDetailsByEmployee_ReturnsOk()
+		public async Task GetAssetAllocationDetailsByEmployee_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -122,18 +122,18 @@ namespace AssetManagementSystemTestProject
 
 			var details = _fixture.CreateMany<AssetAllocationDetailDto>(5).ToList();
 
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetAllocationDetailDto>>(It.IsAny<ICollection<AssetAllocationDetail>>())).Returns(details);
 
-			var result = _controller.GetAssetAllocationDetailsByEmployee(1);
+			var result = await _controller.GetAssetAllocationDetailsByEmployee(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void CreateAssetAllocationDetail_ReturnsOk()
+		public async Task CreateAssetAllocationDetail_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -159,22 +159,22 @@ namespace AssetManagementSystemTestProject
 
 			detail.AllocationStatus = "Allocated";
 			mappedDetail.AllocationStatus = "Allocated";
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetAllocationDetail>(It.IsAny<AssetAllocationDetail>())).Returns(detail);
 
-			_assetAllocationRepositoryMock.Setup(a => a.AllocateAsset(It.IsAny<AssetAllocationDetail>())).Returns(true);
+			_assetAllocationRepositoryMock.Setup(a => a.AllocateAsset(It.IsAny<AssetAllocationDetail>())).Returns(Task.FromResult(true));
 
-			var result = _controller.CreateAssetAllocationDetail(mappedDetail);
+			var result = await _controller.CreateAssetAllocationDetail(mappedDetail);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void UpdateAssetAllocationDetail_ReturnsOk()
+		public async Task UpdateAssetAllocationDetail_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -204,25 +204,25 @@ namespace AssetManagementSystemTestProject
 			mappedDetail.AssetAllocatedTill = DateTime.Now;
 
 
-			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>())).Returns(true);	
+			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>())).Returns(Task.FromResult(true));	
 			
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetAllocationDetail>(It.IsAny<AssetAllocationDetail>())).Returns(detail);
 
-			_assetAllocationRepositoryMock.Setup(a => a.UpdateAllocationDetails(It.IsAny<AssetAllocationDetail>())).Returns(true);
+			_assetAllocationRepositoryMock.Setup(a => a.UpdateAllocationDetails(It.IsAny<AssetAllocationDetail>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateAssetAllocationDetail(mappedDetail.AssetAllocationID, mappedDetail);
+			var result = await _controller.UpdateAssetAllocationDetail(mappedDetail.AssetAllocationID, mappedDetail);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void DeleteAssetAllocationDetail_ReturnsOk()
+		public async Task DeleteAssetAllocationDetail_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -240,11 +240,11 @@ namespace AssetManagementSystemTestProject
 				HttpContext = new DefaultHttpContext { User = principal }
 			};
 
-			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>())).Returns(true);
+			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetAllocationRepositoryMock.Setup(a => a.DeallocateAsset(It.IsAny<int>())).Returns(true);
+			_assetAllocationRepositoryMock.Setup(a => a.DeallocateAsset(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			var result = _controller.DeleteAssetAllocationDetail(1);
+			var result = await _controller.DeleteAssetAllocationDetail(1);
 			var obj = result as OkResult;
 
 			Assert.AreEqual(200, obj.StatusCode);

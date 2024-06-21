@@ -6,15 +6,15 @@ namespace AssetManagementSystem.Interfaces
 {
     public interface IAssetAllocationRepository
     {
-        public ICollection<AssetAllocationDetail> GetAllAssetAllocations();
-        public AssetAllocationDetail GetAssetAllocationByID(int assetAllocationID);
-        public ICollection<AssetAllocationDetail> GetAssetAllocationsByEmployee(int employeeID);
+        public Task<ICollection<AssetAllocationDetail>> GetAllAssetAllocations();
+        public Task<AssetAllocationDetail> GetAssetAllocationByID(int assetAllocationID);
+        public Task<ICollection<AssetAllocationDetail>> GetAssetAllocationsByEmployee(int employeeID);
 
-        public bool AllocateAsset(AssetAllocationDetail assetAllocationDetail);
-        public bool UpdateAllocationDetails(AssetAllocationDetail assetAllocationDetail);
-        public bool DeallocateAsset(int assetAllocationID);
-        public bool AllocationDetailExists(int assetAllocationID);
-        public bool AllocationDetailExists(int assetID, int employeeID);
-        public bool Save();
+        public Task<bool> AllocateAsset(AssetAllocationDetail assetAllocationDetail);
+        public Task<bool> UpdateAllocationDetails(AssetAllocationDetail assetAllocationDetail);
+        public Task<bool> DeallocateAsset(int assetAllocationID);
+        public Task<bool> AllocationDetailExists(int assetAllocationID);
+        public Task<bool> AllocationDetailExists(int assetID, int employeeID);
+        public Task<bool> Save();
     }
 }

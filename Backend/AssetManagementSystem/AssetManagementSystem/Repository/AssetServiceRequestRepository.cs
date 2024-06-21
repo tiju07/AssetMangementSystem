@@ -1,6 +1,7 @@
 ﻿using AssetManagementSystem.Data;
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagementSystem.Repository
 {
@@ -12,42 +13,42 @@ namespace AssetManagementSystem.Repository
         {
             _context = context;
         }
-        public bool CreateServiceRequest(AssetServiceRequest assetServiceRequest)
+        public async Task<bool> CreateServiceRequest(AssetServiceRequest assetServiceRequest)
         {
-            _context.AssetServiceRequests.Add(assetServiceRequest);
-            return Save();
+            await _context.AssetServiceRequests.AddAsync(assetServiceRequest);
+            return await Save();
         }
 
-        public ICollection<AssetServiceRequest> GetAllServiceRequests()
+        public async Task<ICollection<AssetServiceRequest>> GetAllServiceRequests()
         {
-            return _context.AssetServiceRequests.ToList();
+            return await _context.AssetServiceRequests.ToListAsync();
         }
 
-        public AssetServiceRequest GetServiceRequestByID(int requestID)
+        public async Task<AssetServiceRequest> GetServiceRequestByID(int requestID)
         {
-            return _context.AssetServiceRequests.Find(requestID);
+            return await _context.AssetServiceRequests.FindAsync(requestID);
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var result = _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public bool ServiceRequestExists(int requestID)
+        public async Task<bool> ServiceRequestExists(int requestID)
         {
-            return _context.AssetServiceRequests.Any(r => r.RequestID == requestID);
+            return await _context.AssetServiceRequests.AnyAsync(r => r.RequestID == requestID);
         }
 
-        public bool UpdateServiceRequest(AssetServiceRequest assetServiceRequest)
+        public async Task<bool> UpdateServiceRequest(AssetServiceRequest assetServiceRequest)
         {
             _context.AssetServiceRequests.Update(assetServiceRequest);
-            return Save();
+            return await Save();
         }
 
-        public ICollection<AssetServiceRequest> GetServiceRequestsByEmployee(int employeeID)
+        public async Task<ICollection<AssetServiceRequest>> GetServiceRequestsByEmployee(int employeeID)
         {
-            return _context.AssetServiceRequests.Where(r => r.EmployeeID == employeeID).ToList();
+            return await _context.AssetServiceRequests.Where(r => r.EmployeeID == employeeID).ToListAsync();
         }
     }
 }

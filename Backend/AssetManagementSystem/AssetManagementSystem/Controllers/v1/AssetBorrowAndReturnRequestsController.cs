@@ -37,15 +37,15 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult GetAssetBorrowAndReturnRequests()
+        public async Task<IActionResult> GetAssetBorrowAndReturnRequests()
         {
             try
             {
-                var requests = _mapper.Map<ICollection<AssetBorrowAndReturnRequestDto>>(_assetBorrowAndReturnRequestRepository.GetAllRequests());
+                var requests = _mapper.Map<ICollection<AssetBorrowAndReturnRequestDto>>(await _assetBorrowAndReturnRequestRepository.GetAllRequests());
                 foreach(var request in requests)
                 {
-                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
-                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                    request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
                 }
                 return Ok(requests);
             }
@@ -59,7 +59,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("{requestID}")]
-        public IActionResult GetAssetBorrowAndReturnRequestByID(int requestID)
+        public async Task<IActionResult> GetAssetBorrowAndReturnRequestByID(int requestID)
         {
             try
             {
@@ -67,16 +67,16 @@ namespace AssetManagementSystem.Controllers.v1
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                if (!_assetBorrowAndReturnRequestRepository.RequestExists(requestID))
+                if (!await _assetBorrowAndReturnRequestRepository.RequestExists(requestID))
                 {
                     if (currentUserRole == "Admin") return NotFound();
                     return Unauthorized();
                 }
-                var request = _mapper.Map<AssetBorrowAndReturnRequestDto>(_assetBorrowAndReturnRequestRepository.GetRequestById(requestID));
+                var request = _mapper.Map<AssetBorrowAndReturnRequestDto>(await _assetBorrowAndReturnRequestRepository.GetRequestById(requestID));
 
                 if (currentUserRole != "Admin" && currentUserID != request.EmployeeID) return Unauthorized();
-                request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
-                request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
+                request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
                 return Ok(request);
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("Employee/{employeeID}")]
-        public IActionResult GetAssetBorrowAndReturnRequestByEmployee(int employeeID)
+        public async Task<IActionResult> GetAssetBorrowAndReturnRequestByEmployee(int employeeID)
         {
             try
             {
@@ -99,13 +99,13 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
-                if (currentUserRole == "Admin" && !_employeeRepository.EmployeeExists(employeeID)) return NotFound();
+                if (currentUserRole == "Admin" && !await _employeeRepository.EmployeeExists(employeeID)) return NotFound();
 
-                var requests = _mapper.Map<ICollection<AssetBorrowAndReturnRequestDto>>(_assetBorrowAndReturnRequestRepository.GetRequestByEmployee(employeeID));
+                var requests = _mapper.Map<ICollection<AssetBorrowAndReturnRequestDto>>(await _assetBorrowAndReturnRequestRepository.GetRequestByEmployee(employeeID));
                 foreach (var request in requests)
                 {
-                    request.Employee = _employeeRepository.GetEmployeeByID(request.EmployeeID);
-                    request.Asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(request.AssetID));
+                    request.Employee = await _employeeRepository.GetEmployeeByID(request.EmployeeID);
+                    request.Asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(request.AssetID));
                 }
                 return Ok(requests);
             }
@@ -119,20 +119,20 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPut("{requestID}")]
-        public IActionResult UpdateAssetBorrowAndReturnRequest(int requestID, AssetBorrowAndReturnRequestDto assetBorrowAndReturnRequest)
+        public async Task<IActionResult> UpdateAssetBorrowAndReturnRequest(int requestID, AssetBorrowAndReturnRequestDto assetBorrowAndReturnRequest)
         {
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
                 if (requestID != assetBorrowAndReturnRequest.RequestID) return BadRequest(ModelState);
 
-                if (!_assetBorrowAndReturnRequestRepository.RequestExists(requestID)) return NotFound("Could not find request!");
+                if (!await _assetBorrowAndReturnRequestRepository.RequestExists(requestID)) return NotFound("Could not find request!");
 
-                if (!_employeeRepository.EmployeeExists(assetBorrowAndReturnRequest.EmployeeID)) return NotFound("Could not find employee!");
+                if (!await _employeeRepository.EmployeeExists(assetBorrowAndReturnRequest.EmployeeID)) return NotFound("Could not find employee!");
 
-                if (!_adminRepository.AdminExists(assetBorrowAndReturnRequest.AdminID)) return NotFound("Could not find admin!");
+                if (!await _adminRepository.AdminExists(assetBorrowAndReturnRequest.AdminID)) return NotFound("Could not find admin!");
 
-                if (!_assetCatalogueRepository.AssetExists(assetBorrowAndReturnRequest.AssetID)) return NotFound("Could not find asset!");
+                if (!await _assetCatalogueRepository.AssetExists(assetBorrowAndReturnRequest.AssetID)) return NotFound("Could not find asset!");
 
                 if (assetBorrowAndReturnRequest.AssetCount < 1) return BadRequest("Invalid asset count!");
 
@@ -153,7 +153,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var request = _mapper.Map<AssetBorrowAndReturnRequest>(assetBorrowAndReturnRequest);
 
-                var result = _assetBorrowAndReturnRequestRepository.UpdateRequest(request);
+                var result = await _assetBorrowAndReturnRequestRepository.UpdateRequest(request);
 
                 if (result) return NoContent();
 
@@ -170,7 +170,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Employee")]
         [HttpPost]
-        public IActionResult CreateAssetBorrowAndReturnRequest(AssetBorrowAndReturnRequestDto assetBorrowAndReturnRequest)
+        public async Task<IActionResult> CreateAssetBorrowAndReturnRequest(AssetBorrowAndReturnRequestDto assetBorrowAndReturnRequest)
         {
             try
             {
@@ -182,9 +182,9 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserID != assetBorrowAndReturnRequest.EmployeeID) return Unauthorized();
 
-                if (!_adminRepository.AdminExists(assetBorrowAndReturnRequest.AdminID)) return NotFound("Could not find admin!");
+                if (!await _adminRepository.AdminExists(assetBorrowAndReturnRequest.AdminID)) return NotFound("Could not find admin!");
 
-                if (!_assetCatalogueRepository.AssetExists(assetBorrowAndReturnRequest.AssetID)) return NotFound("Could not find asset!");
+                if (!await _assetCatalogueRepository.AssetExists(assetBorrowAndReturnRequest.AssetID)) return NotFound("Could not find asset!");
 
                 if (assetBorrowAndReturnRequest.AssetCount < 1) return BadRequest("Invalid asset count!");
 
@@ -205,7 +205,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var request = _mapper.Map<AssetBorrowAndReturnRequest>(assetBorrowAndReturnRequest);
 
-                var result = _assetBorrowAndReturnRequestRepository.CreateRequest(request);
+                var result = await _assetBorrowAndReturnRequestRepository.CreateRequest(request);
 
                 if (result) return Ok(_mapper.Map<AssetBorrowAndReturnRequestDto>(request));
 

@@ -29,11 +29,11 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet]
-        public IActionResult GetAllAssetCategories()
+        public async Task<IActionResult> GetAllAssetCategories()
         {
             try
             {
-                var categories = _mapper.Map<ICollection<AssetCategoryDto>>(_assetCategoryRepository.GetAllCategories());
+                var categories = _mapper.Map<ICollection<AssetCategoryDto>>(await _assetCategoryRepository.GetAllCategories());
 
                 return Ok(categories);
             }
@@ -47,13 +47,13 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("{categoryID}")]
-        public IActionResult GetAssetCategorByID(int categoryID)
+        public async Task<IActionResult> GetAssetCategorByID(int categoryID)
         {
             try
             {
-                if (!_assetCategoryRepository.AssetCategoryExists(categoryID)) return NotFound();
+                if (!await _assetCategoryRepository.AssetCategoryExists(categoryID)) return NotFound();
 
-                var category = _mapper.Map<AssetCategoryDto>(_assetCategoryRepository.GetCategoryByID(categoryID));
+                var category = _mapper.Map<AssetCategoryDto>(await _assetCategoryRepository.GetCategoryByID(categoryID));
 
                 return Ok(category);
             }
@@ -67,7 +67,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPut("{categoryID}")]
-        public IActionResult UpdateAssetCategory(int categoryID, AssetCategoryDto assetCategory)
+        public async Task<IActionResult> UpdateAssetCategory(int categoryID, AssetCategoryDto assetCategory)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var categoryToUpdate = _mapper.Map<AssetCategory>(assetCategory);
 
-                var result = _assetCategoryRepository.UpdateCategory(categoryToUpdate);
+                var result = await _assetCategoryRepository.UpdateCategory(categoryToUpdate);
 
                 if (result) return NoContent();
 
@@ -94,7 +94,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult CreateAssetCategory(AssetCategoryDto assetCategory)
+        public async Task<IActionResult> CreateAssetCategory(AssetCategoryDto assetCategory)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var categoryToCreate = _mapper.Map<AssetCategory>(assetCategory);
 
-                var result = _assetCategoryRepository.CreateCategory(categoryToCreate);
+                var result = await _assetCategoryRepository.CreateCategory(categoryToCreate);
 
                 if (result) return Ok(categoryToCreate);
 
@@ -119,15 +119,15 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpDelete("{categoryID}")]
-        public IActionResult DeleteAssetCategory(int categoryID)
+        public async Task<IActionResult> DeleteAssetCategory(int categoryID)
         {
             try
             {
-                if (!_assetCategoryRepository.AssetCategoryExists(categoryID)) return NotFound();
+                if (!await _assetCategoryRepository.AssetCategoryExists(categoryID)) return NotFound();
 
-                var categoryToDelete = _assetCategoryRepository.GetCategoryByID(categoryID);
+                var categoryToDelete = await _assetCategoryRepository.GetCategoryByID(categoryID);
 
-                var result = _assetCategoryRepository.DeleteCategory(categoryToDelete);
+                var result = await _assetCategoryRepository.DeleteCategory(categoryToDelete);
 
                 if (result) return NoContent();
 

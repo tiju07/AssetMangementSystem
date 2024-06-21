@@ -4,14 +4,14 @@ namespace AssetManagementSystem.Interfaces
 {
     public interface IAssetCatalogueRepository
     {
-        public ICollection<Asset> GetAllAssets();
-        public Asset? GetAssetById(int assetID);
-        public ICollection<Asset> GetAssetsByCategory(int categoryID);
-        public ICollection<Asset> GetAssetsForSearch(string searchQuery);
-        public bool CreateAsset(Asset assetCatalogue);
-        public bool UpdateAsset(Asset assetCatalogue);
-        public bool DeleteAsset(Asset asset);
-        public bool AssetExists(int assetID);
-        public bool Save();
+        public Task<ICollection<Asset>> GetAllAssets();
+        public Task<Asset?> GetAssetById(int assetID);
+        public Task<ICollection<Asset>> GetAssetsByCategory(int categoryID);
+        public Task<ICollection<Asset>> GetAssetsForSearch(string searchQuery);
+        public Task<bool> CreateAsset(Asset assetCatalogue);
+        public Task<bool> UpdateAsset(Asset assetCatalogue);
+        public Task<bool> DeleteAsset(Asset asset);
+        public Task<bool> AssetExists(int assetID);
+        public Task<bool> Save();
     }
 }

@@ -17,6 +17,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<IOptions<AppSettings>> _applicationSettings;
 		private Mock<IAdminRepository> _adminRepositoryMock;
 		private Mock<IEmployeeRepository> _employeeRepositoryMock;
+		private Mock<IExternalAuthRepository> _externalAuthRepositoryMock;
 		private Mock<IAuthUtilityRepository> _authUtilityRepositoryMock;
 		private Mock<IEmailService> _emailServiceMock;
 		private Mock<IMapper> _mapperMock;
@@ -35,13 +36,21 @@ namespace AssetManagementSystemTestProject
 
 			_adminRepositoryMock = new Mock<IAdminRepository>();
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
+            _externalAuthRepositoryMock = new Mock<IExternalAuthRepository>();
 			_authUtilityRepositoryMock = new Mock<IAuthUtilityRepository>();
 			_emailServiceMock = new Mock<IEmailService>();
 			_mapperMock = new Mock<IMapper>();
 			_fixture = new Fixture();
 			_loggerMock = new Mock<ILogger<AuthController>>();
 
-			_controller = new AuthController(_applicationSettings.Object, _adminRepositoryMock.Object, _employeeRepositoryMock.Object, _authUtilityRepositoryMock.Object, _mapperMock.Object, _loggerMock.Object, _emailServiceMock.Object);
+			_controller = new AuthController(_applicationSettings.Object, 
+											_adminRepositoryMock.Object, 
+											_employeeRepositoryMock.Object,
+                                            _externalAuthRepositoryMock.Object,
+											_authUtilityRepositoryMock.Object, 
+											_mapperMock.Object, 
+											_loggerMock.Object, 
+											_emailServiceMock.Object);
 
 			_fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
 	.ForEach(b => _fixture.Behaviors.Remove(b));
@@ -49,7 +58,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void RegisterAdmin_ReturnsOk()
+		public async Task RegisterAdmin_ReturnsOk()
 		{
 			var registrationData = _fixture.Create<RegistrationDto>();
 			var admin = _fixture.Create<Admin>();
@@ -59,15 +68,15 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<AdminDto>(It.IsAny<RegistrationDto>())).Returns(mappedAdmin);
 
-			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<AdminDto>())).Returns(false);
-			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<string>())).Returns(false);
+			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<AdminDto>())).Returns(Task.FromResult(false));
+			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<string>())).Returns(Task.FromResult(false));
 
 			_mapperMock.Setup(m => m.Map<Admin>(It.IsAny<RegistrationDto>())).Returns(admin);
 
-			_adminRepositoryMock.Setup(a => a.CreateAdmin(It.IsAny<Admin>())).Returns(true);
+			_adminRepositoryMock.Setup(a => a.CreateAdmin(It.IsAny<Admin>())).Returns(Task.FromResult(true));
 
 			//Act
-			var result = _controller.RegisterAdmin(registrationData);
+			var result = await _controller.RegisterAdmin(registrationData);
 			var obj = result as OkObjectResult;
 
 			//Assert
@@ -75,7 +84,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void RegisterEmployee_ReturnsOk()
+		public async Task RegisterEmployee_ReturnsOk()
 		{
 			var registrationData = _fixture.Create<RegistrationDto>();
 			var employee = _fixture.Create<Employee>();
@@ -85,15 +94,15 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<EmployeeDto>(It.IsAny<RegistrationDto>())).Returns(mappedEmployee);
 
-			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<string>())).Returns(false);
-			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<EmployeeDto>())).Returns(false);
+			_adminRepositoryMock.Setup(a => a.AdminExists(It.IsAny<string>())).Returns(Task.FromResult(false));
+			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<EmployeeDto>())).Returns(Task.FromResult(false));
 
 			_mapperMock.Setup(m => m.Map<Employee>(It.IsAny<EmployeeDto>())).Returns(employee);
 
-			_employeeRepositoryMock.Setup(a => a.CreateEmployee(It.IsAny<Employee>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.CreateEmployee(It.IsAny<Employee>())).Returns(Task.FromResult(true));
 
 			//Act
-			var result = _controller.RegisterEmployee(registrationData);
+			var result = await _controller.RegisterEmployee(registrationData);
 			var obj = result as OkObjectResult;
 
 			//Assert
@@ -101,17 +110,17 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void LoginAdmin_ReturnsOk()
+		public async Task LoginAdmin_ReturnsOk()
 		{
 			var loginCredentials = _fixture.Create<LoginDto>();
 			var admin = _fixture.Create<Admin>();
 
-			_adminRepositoryMock.Setup(a => a.GetAdminByUsername(It.IsAny<string>())).Returns(admin);
+			_adminRepositoryMock.Setup(a => a.GetAdminByUsername(It.IsAny<string>())).Returns(Task.FromResult(admin));
 
 			_authUtilityRepositoryMock.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).Returns(true);
 
 			//Act
-			var result = _controller.ogi(loginCredentials);
+			var result = await _controller.Login(loginCredentials);
 			var obj = result as OkObjectResult;
 
 			//Assert
@@ -119,17 +128,17 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void EmployeeLogin_ReturnsOk()
+		public async Task EmployeeLogin_ReturnsOk()
 		{
 			var loginCredentials = _fixture.Create<LoginDto>();
 			var employee = _fixture.Create<Employee>();
 
-			_employeeRepositoryMock.Setup(a => a.GetEmployeeByUserName(It.IsAny<string>())).Returns(employee);
+			_employeeRepositoryMock.Setup(a => a.GetEmployeeByUserName(It.IsAny<string>())).Returns(Task.FromResult(employee));
 
 			_authUtilityRepositoryMock.Setup(a => a.CheckPassword(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).Returns(true);
 
 			//Act
-			var result = _controller.EmployeeLogin(loginCredentials);
+			var result = await _controller.Login(loginCredentials);
 			var obj = result as OkObjectResult;
 
 			//Assert

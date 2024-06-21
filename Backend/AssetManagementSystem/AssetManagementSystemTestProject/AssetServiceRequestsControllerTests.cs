@@ -29,7 +29,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<ILogger<AssetServiceRequestsController>> _loggerMock;
 
 		[SetUp]
-		public void SetUp()
+		public async Task SetUp()
 		{
 			_assetServiceRequestRepositoryMock = new Mock<IAssetServiceRequestRepository>();
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
@@ -47,7 +47,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAllAssetServiceRequests_ReturnsOk()
+		public async Task GetAllAssetServiceRequests_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -69,14 +69,14 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetServiceRequestDto>>(It.IsAny<AssetServiceRequest>)).Returns(requests);
 
-			var result = _controller.GetAllAssetServiceRequests();
+			var result = await _controller.GetAllAssetServiceRequests();
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetServiceRequestByID_ReturnsOk()
+		public async Task GetAssetServiceRequestByID_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -96,18 +96,18 @@ namespace AssetManagementSystemTestProject
 
 			var request = _fixture.Create<AssetServiceRequestDto>();
 
-			_assetServiceRequestRepositoryMock.Setup(a => a.ServiceRequestExists(It.IsAny<int>())).Returns(true);
+			_assetServiceRequestRepositoryMock.Setup(a => a.ServiceRequestExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetServiceRequestDto>(It.IsAny<AssetServiceRequest>())).Returns(request);
 
-			var result = _controller.GetAssetServiceRequestByID(1);
+			var result = await _controller.GetAssetServiceRequestByID(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetServiceRequestByEmployee_ReturnsOk()
+		public async Task GetAssetServiceRequestByEmployee_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -127,18 +127,18 @@ namespace AssetManagementSystemTestProject
 
 			var requests = _fixture.CreateMany<AssetServiceRequestDto>(5).ToList();
 
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetServiceRequestDto>>(It.IsAny<AssetServiceRequest>())).Returns(requests);
 
-			var result = _controller.GetAssetServiceRequestByEmployee(1);
+			var result = await _controller.GetAssetServiceRequestByEmployee(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void CreateAssetBorrowAndReturnRequest_ReturnsOk()
+		public async Task CreateAssetBorrowAndReturnRequest_ReturnsOk()
 		{
 			var employee = _fixture.Create<Employee>();
 
@@ -163,20 +163,20 @@ namespace AssetManagementSystemTestProject
 			mappedRequest.IssueType = "Malfunction";
 			mappedRequest.RequestStatus = "Open";
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetServiceRequestRepositoryMock.Setup(r => r.CreateServiceRequest(It.IsAny<AssetServiceRequest>())).Returns(true);
+			_assetServiceRequestRepositoryMock.Setup(r => r.CreateServiceRequest(It.IsAny<AssetServiceRequest>())).Returns(Task.FromResult(true));
 
-			var result = _controller.CreateAssetServiceRequest(mappedRequest);
+			var result = await _controller.CreateAssetServiceRequest(mappedRequest);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void UpdateAssetServiceRequest_ReturnsOk()
+		public async Task UpdateAssetServiceRequest_ReturnsOk()
 		{
 			var employee = _fixture.Create<Employee>();
 
@@ -200,15 +200,15 @@ namespace AssetManagementSystemTestProject
 			mappedRequest.IssueType = "Malfunction";
 			mappedRequest.RequestStatus = "Open";
 
-			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(e => e.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+			_assetAllocationRepositoryMock.Setup(a => a.AllocationDetailExists(It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetServiceRequestRepositoryMock.Setup(r => r.UpdateServiceRequest(It.IsAny<AssetServiceRequest>())).Returns(true);
+			_assetServiceRequestRepositoryMock.Setup(r => r.UpdateServiceRequest(It.IsAny<AssetServiceRequest>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateAssetServiceRequest(mappedRequest.RequestID, mappedRequest);
+			var result = await _controller.UpdateAssetServiceRequest(mappedRequest.RequestID, mappedRequest);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);

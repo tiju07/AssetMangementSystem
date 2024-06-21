@@ -2,6 +2,7 @@
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagementSystem.Repository
 {
@@ -14,59 +15,59 @@ namespace AssetManagementSystem.Repository
             _context = context;
         }
 
-        public bool AssetExists(int assetID)
+        public async Task<bool> AssetExists(int assetID)
         {
-            return _context.AssetCatalogue.Any(a => a.AssetID == assetID);
+            return await _context.AssetCatalogue.AnyAsync(a => a.AssetID == assetID);
         }
 
-        public bool CreateAsset(Asset assetCatalogue)
+        public async Task<bool> CreateAsset(Asset assetCatalogue)
         {
-            _context.AssetCatalogue.Add(assetCatalogue);
-            return Save();
+            await _context.AssetCatalogue.AddAsync(assetCatalogue);
+            return await Save();
         }
 
-        public bool DeleteAsset(Asset asset)
+        public async Task<bool> DeleteAsset(Asset asset)
         {
             _context.AssetCatalogue.Remove(asset);
-            return Save();
+            return await Save();
         }
 
-        public ICollection<Asset> GetAllAssets()
+        public async Task<ICollection<Asset>> GetAllAssets()
         {
-            return _context.AssetCatalogue.ToList();
+            return await _context.AssetCatalogue.ToListAsync();
         }
 
-        public Asset? GetAssetById(int assetID)
+        public async Task<Asset?> GetAssetById(int assetID)
         {
-            return _context.AssetCatalogue.Find(assetID);
+            return await _context.AssetCatalogue.FindAsync(assetID);
         }
 
-        public bool UpdateAsset(Asset assetCatalogue)
+        public async Task<bool> UpdateAsset(Asset assetCatalogue)
         {
             _context.AssetCatalogue.Update(assetCatalogue);
-            return Save();
+            return await Save();
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var result = _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-		public ICollection<Asset> GetAssetsByCategory(int categoryID)
+		public async Task<ICollection<Asset>> GetAssetsByCategory(int categoryID)
 		{
 
-		    return _context.AssetCatalogue.Where(a => a.AssetCategoryID == categoryID).ToList();
+		    return await _context.AssetCatalogue.Where(a => a.AssetCategoryID == categoryID).ToListAsync();
 		}
 
-		public ICollection<Asset> GetAssetsForSearch(string searchQuery)
+		public async Task<ICollection<Asset>> GetAssetsForSearch(string searchQuery)
 		{
 			searchQuery = searchQuery.ToLower();
-			return _context.AssetCatalogue.Where(a => a.AssetModel.ToLower().Contains(searchQuery) || 
+			return await _context.AssetCatalogue.Where(a => a.AssetModel.ToLower().Contains(searchQuery) || 
                                                  a.AssetDescription.ToLower().Contains(searchQuery) ||
                                                  a.AssetName.ToLower().Contains(searchQuery) || 
                                                  a.AssetSpecifications.ToLower().Contains(searchQuery)
-                                                ).ToList();
+                                                ).ToListAsync();
 		}
 
 	}

@@ -25,7 +25,7 @@ namespace AssetManagementSystemTestProject
 		private AssetCategoriesController _controller;
 		private Mock<ILogger<AssetCategoriesController>> _loggerMock;
 		[SetUp]
-		public void SetUp()
+		public async Task SetUp()
 		{
 			_assetCategoryRepositoryMock = new Mock<IAssetCategoryRepository>();
 			_mapperMock = new Mock<IMapper>();
@@ -40,7 +40,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAllAssetCategories_ReturnsOk()
+		public async Task GetAllAssetCategories_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -62,14 +62,14 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetCategoryDto>>(It.IsAny<Asset>)).Returns(assetCategories);
 
-			var result = _controller.GetAllAssetCategories();
+			var result = await _controller.GetAllAssetCategories();
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetCategorByID_ReturnsOk()
+		public async Task GetAssetCategorByID_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -89,18 +89,18 @@ namespace AssetManagementSystemTestProject
 
 			var assetCategory = _fixture.Create<AssetCategoryDto>();
 
-			_assetCategoryRepositoryMock.Setup(a => a.AssetCategoryExists(It.IsAny<int>())).Returns(true);
+			_assetCategoryRepositoryMock.Setup(a => a.AssetCategoryExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetCategoryDto>(It.IsAny<AssetCategory>)).Returns(assetCategory);
 
-			var result = _controller.GetAssetCategorByID(1);
+			var result = await _controller.GetAssetCategorByID(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void CreateAssetCategory_ReturnsOk()
+		public async Task CreateAssetCategory_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -120,16 +120,16 @@ namespace AssetManagementSystemTestProject
 
 			var assetCategory = _fixture.Create<AssetCategoryDto>();
 
-			_assetCategoryRepositoryMock.Setup(c => c.CreateCategory(It.IsAny<AssetCategory>())).Returns(true);
+			_assetCategoryRepositoryMock.Setup(c => c.CreateCategory(It.IsAny<AssetCategory>())).Returns(Task.FromResult(true));
 
-			var result = _controller.CreateAssetCategory(assetCategory);
+			var result = await _controller.CreateAssetCategory(assetCategory);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void UpdateAssetCategory_ReturnsOk()
+		public async Task UpdateAssetCategory_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -149,16 +149,16 @@ namespace AssetManagementSystemTestProject
 
 			var assetCategory = _fixture.Create<AssetCategoryDto>();
 
-			_assetCategoryRepositoryMock.Setup(c => c.UpdateCategory(It.IsAny<AssetCategory>())).Returns(true);
+			_assetCategoryRepositoryMock.Setup(c => c.UpdateCategory(It.IsAny<AssetCategory>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateAssetCategory(assetCategory.CategoryID, assetCategory);
+			var result = await _controller.UpdateAssetCategory(assetCategory.CategoryID, assetCategory);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);
 		}
 
 		[Test]
-		public void DeleteAssetCategory_ReturnsOk()
+		public async Task DeleteAssetCategory_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -178,13 +178,13 @@ namespace AssetManagementSystemTestProject
 
 			var assetCategory = _fixture.Create<AssetCategory>();
 
-			_assetCategoryRepositoryMock.Setup(c => c.AssetCategoryExists(It.IsAny<int>())).Returns(true);
+			_assetCategoryRepositoryMock.Setup(c => c.AssetCategoryExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCategoryRepositoryMock.Setup(c => c.GetCategoryByID(It.IsAny<int>())).Returns(assetCategory);
+			_assetCategoryRepositoryMock.Setup(c => c.GetCategoryByID(It.IsAny<int>())).Returns(Task.FromResult(assetCategory));
 
-			_assetCategoryRepositoryMock.Setup(c => c.DeleteCategory(It.IsAny<AssetCategory>())).Returns(true);
+			_assetCategoryRepositoryMock.Setup(c => c.DeleteCategory(It.IsAny<AssetCategory>())).Returns(Task.FromResult(true));
 
-			var result = _controller.DeleteAssetCategory(1);
+			var result = await _controller.DeleteAssetCategory(1);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);

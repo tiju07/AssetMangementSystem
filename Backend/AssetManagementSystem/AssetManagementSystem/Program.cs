@@ -54,6 +54,8 @@ builder.Services.Configure<AppSettings>(
 	builder.Configuration.GetSection("ApplicationSettings")
 );
 
+builder.Services.Configure<GoogleSettings>(builder.Configuration.GetSection("Google_OAuth"));
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -66,6 +68,7 @@ builder.Services.AddScoped<IAssetServiceRequestRepository, AssetServiceRequestRe
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IAuthUtilityRepository, AuthUtilityRepository>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddScoped<IExternalAuthRepository, ExternalAuthRepository>();
 
 builder.Services.AddAuthentication(x =>
 {

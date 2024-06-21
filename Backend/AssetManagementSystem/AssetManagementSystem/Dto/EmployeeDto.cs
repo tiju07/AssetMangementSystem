@@ -14,14 +14,11 @@ namespace AssetManagementSystem.Dto
 		[EmailAddress]
 		public string Email { get; set; }
 
-		[Required]
-		public string Username { get; set; }
+		public string? Username { get; set; }
 
-		[Required]
-		public string Gender { get; set; }
+		public string? Gender { get; set; }
 
-		[Required]
-		public string ContactNumber { get; set; }
+		public string? ContactNumber { get; set; }
 		public string? Address { get; set; }
 	}
 }

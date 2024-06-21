@@ -4,12 +4,12 @@ namespace AssetManagementSystem.Interfaces
 {
     public interface IAssetBorrowAndReturnRequestRepository
     {
-        public ICollection<AssetBorrowAndReturnRequest> GetAllRequests();
-        public AssetBorrowAndReturnRequest GetRequestById(int id);
-        public ICollection<AssetBorrowAndReturnRequest> GetRequestByEmployee(int employeeID);
-        public bool CreateRequest(AssetBorrowAndReturnRequest request);
-        public bool UpdateRequest(AssetBorrowAndReturnRequest request);
-        public bool RequestExists(int requestID);
-        public bool Save();
+        public Task<ICollection<AssetBorrowAndReturnRequest>> GetAllRequests();
+        public Task<AssetBorrowAndReturnRequest> GetRequestById(int id);
+        public Task<ICollection<AssetBorrowAndReturnRequest>> GetRequestByEmployee(int employeeID);
+        public Task<bool> CreateRequest(AssetBorrowAndReturnRequest request);
+        public Task<bool> UpdateRequest(AssetBorrowAndReturnRequest request);
+        public Task<bool> RequestExists(int requestID);
+        public Task<bool> Save();
     }
 }

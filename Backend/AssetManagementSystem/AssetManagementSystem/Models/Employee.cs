@@ -20,17 +20,13 @@ namespace AssetManagementSystem.Models
 		[Required]
 		public string Username { get; set; }
 
-		[Required]
-		public byte[] PasswordHash { get; set; }
+		public byte[]? PasswordHash { get; set; }
 
-		[Required]
-		public byte[] PasswordSalt { get; set; }
+		public byte[]? PasswordSalt { get; set; }
 
-		[Required]
-		public string Gender { get; set; }
+		public string? Gender { get; set; }
 
-		[Required]
-		public string ContactNumber { get; set; }
+		public string? ContactNumber { get; set; }
 		public string? Address { get; set; }
 
 		public ICollection<AssetAllocationDetail>? AssetAllocationDetails { get; set; }

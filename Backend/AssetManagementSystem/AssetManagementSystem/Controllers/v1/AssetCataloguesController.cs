@@ -33,7 +33,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet]
-        public IActionResult GetAllAssetDetails([FromQuery] string? searchQuery, [FromQuery] int? categoryFilter)
+        public async Task<IActionResult> GetAllAssetDetails([FromQuery] string? searchQuery, [FromQuery] int? categoryFilter)
         {
             try
             {
@@ -41,26 +41,26 @@ namespace AssetManagementSystem.Controllers.v1
                 ICollection<AssetDto> assetCatalogue = new List<AssetDto>();
                 if (searchQuery == null && categoryFilter == null)
                 {
-                    assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAllAssets());
+                    assetCatalogue = _mapper.Map<ICollection<AssetDto>>(await _assetCatalogueRepository.GetAllAssets());
                 }
                 else if (searchQuery != null && categoryFilter == null)
                 {
-                    assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsForSearch(searchQuery));
+                    assetCatalogue = _mapper.Map<ICollection<AssetDto>>(await _assetCatalogueRepository.GetAssetsForSearch(searchQuery));
                 }
                 else if (categoryFilter != null && searchQuery == null)
                 {
-                    var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
+                    var category = await _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
                     if (category != null)
                     {
-                        assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
+                        assetCatalogue = _mapper.Map<ICollection<AssetDto>>(await _assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
                     }
                 }
                 else
                 {
-                    var category = _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
+                    var category = await _assetCategoryRepository.GetCategoryByID((int)categoryFilter);
                     if (category != null)
                     {
-                        assetCatalogue = _mapper.Map<ICollection<AssetDto>>(_assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
+                        assetCatalogue = _mapper.Map<ICollection<AssetDto>>(await _assetCatalogueRepository.GetAssetsByCategory(category.CategoryID));
                         assetCatalogue = _mapper.Map<ICollection<AssetDto>>(assetCatalogue
                             .Where(a => a.AssetModel.ToLower().Contains(searchQuery) ||
                             a.AssetDescription.ToLower().Contains(searchQuery) ||
@@ -82,13 +82,13 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("{assetID}")]
-        public IActionResult GetAssetDetailsByID(int assetID)
+        public async Task<IActionResult> GetAssetDetailsByID(int assetID)
         {
             try
             {
-                if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+                if (!await _assetCatalogueRepository.AssetExists(assetID)) return NotFound();
 
-                var asset = _mapper.Map<AssetDto>(_assetCatalogueRepository.GetAssetById(assetID));
+                var asset = _mapper.Map<AssetDto>(await _assetCatalogueRepository.GetAssetById(assetID));
                 return Ok(asset);
             }
             catch (Exception ex)
@@ -101,20 +101,20 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPut("{assetID}")]
-        public IActionResult UpdateAssetDetails(int assetID, AssetDto asset)
+        public async Task<IActionResult> UpdateAssetDetails(int assetID, AssetDto asset)
         {
             try
             {
                 if (assetID != asset.AssetID) return BadRequest();
 
-                if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+                if (!await _assetCatalogueRepository.AssetExists(assetID)) return NotFound();
 
                 if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
 
                 if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
 
                 var assetToUpdate = _mapper.Map<Asset>(asset);
-                var result = _assetCatalogueRepository.UpdateAsset(assetToUpdate);
+                var result = await _assetCatalogueRepository.UpdateAsset(assetToUpdate);
 
                 if (result) return NoContent();
 
@@ -131,20 +131,20 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult CreateAsset(AssetDto asset)
+        public async Task<IActionResult> CreateAsset(AssetDto asset)
         {
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                if (!_assetCategoryRepository.AssetCategoryExists(asset.AssetCategoryID)) return BadRequest("Invalid category ID!");
+                if (!await _assetCategoryRepository.AssetCategoryExists(asset.AssetCategoryID)) return BadRequest("Invalid category ID!");
 
                 if (!AssetCatalogueUtils.AssetStatusIsValid(asset.AssetStatus)) return BadRequest("Invalid asset status!");
 
                 if (!(asset.AssetValue > 0)) return BadRequest("Invalid asset value!");
 
                 var assetToCreate = _mapper.Map<Asset>(asset);
-                var result = _assetCatalogueRepository.CreateAsset(assetToCreate);
+                var result = await _assetCatalogueRepository.CreateAsset(assetToCreate);
 
                 if (result) return Ok(assetToCreate);
 
@@ -161,15 +161,15 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpDelete("{assetID}")]
-        public IActionResult DeleteAsset(int assetID)
+        public async Task<IActionResult> DeleteAsset(int assetID)
         {
             try
             {
-                if (!_assetCatalogueRepository.AssetExists(assetID)) return NotFound();
+                if (!await _assetCatalogueRepository.AssetExists(assetID)) return NotFound();
 
-                var assetToDelete = _assetCatalogueRepository.GetAssetById(assetID);
+                var assetToDelete = await _assetCatalogueRepository.GetAssetById(assetID);
 
-                var result = _assetCatalogueRepository.DeleteAsset(assetToDelete);
+                var result = await _assetCatalogueRepository.DeleteAsset(assetToDelete);
                 if (result) return NoContent();
 
                 ModelState.AddModelError("Error", "An error occured while deleting the asset!");

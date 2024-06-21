@@ -6,15 +6,15 @@ namespace AssetManagementSystem.Interfaces
 {
     public interface IAdminRepository
     {
-        public ICollection<Admin> GetAdminsWithPendingAccess();
-        public Admin? GetAdminByID(int id);
-        public Admin GetAdminByUsername(string username);
-        public bool UpdateAdmin(Admin admin);
-        public bool CreateAdmin(Admin admin);
-        public bool DeleteAdmin(int id);
-        public bool AdminExists(int? id);
-        public bool AdminExists(AdminDto admin);
-        public bool AdminExists(string email);
-        public bool Save();
+        public Task<ICollection<Admin>> GetAdminsWithPendingAccess();
+        public Task<Admin?> GetAdminByID(int id);
+        public Task<Admin> GetAdminByUsername(string username);
+        public Task<bool> UpdateAdmin(Admin admin);
+        public Task<bool> CreateAdmin(Admin admin);
+        public Task<bool> DeleteAdmin(int id);
+        public Task<bool> AdminExists(int? id);
+        public Task<bool> AdminExists(AdminDto admin);
+        public Task<bool> AdminExists(string email);
+        public Task<bool> Save();
     }
 }

@@ -34,11 +34,11 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult GetAllEmployees()
+        public async Task<IActionResult> GetAllEmployees()
         {
             try
             {
-                var employees = _mapper.Map<ICollection<EmployeeAdminViewModel>>(_employeeRepository.GetAllEmployees());
+                var employees = _mapper.Map<ICollection<EmployeeAdminViewModel>>(await _employeeRepository.GetAllEmployees());
 
                 return Ok(employees);
             }
@@ -52,7 +52,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("{employeeID}")]
-        public IActionResult GetEmployeeByID(int employeeID)
+        public async Task<IActionResult> GetEmployeeByID(int employeeID)
         {
             try
             {
@@ -62,9 +62,9 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
-                if (!_employeeRepository.EmployeeExists(employeeID)) return NotFound();
+                if (!await _employeeRepository.EmployeeExists(employeeID)) return NotFound();
 
-                var employee = _mapper.Map<EmployeeAdminViewModel>(_employeeRepository.GetEmployeeByID(employeeID));
+                var employee = _mapper.Map<EmployeeAdminViewModel>(await _employeeRepository.GetEmployeeByID(employeeID));
 
                 return Ok(employee);
             }
@@ -78,7 +78,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Employee")]
         [HttpPut("{employeeID}")]
-        public IActionResult UpdateEmployee(int employeeID, EmployeeDto employee)
+        public async Task<IActionResult> UpdateEmployee(int employeeID, EmployeeDto employee)
         {
             try
             {
@@ -97,17 +97,17 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var employeeToUpdate = _mapper.Map<Employee>(employee);
 
-                if (_employeeRepository.EmployeeExists(_mapper.Map<EmployeeDto>(employeeToUpdate)))
+                if (await _employeeRepository.EmployeeExists(_mapper.Map<EmployeeDto>(employeeToUpdate)))
                 {
                     return BadRequest("A user with the given details already exists!");
                 }
 
-                var originalData = _employeeRepository.GetEmployeeByIDWithCredentials(employeeID);
+                var originalData = await _employeeRepository.GetEmployeeByIDWithCredentials(employeeID);
 
                 employeeToUpdate.PasswordHash = originalData.PasswordHash;
                 employeeToUpdate.PasswordSalt = originalData.PasswordSalt;
 
-                var result = _employeeRepository.UpdateEmployee(employeeToUpdate);
+                var result = await _employeeRepository.UpdateEmployee(employeeToUpdate);
 
                 if (result) return NoContent();
 
@@ -124,7 +124,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpDelete("{employeeID}")]
-        public IActionResult DeleteEmployee(int employeeID)
+        public async Task<IActionResult> DeleteEmployee(int employeeID)
         {
             try
             {
@@ -134,9 +134,9 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
-                if (!_employeeRepository.EmployeeExists(employeeID)) return NotFound();
+                if (!await _employeeRepository.EmployeeExists(employeeID)) return NotFound();
 
-                var result = _employeeRepository.DeleteEmployee(employeeID);
+                var result = await _employeeRepository.DeleteEmployee(employeeID);
 
                 if (result) return Ok();
 
@@ -153,19 +153,19 @@ namespace AssetManagementSystem.Controllers.v1
         [MapToApiVersion("1.0")]
         [HttpPost]
         [Route("ValidateUsernameOrEmail")]
-        public IActionResult ValidateUsernameOrEmail([FromBody] string username)
+        public async Task<IActionResult> ValidateUsernameOrEmail([FromBody] string username)
         {
-            if (_employeeRepository.EmployeeExists(username)) return Ok();
+            if (await _employeeRepository.EmployeeExists(username)) return Ok();
             return NotFound();
         }
 
         [MapToApiVersion("1.0")]
         [HttpPost]
         [Route("UpdatePassword")]
-        public IActionResult UpdatePassword(LoginDto credentials)
+        public async Task<IActionResult> UpdatePassword(LoginDto credentials)
         {
             //Will get by both checking username & email
-            var employeeToUpdate = _employeeRepository.GetEmployeeByUserName(credentials.UserName);
+            var employeeToUpdate = await _employeeRepository.GetEmployeeByUserName(credentials.UserName);
             if (employeeToUpdate != null)
             {
                 using (HMACSHA512? hmac = new HMACSHA512())
@@ -174,7 +174,7 @@ namespace AssetManagementSystem.Controllers.v1
                     employeeToUpdate.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(credentials.Password));
                 }
 
-                var result = _employeeRepository.UpdateEmployee(employeeToUpdate);
+                var result = await _employeeRepository.UpdateEmployee(employeeToUpdate);
 
                 if (result) return Ok();
 

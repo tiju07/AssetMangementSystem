@@ -17,64 +17,64 @@ namespace AssetManagementSystem.Repository
         {
             _context = context;
         }
-        public Admin? GetAdminByID(int id)
+        public async Task<Admin?> GetAdminByID(int id)
         {
-            return _context.Admins.AsNoTracking().FirstOrDefault(a => a.ID == id);
+            return await _context.Admins.AsNoTracking().FirstOrDefaultAsync(a => a.ID == id);
         }
-        public bool UpdateAdmin(Admin admin)
+        public async Task<bool> UpdateAdmin(Admin admin)
         {
             _context.Admins.Update(admin);
-            return Save();
+            return await Save();
         }
-        public bool CreateAdmin(Admin admin)
+        public async Task<bool> CreateAdmin(Admin admin)
         {
-            _context.Admins.Add(admin);
-            return Save();
+            await _context.Admins.AddAsync(admin);
+            return await Save();
         }
-        public bool DeleteAdmin(int adminID)
+        public async Task<bool> DeleteAdmin(int adminID)
         {
-            _context.Admins.Remove(GetAdminByID(adminID));
-            return Save();
+            _context.Admins.Remove(await GetAdminByID(adminID));
+            return await Save();
         }
-        public bool AdminExists(int? id)
+        public async Task<bool> AdminExists(int? id)
         {
             if(id == null) return true;
 
-            return _context.Admins.Any(a => a.ID == id);
+            return await _context.Admins.AnyAsync(a => a.ID == id);
         }
-        public bool AdminExists(AdminDto admin)
+        public async Task<bool> AdminExists(AdminDto admin)
         {
-            return _context.Admins.Any(a => a.Email == admin.Email);
+            return await _context.Admins.AnyAsync(a => a.Email == admin.Email);
         }
         
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var result = _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
             return result > 0 ? true : false;
         }
 
-		public Admin GetAdminByUsername(string username)
+		public async Task<Admin> GetAdminByUsername(string username)
 		{
-            return _context.Admins.FirstOrDefault(a => a.Username == username || a.Email == username);
+            return await _context.Admins.FirstOrDefaultAsync(a => a.Username == username || a.Email == username);
 		}
 
-		public bool AdminExists(string email)
+		public async Task<bool> AdminExists(string email)
 		{
-			return _context.Admins.Any(a => a.Email == email || a.Username == email);
+			return await _context.Admins.AnyAsync(a => a.Email == email || a.Username == email);
 		}
 
-        public Admin UpdatePassword(LoginDto credentials)
+        public async Task<Admin> UpdatePassword(LoginDto credentials)
         {
-            var adminToUpdate = _context.Admins
-                .Where(a =>  a.Username == credentials.UserName || a.Email == credentials.UserName).FirstOrDefault();
+            var adminToUpdate = await _context.Admins
+                .Where(a =>  a.Username == credentials.UserName || a.Email == credentials.UserName).FirstOrDefaultAsync();
 
             return adminToUpdate;
 
         }
 
-        public ICollection<Admin> GetAdminsWithPendingAccess()
+        public async Task<ICollection<Admin>> GetAdminsWithPendingAccess()
         {
-            return _context.Admins.Where(a => !a.IsVerified).ToList();
+            return await _context.Admins.Where(a => !a.IsVerified).ToListAsync();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace AssetManagementSystemTestProject
 		private Mock<ILogger<AssetAuditReportRequestsController>> _loggerMock;
 
 		[SetUp]
-		public void SetUp()
+		public async Task SetUp()
 		{
 			_assetAuditReportRequestRepositoryMock = new Mock<IAssetAuditReportRequestRepository>();
 			_employeeRepositoryMock = new Mock<IEmployeeRepository>();
@@ -49,7 +49,7 @@ namespace AssetManagementSystemTestProject
 		}
 
 		[Test]
-		public void GetAssetAuditReportRequests_ReturnsOk()
+		public async Task GetAssetAuditReportRequests_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -71,14 +71,14 @@ namespace AssetManagementSystemTestProject
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetAuditReportRequestDto>>(It.IsAny<AssetAuditReportRequest>)).Returns(requests);
 
-			var result = _controller.GetAssetAuditReportRequests();
+			var result = await _controller.GetAssetAuditReportRequests();
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetAuditReportRequestByID_ReturnsOk()
+		public async Task GetAssetAuditReportRequestByID_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -98,18 +98,18 @@ namespace AssetManagementSystemTestProject
 
 			var request = _fixture.Create<AssetAuditReportRequestDto>();
 
-			_assetAuditReportRequestRepositoryMock.Setup(a => a.AssetAuditReportRequestExists(It.IsAny<int>())).Returns(true);
+			_assetAuditReportRequestRepositoryMock.Setup(a => a.AssetAuditReportRequestExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetAuditReportRequestDto>(It.IsAny<AssetAuditReportRequest>())).Returns(request);
 
-			var result = _controller.GetAssetAuditReportRequestByID(1);
+			var result = await _controller.GetAssetAuditReportRequestByID(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void GetAssetAuditReportRequestByEmployee_ReturnsOk()
+		public async Task GetAssetAuditReportRequestByEmployee_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -129,18 +129,18 @@ namespace AssetManagementSystemTestProject
 
 			var requests = _fixture.CreateMany<AssetAuditReportRequestDto>(5).ToList();
 
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<ICollection<AssetAuditReportRequestDto>>(It.IsAny<AssetAuditReportRequest>())).Returns(requests);
 
-			var result = _controller.GetAssetAuditReportRequestByEmployee(1);
+			var result = await _controller.GetAssetAuditReportRequestByEmployee(1);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void CreateAssetAllocationDetail_ReturnsOk()
+		public async Task CreateAssetAllocationDetail_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -161,22 +161,22 @@ namespace AssetManagementSystemTestProject
 			var request = _fixture.Create<AssetAuditReportRequest>();
 			var mappedRequest = _fixture.Create<AssetAuditReportRequestDto>();
 			mappedRequest.RequestStatus = "Pending";
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetAuditReportRequest>(It.IsAny<AssetAuditReportRequestDto>())).Returns(request);
 
-			_assetAuditReportRequestRepositoryMock.Setup(a => a.CreateAuditRequest(It.IsAny<AssetAuditReportRequest>())).Returns(true);
+			_assetAuditReportRequestRepositoryMock.Setup(a => a.CreateAuditRequest(It.IsAny<AssetAuditReportRequest>())).Returns(Task.FromResult(true));
 
-			var result = _controller.CreateAssetAuditReportRequest(mappedRequest);
+			var result = await _controller.CreateAssetAuditReportRequest(mappedRequest);
 			var obj = result as OkObjectResult;
 
 			Assert.AreEqual(200, obj.StatusCode);
 		}
 
 		[Test]
-		public void UpdateAssetAuditReportRequest_ReturnsOk()
+		public async Task UpdateAssetAuditReportRequest_ReturnsOk()
 		{
 			var admin = _fixture.Create<Admin>();
 
@@ -198,17 +198,17 @@ namespace AssetManagementSystemTestProject
 			var mappedRequest = _fixture.Create<AssetAuditReportRequestDto>();
 			mappedRequest.RequestStatus = "Pending";
 
-			_assetAuditReportRequestRepositoryMock.Setup(a => a.AssetAuditReportRequestExists(It.IsAny<int>())).Returns(true);
+			_assetAuditReportRequestRepositoryMock.Setup(a => a.AssetAuditReportRequestExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(true);
+			_employeeRepositoryMock.Setup(a => a.EmployeeExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
-			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(true);
+			_assetCatalogueRepositoryMock.Setup(a => a.AssetExists(It.IsAny<int>())).Returns(Task.FromResult(true));
 
 			_mapperMock.Setup(m => m.Map<AssetAuditReportRequest>(It.IsAny<AssetAuditReportRequestDto>())).Returns(request);
 
-			_assetAuditReportRequestRepositoryMock.Setup(a => a.UpdateAuditRequest(It.IsAny<AssetAuditReportRequest>())).Returns(true);
+			_assetAuditReportRequestRepositoryMock.Setup(a => a.UpdateAuditRequest(It.IsAny<AssetAuditReportRequest>())).Returns(Task.FromResult(true));
 
-			var result = _controller.UpdateAssetAuditReportRequest(mappedRequest.RequestID, mappedRequest);
+			var result = await _controller.UpdateAssetAuditReportRequest(mappedRequest.RequestID, mappedRequest);
 			var obj = result as NoContentResult;
 
 			Assert.AreEqual(204, obj.StatusCode);

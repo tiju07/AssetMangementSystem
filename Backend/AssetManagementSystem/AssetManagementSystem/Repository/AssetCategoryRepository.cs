@@ -1,6 +1,7 @@
 ﻿using AssetManagementSystem.Data;
 using AssetManagementSystem.Interfaces;
 using AssetManagementSystem.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagementSystem.Repository
 {
@@ -12,43 +13,43 @@ namespace AssetManagementSystem.Repository
         {
             _context = context;
         }
-        public bool AssetCategoryExists(int categoryID)
+        public async Task<bool> AssetCategoryExists(int categoryID)
         {
-            return _context.AssetCategories.Any(c => c.CategoryID == categoryID);
+            return await _context.AssetCategories.AnyAsync(c => c.CategoryID == categoryID);
         }
 
-        public bool CreateCategory(AssetCategory category)
+        public async Task<bool> CreateCategory(AssetCategory category)
         {
             _context.AssetCategories.Add(category);
-            return Save();
+            return await Save();
         }
 
-        public bool DeleteCategory(AssetCategory category)
+        public async Task<bool> DeleteCategory(AssetCategory category)
         {
             _context.AssetCategories.Remove(category);
-            return Save();
+            return await Save();
         }
 
-        public ICollection<AssetCategory> GetAllCategories()
+        public async Task<ICollection<AssetCategory>> GetAllCategories()
         {
-            return _context.AssetCategories.ToList();
+            return await _context.AssetCategories.ToListAsync();
         }
 
-        public AssetCategory? GetCategoryByID(int categoryID)
+        public async Task<AssetCategory?> GetCategoryByID(int categoryID)
         {
-            return _context.AssetCategories.Find(categoryID);
+            return await _context.AssetCategories.FindAsync(categoryID);
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var result = _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
             return result > 0;
         }
 
-        public bool UpdateCategory(AssetCategory category)
+        public async Task<bool> UpdateCategory(AssetCategory category)
         {
             _context.AssetCategories.Update(category);
-            return Save();
+            return await Save();
         }
     }
 }

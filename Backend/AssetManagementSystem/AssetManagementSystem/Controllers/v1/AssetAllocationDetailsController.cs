@@ -43,7 +43,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		//[Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult GetAllAssetAllocationDetails()
+        public async Task<IActionResult> GetAllAssetAllocationDetails()
         {
             try
             {
@@ -52,7 +52,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
                 _logger.LogCritical($"User ID {currentUserID}");
-                var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(_assetAllocationRepository.GetAllAssetAllocations());
+                var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(await _assetAllocationRepository.GetAllAssetAllocations());
 
                 return Ok(assetAllocationDetails);
             }
@@ -66,7 +66,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("{assetAllocationID}")]
-        public IActionResult GetAssetAllocationDetailByID(int assetAllocationID)
+        public async Task<IActionResult> GetAssetAllocationDetailByID(int assetAllocationID)
         {
             try
             {
@@ -76,13 +76,13 @@ namespace AssetManagementSystem.Controllers.v1
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
                 _logger.LogCritical($"User ID {currentUserID}");
 
-                if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationID))
+                if (!await _assetAllocationRepository.AllocationDetailExists(assetAllocationID))
                 {
                     if (currentUserRole == "Admin") return NotFound();
                     return Unauthorized();
                 }
 
-                var assetAllocationDetail = _mapper.Map<AssetAllocationDetailDto>(_assetAllocationRepository.GetAssetAllocationByID(assetAllocationID));
+                var assetAllocationDetail = _mapper.Map<AssetAllocationDetailDto>(await _assetAllocationRepository.GetAssetAllocationByID(assetAllocationID));
 
                 if (currentUserRole != "Admin" && currentUserID != assetAllocationDetail.EmployeeID) return Unauthorized();
 
@@ -98,7 +98,7 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin, Employee")]
         [HttpGet("Employee/{employeeID}")]
-        public IActionResult GetAssetAllocationDetailsByEmployee(int employeeID)
+        public async Task<IActionResult> GetAssetAllocationDetailsByEmployee(int employeeID)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 int currentUserID = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "id").Value);
 
-                if (!_employeeRepository.EmployeeExists(employeeID))
+                if (!await _employeeRepository.EmployeeExists(employeeID))
                 {
                     if (currentUserRole == "Admin") return NotFound();
                     return Unauthorized();
@@ -114,7 +114,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 if (currentUserRole != "Admin" && currentUserID != employeeID) return Unauthorized();
 
-                var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(_assetAllocationRepository.GetAssetAllocationsByEmployee(employeeID));
+                var assetAllocationDetails = _mapper.Map<ICollection<AssetAllocationDetailDto>>(await _assetAllocationRepository.GetAssetAllocationsByEmployee(employeeID));
                 return Ok(assetAllocationDetails);
             }
             catch (Exception ex)
@@ -127,15 +127,15 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult CreateAssetAllocationDetail(AssetAllocationDetailDto assetAllocationDetail)
+        public async Task<IActionResult> CreateAssetAllocationDetail(AssetAllocationDetailDto assetAllocationDetail)
         {
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                if (!_employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
+                if (!await _employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
 
-                if (!_assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
+                if (!await _assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
 
                 if (assetAllocationDetail.AssetCount < 1) return BadRequest("Invalid asset count!");
 
@@ -148,7 +148,7 @@ namespace AssetManagementSystem.Controllers.v1
                 }
                 var assetAllocation = _mapper.Map<AssetAllocationDetail>(assetAllocationDetail);
 
-                var result = _assetAllocationRepository.AllocateAsset(assetAllocation);
+                var result = await _assetAllocationRepository.AllocateAsset(assetAllocation);
 
                 if (result) return Ok(assetAllocation);
 
@@ -165,17 +165,17 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpPut("{assetAllocationID}")]
-        public IActionResult UpdateAssetAllocationDetail(int assetAllocationID, AssetAllocationDetailDto assetAllocationDetail)
+        public async Task<IActionResult> UpdateAssetAllocationDetail(int assetAllocationID, AssetAllocationDetailDto assetAllocationDetail)
         {
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationDetail.AssetAllocationID)) return NotFound("Asset allocation details not found!");
+                if (!await _assetAllocationRepository.AllocationDetailExists(assetAllocationDetail.AssetAllocationID)) return NotFound("Asset allocation details not found!");
 
-                if (!_employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
+                if (!await _employeeRepository.EmployeeExists(assetAllocationDetail.EmployeeID)) return NotFound("Employee not found!");
 
-                if (!_assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
+                if (!await _assetCatalogueRepository.AssetExists(assetAllocationDetail.AssetID)) return NotFound("Asset not found!");
 
                 if (assetAllocationDetail.AssetCount < 1) return BadRequest("Invalid asset count!");
 
@@ -189,7 +189,7 @@ namespace AssetManagementSystem.Controllers.v1
 
                 var allocationDetail = _mapper.Map<AssetAllocationDetail>(assetAllocationDetail);
 
-                var result = _assetAllocationRepository.UpdateAllocationDetails(allocationDetail);
+                var result = await _assetAllocationRepository.UpdateAllocationDetails(allocationDetail);
                 if (result) return Ok(allocationDetail);
 
                 ModelState.AddModelError("Error", "An error occuerd while updating asset allocation details!");
@@ -205,13 +205,13 @@ namespace AssetManagementSystem.Controllers.v1
 		[MapToApiVersion("1.0")]
 		[Authorize(Roles = "Admin")]
         [HttpDelete("{assetAllocationID}")]
-        public IActionResult DeleteAssetAllocationDetail(int assetAllocationID)
+        public async Task<IActionResult> DeleteAssetAllocationDetail(int assetAllocationID)
         {
             try
             {
-                if (!_assetAllocationRepository.AllocationDetailExists(assetAllocationID)) return NotFound("Asset allocation details not found!");
+                if (!await _assetAllocationRepository.AllocationDetailExists(assetAllocationID)) return NotFound("Asset allocation details not found!");
 
-                var result = _assetAllocationRepository.DeallocateAsset(assetAllocationID);
+                var result = await _assetAllocationRepository.DeallocateAsset(assetAllocationID);
 
                 if (result) return Ok();
 

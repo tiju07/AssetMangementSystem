@@ -102,6 +102,18 @@
                         </span>
                     </div>
                 </form>
+                <div style="padding: 20px;" (click)="$event.stopPropagation(); externalLogin()">
+                    <asl-google-signin-button
+                        type="standard"
+                        size="medium"
+                        text="continue_with"
+                        shape="pill"
+                        theme="outline"
+                        logo_alignment="left"
+                        style="width: 100%;"
+                        (click)="$event.stopPropagation();"
+                    ></asl-google-signin-button>
+                </div>
             </div>
         </div>
     </section>

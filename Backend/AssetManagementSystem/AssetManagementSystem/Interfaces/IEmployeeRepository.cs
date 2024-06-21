@@ -6,16 +6,16 @@ namespace AssetManagementSystem.Interfaces
 {
     public interface IEmployeeRepository
     {
-        public ICollection<EmployeeAdminViewModel> GetAllEmployees();
-        public EmployeeAdminViewModel? GetEmployeeByID(int employeeID);
-        public Employee GetEmployeeByIDWithCredentials(int employeeID);
-        public Employee GetEmployeeByUserName(string username);
-        public bool CreateEmployee(Employee employee);
-        public bool UpdateEmployee(Employee employee);
-        public bool DeleteEmployee(int employeeID);
-        public bool EmployeeExists(int employeeID);
-        public bool EmployeeExists(EmployeeDto employee);
-        public bool EmployeeExists(string email);
-        public bool Save();
+        public Task<ICollection<EmployeeAdminViewModel>> GetAllEmployees();
+        public Task<EmployeeAdminViewModel?> GetEmployeeByID(int employeeID);
+        public Task<Employee> GetEmployeeByIDWithCredentials(int employeeID);
+        public Task<Employee> GetEmployeeByUserName(string username);
+        public Task<bool> CreateEmployee(Employee employee);
+        public Task<bool> UpdateEmployee(Employee employee);
+        public Task<bool>    DeleteEmployee(int employeeID);
+        public Task<bool> EmployeeExists(int employeeID);
+        public Task<bool> EmployeeExists(EmployeeDto employee);
+        public Task<bool> EmployeeExists(string email);
+        public Task<bool> Save();
     }
 }
